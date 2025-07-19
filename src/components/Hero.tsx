@@ -4,17 +4,17 @@ import FloatingHeader from "./FloatingHeader";
 
 const Hero = () => {
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden hero-gradient-bg">
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-background">
       <FloatingHeader />
       <div className="relative z-10 container mx-auto px-4 text-center">
         {/* Main Headline */}
         <div className="max-w-5xl mx-auto space-y-8">
-          <h1 className="text-6xl md:text-8xl lg:text-9xl font-bold leading-tight text-foreground">
+          <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold leading-tight text-foreground">
             From{" "}
-            <span className="bg-gradient-to-r from-purple-600 to-purple-400 bg-clip-text text-transparent font-extrabold">
-              Scattered
-            </span>{" "}
-            <span className="text-foreground font-extrabold">Notes,</span>
+            <span className="relative twinkling-stars">
+              <Star className="inline-block h-10 md:h-14 lg:h-16 w-10 md:w-14 lg:w-16 mx-2 text-primary" />
+            </span>
+            <span className="text-primary font-extrabold">Scattered Notes,</span>
             <br />
             to{" "}
             <span className="relative inline-block group">
@@ -27,7 +27,7 @@ const Hero = () => {
             <span className="text-foreground font-extrabold">Success</span>
           </h1>
 
-          <p className="text-xl md:text-2xl lg:text-3xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+          <p className="text-lg md:text-xl lg:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
             Transform your engineering study chaos into organized, searchable knowledge 
             that actually helps you succeed.
           </p>
@@ -37,10 +37,10 @@ const Hero = () => {
             <Button 
               size="lg" 
               variant="gradient"
-              className="text-xl px-12 py-8 rounded-2xl transition-all duration-300 hover:scale-110 hover:shadow-2xl shadow-primary/50 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary font-semibold"
+              className="text-lg px-8 py-6 rounded-2xl transition-all duration-300 hover:scale-105"
             >
-              Organize My Notes
-              <ArrowRight className="ml-3 h-6 w-6" />
+              Organize Your Studies Now
+              <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
           </div>
         </div>
