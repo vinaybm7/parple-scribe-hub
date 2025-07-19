@@ -8,26 +8,26 @@ const Hero = () => {
         {/* Main Headline */}
         <div className="max-w-5xl mx-auto space-y-8">
           <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold leading-tight text-foreground">
-            Think{" "}
+            Study{" "}
             <span className="relative">
-              <Sparkles className="inline-block h-14 md:h-20 lg:h-24 w-14 md:w-20 lg:w-24 mx-2 text-primary animate-pulse" />
+              <Sparkles className="inline-block h-14 md:h-20 lg:h-24 w-14 md:w-20 lg:w-24 mx-2 text-primary sparkle-float" />
             </span>
-            <span className="text-primary font-extrabold">visually,</span>
+            <span className="text-primary font-extrabold">smart,</span>
             <br />
             <span className="relative inline-block group">
-              {/* Purple gradient background behind "learn deeply" */}
+              {/* Purple gradient background behind "excel" */}
               <span className="absolute inset-0 hero-gradient-accent rounded-3xl transform -skew-y-1 scale-110 z-0 opacity-30"></span>
               <span className="relative z-10 bg-white px-8 py-4 rounded-3xl shadow-lg border border-border/20 inline-block mx-2 transform -rotate-3 transition-all duration-300 hover:rotate-0 hover:scale-105 cursor-pointer">
-                <span className="text-foreground font-bold">learn</span>
+                <span className="text-foreground font-bold">excel</span>
               </span>
             </span>{" "}
-            <span className="text-foreground font-extrabold">deeply</span>
+            <span className="text-foreground font-extrabold">everywhere</span>
           </h1>
 
           <p className="text-lg md:text-xl lg:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-            Access comprehensive engineering notes, study materials, and resources 
-            curated specifically for Indian students. Excel in your academics with 
-            our extensive collection.
+            Master engineering concepts with comprehensive notes, detailed explanations, 
+            and curated study materials designed for Indian engineering students. 
+            Your path to academic excellence starts here.
           </p>
 
           {/* CTA Button */}
