@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 const Footer = () => {
   return (
-    <footer className="hero-gradient text-white">
+    <footer className="bg-gradient-to-br from-primary via-primary-dark to-primary text-white">
       {/* Download Section */}
       <div className="container mx-auto px-4 py-8 border-b border-white/20">
         <div className="text-center mb-6">
