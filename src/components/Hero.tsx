@@ -5,6 +5,8 @@ import FloatingHeader from "./FloatingHeader";
 const Hero = () => {
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-background">
+      {/* Rising sun gradient background */}
+      <div className="absolute inset-0 gradient-rising-sun opacity-60"></div>
       <FloatingHeader />
       <div className="relative z-10 container mx-auto px-4 text-center pt-32 pb-16">
         {/* Main Headline */}

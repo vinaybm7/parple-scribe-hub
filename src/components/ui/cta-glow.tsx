@@ -8,9 +8,9 @@ const ctaGlowVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-gradient-to-r from-purple-500 to-violet-600 text-white shadow-[0_0_40px_rgba(139,92,246,0.6)] hover:shadow-[0_0_60px_rgba(139,92,246,0.8)] hover:scale-105 hover:from-purple-400 hover:to-violet-500",
-        outline: "border border-purple-500 bg-transparent text-purple-500 shadow-[0_0_20px_rgba(139,92,246,0.3)] hover:shadow-[0_0_40px_rgba(139,92,246,0.6)] hover:scale-105 hover:bg-purple-500/10",
-        ghost: "text-purple-500 hover:bg-purple-500/10 hover:shadow-[0_0_20px_rgba(139,92,246,0.3)] hover:scale-105",
+        default: "cta-gradient text-white font-bold",
+        outline: "border-2 border-purple-500 bg-transparent text-purple-500 shadow-[0_0_20px_rgba(139,92,246,0.3)] hover:shadow-[0_0_40px_rgba(139,92,246,0.6)] hover:scale-105 hover:bg-purple-500/10 transition-all duration-300",
+        ghost: "text-purple-500 hover:bg-purple-500/10 hover:shadow-[0_0_20px_rgba(139,92,246,0.3)] hover:scale-105 transition-all duration-300",
       },
       size: {
         default: "h-10 px-6 py-2",

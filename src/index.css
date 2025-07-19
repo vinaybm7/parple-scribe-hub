@@ -56,6 +56,17 @@
     --shadow-primary: 0 20px 40px -12px hsla(270, 100%, 65%, 0.15);
     --shadow-card: 0 4px 20px -4px hsla(270, 100%, 65%, 0.08);
     --shadow-glow: 0 0 40px hsla(270, 100%, 65%, 0.2);
+    
+    /* Rising Sun Gradients */
+    --gradient-rising-sun: radial-gradient(ellipse 1000px 500px at 50% 100%, 
+      hsla(280, 100%, 70%, 0.4) 0%, 
+      hsla(270, 100%, 60%, 0.3) 30%, 
+      hsla(260, 100%, 50%, 0.2) 60%, 
+      transparent 100%);
+    --gradient-cta-base: linear-gradient(135deg, hsl(280, 100%, 70%), hsl(270, 100%, 60%));
+    --gradient-cta-hover: linear-gradient(135deg, hsl(280, 100%, 75%), hsl(270, 100%, 65%));
+    --gradient-cta-glow: 0 0 40px hsla(280, 100%, 70%, 0.6), 0 0 80px hsla(270, 100%, 60%, 0.3);
+    --gradient-cta-glow-hover: 0 0 60px hsla(280, 100%, 70%, 0.8), 0 0 120px hsla(270, 100%, 60%, 0.5);
 
     --sidebar-background: 0 0% 98%;
 
@@ -164,6 +175,34 @@
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+  }
+  
+  .gradient-rising-sun {
+    background: var(--gradient-rising-sun);
+  }
+  
+  .cta-gradient {
+    background: var(--gradient-cta-base);
+    box-shadow: var(--gradient-cta-glow);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .cta-gradient:hover {
+    background: var(--gradient-cta-hover);
+    box-shadow: var(--gradient-cta-glow-hover);
+    transform: scale(1.05);
+    animation: breathe 2s ease-in-out infinite;
+  }
+  
+  @keyframes breathe {
+    0%, 100% {
+      box-shadow: var(--gradient-cta-glow-hover);
+      transform: scale(1.05);
+    }
+    50% {
+      box-shadow: 0 0 80px hsla(280, 100%, 70%, 1), 0 0 160px hsla(270, 100%, 60%, 0.7);
+      transform: scale(1.08);
+    }
   }
   
   .twinkling-stars {
