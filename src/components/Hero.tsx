@@ -5,13 +5,13 @@ import FloatingHeader from "./FloatingHeader";
 const Hero = () => {
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-background">
-      {/* Rising sun gradient background */}
-      <div className="absolute inset-0 gradient-rising-sun opacity-60"></div>
+      {/* Rising sun gradient background with hover effect */}
+      <div className="absolute inset-0 gradient-hover-area opacity-60"></div>
       <FloatingHeader />
       <div className="relative z-10 container mx-auto px-4 text-center pt-32 pb-16">
         {/* Main Headline */}
         <div className="max-w-5xl mx-auto space-y-16">
-          <h1 className="font-bricolage text-5xl md:text-7xl lg:text-8xl font-extrabold leading-tight text-foreground mt-16 mb-12">
+          <h1 className="font-bricolage text-5xl md:text-7xl lg:text-8xl font-extrabold leading-relaxed text-foreground mt-16 mb-12">
             From{" "}
             <span className="text-gradient font-extrabold wavy-underline">Scattered</span>{" "}
             <span className="text-foreground font-extrabold">Notes,</span>

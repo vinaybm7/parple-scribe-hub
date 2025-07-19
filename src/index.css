@@ -59,9 +59,17 @@
     
     /* Rising Sun Gradients */
     --gradient-rising-sun: radial-gradient(ellipse 1000px 500px at 50% 100%, 
-      hsla(280, 100%, 70%, 0.4) 0%, 
-      hsla(270, 100%, 60%, 0.3) 30%, 
-      hsla(260, 100%, 50%, 0.2) 60%, 
+      hsla(280, 100%, 75%, 0.5) 0%, 
+      hsla(270, 100%, 65%, 0.4) 20%, 
+      hsla(260, 100%, 55%, 0.3) 40%, 
+      hsla(250, 100%, 45%, 0.2) 70%, 
+      transparent 100%);
+    --gradient-rising-sun-hover: radial-gradient(ellipse 1200px 600px at 50% 100%, 
+      hsla(280, 100%, 80%, 0.7) 0%, 
+      hsla(270, 100%, 70%, 0.6) 20%, 
+      hsla(260, 100%, 60%, 0.5) 40%, 
+      hsla(250, 100%, 50%, 0.4) 70%, 
+      hsla(240, 100%, 40%, 0.2) 90%, 
       transparent 100%);
     --gradient-cta-base: linear-gradient(135deg, hsl(280, 100%, 70%), hsl(270, 100%, 60%));
     --gradient-cta-hover: linear-gradient(135deg, hsl(280, 100%, 75%), hsl(270, 100%, 65%));
@@ -208,22 +216,32 @@
   .wavy-underline {
     position: relative;
     display: inline-block;
+    margin-bottom: 24px;
   }
   
   .wavy-underline::after {
     content: '';
     position: absolute;
-    bottom: -8px;
+    bottom: -16px;
     left: 0;
     width: 100%;
-    height: 12px;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 20'%3E%3Cpath d='M0,10 Q20,0 40,10 T80,10 T120,10 T160,10 T200,10 T240,10 T280,10 T320,10 T360,10 T400,10' stroke='%238B5CF6' stroke-width='6' fill='none'/%3E%3C/svg%3E");
+    height: 16px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 20'%3E%3Cpath d='M0,10 Q20,0 40,10 T80,10 T120,10 T160,10 T200,10 T240,10 T280,10 T320,10 T360,10 T400,10' stroke='%238B5CF6' stroke-width='10' fill='none'/%3E%3C/svg%3E");
     background-repeat: repeat-x;
-    background-size: 100px 12px;
+    background-size: 120px 16px;
     opacity: 0;
     transform: scaleX(0);
     transform-origin: left;
     animation: drawWave 2s ease-out 0.5s forwards;
+  }
+  
+  .gradient-hover-area {
+    background: var(--gradient-rising-sun);
+    transition: background 0.6s ease;
+  }
+  
+  .gradient-hover-area:hover {
+    background: var(--gradient-rising-sun-hover);
   }
   
   @keyframes drawWave {
