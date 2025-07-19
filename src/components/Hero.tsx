@@ -13,7 +13,7 @@ const Hero = () => {
         <div className="max-w-5xl mx-auto space-y-16">
           <h1 className="font-bricolage text-5xl md:text-7xl lg:text-8xl font-extrabold leading-tight text-foreground mt-16 mb-12">
             From{" "}
-            <span className="text-gradient font-extrabold">Scattered</span>{" "}
+            <span className="text-gradient font-extrabold wavy-underline">Scattered</span>{" "}
             <span className="text-foreground font-extrabold">Notes,</span>
             <br />
             to{" "}
