@@ -4,11 +4,11 @@ import FloatingHeader from "./FloatingHeader";
 
 const Hero = () => {
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden hero-gradient-bg">
+    <section className="relative h-[80vh] flex items-center justify-center overflow-hidden hero-gradient-bg">
       <FloatingHeader />
       <div className="relative z-10 container mx-auto px-4 text-center">
         {/* Main Headline */}
-        <div className="max-w-5xl mx-auto space-y-8">
+        <div className="max-w-5xl mx-auto space-y-6">
           <h1 className="text-6xl md:text-8xl lg:text-9xl font-bold leading-tight text-foreground">
             From{" "}
             <span className="bg-gradient-to-r from-purple-600 to-purple-400 bg-clip-text text-transparent font-extrabold">
@@ -33,7 +33,7 @@ const Hero = () => {
           </p>
 
           {/* CTA Button */}
-          <div className="pt-12">
+          <div className="pt-8">
             <Button 
               size="lg" 
               variant="gradient"
