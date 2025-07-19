@@ -167,21 +167,17 @@
   }
   
   .sparkle-float {
-    animation: sparkleFloat 3s ease-in-out infinite;
+    animation: sparkleFloat 4s ease-in-out infinite;
   }
   
   @keyframes sparkleFloat {
     0%, 100% {
       transform: translateY(0px) rotate(0deg);
-    }
-    25% {
-      transform: translateY(-10px) rotate(5deg);
+      opacity: 0.9;
     }
     50% {
-      transform: translateY(-5px) rotate(-3deg);
-    }
-    75% {
-      transform: translateY(-8px) rotate(2deg);
+      transform: translateY(-3px) rotate(1deg);
+      opacity: 1;
     }
   }
 }

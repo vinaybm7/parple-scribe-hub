@@ -16,39 +16,36 @@ const Header = () => {
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center space-x-3">
+        <nav className="hidden md:flex items-center space-x-2">
           <Link
             to="/"
-            className="text-foreground/80 hover:text-primary transition-colors duration-200 font-medium px-4 py-2 rounded-full hover:bg-accent/50"
+            className="text-foreground hover:text-primary transition-colors duration-200 font-medium px-4 py-2 rounded-full bg-muted/50 hover:bg-muted"
           >
             Home
           </Link>
           <Link
             to="/notes"
-            className="text-foreground/80 hover:text-primary transition-colors duration-200 font-medium px-4 py-2 rounded-full hover:bg-accent/50"
+            className="text-foreground hover:text-primary transition-colors duration-200 font-medium px-4 py-2 rounded-full bg-muted/50 hover:bg-muted"
           >
             Browse Notes
           </Link>
           <Link
             to="/subjects"
-            className="text-foreground/80 hover:text-primary transition-colors duration-200 font-medium px-4 py-2 rounded-full hover:bg-accent/50"
+            className="text-foreground hover:text-primary transition-colors duration-200 font-medium px-4 py-2 rounded-full bg-muted/50 hover:bg-muted"
           >
             Subjects
           </Link>
           <Link
             to="/about"
-            className="text-foreground/80 hover:text-primary transition-colors duration-200 font-medium px-4 py-2 rounded-full hover:bg-accent/50"
+            className="text-foreground hover:text-primary transition-colors duration-200 font-medium px-4 py-2 rounded-full bg-muted/50 hover:bg-muted"
           >
             About us
           </Link>
         </nav>
 
-        {/* Search and CTA */}
-        <div className="hidden md:flex items-center space-x-4">
-          <Button variant="ghost" size="sm" className="text-foreground/80 rounded-full px-4 py-2 hover:bg-accent/50">
-            <Search className="h-4 w-4" />
-          </Button>
-          <Button variant="ghost" size="sm" className="text-foreground/80 rounded-full px-4 py-2 hover:bg-accent/50 font-medium">
+        {/* Login */}
+        <div className="hidden md:flex items-center">
+          <Button variant="ghost" size="sm" className="text-foreground rounded-full px-4 py-2 font-medium hover:bg-muted">
             Login
           </Button>
         </div>
