@@ -16,40 +16,40 @@ const Header = () => {
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center space-x-8">
+        <nav className="hidden md:flex items-center space-x-3">
           <Link
             to="/"
-            className="text-foreground/80 hover:text-primary transition-colors duration-200 font-medium"
+            className="text-foreground/80 hover:text-primary transition-colors duration-200 font-medium px-4 py-2 rounded-full hover:bg-accent/50"
           >
             Home
           </Link>
           <Link
             to="/notes"
-            className="text-foreground/80 hover:text-primary transition-colors duration-200 font-medium"
+            className="text-foreground/80 hover:text-primary transition-colors duration-200 font-medium px-4 py-2 rounded-full hover:bg-accent/50"
           >
             Browse Notes
           </Link>
           <Link
             to="/subjects"
-            className="text-foreground/80 hover:text-primary transition-colors duration-200 font-medium"
+            className="text-foreground/80 hover:text-primary transition-colors duration-200 font-medium px-4 py-2 rounded-full hover:bg-accent/50"
           >
             Subjects
           </Link>
           <Link
             to="/about"
-            className="text-foreground/80 hover:text-primary transition-colors duration-200 font-medium"
+            className="text-foreground/80 hover:text-primary transition-colors duration-200 font-medium px-4 py-2 rounded-full hover:bg-accent/50"
           >
-            About
+            About us
           </Link>
         </nav>
 
         {/* Search and CTA */}
         <div className="hidden md:flex items-center space-x-4">
-          <Button variant="ghost" size="sm" className="text-foreground/80">
+          <Button variant="ghost" size="sm" className="text-foreground/80 rounded-full px-4 py-2 hover:bg-accent/50">
             <Search className="h-4 w-4" />
           </Button>
-          <Button variant="default" size="sm" className="button-gradient shadow-primary">
-            Get Started
+          <Button variant="ghost" size="sm" className="text-foreground/80 rounded-full px-4 py-2 hover:bg-accent/50 font-medium">
+            Login
           </Button>
         </div>
 
