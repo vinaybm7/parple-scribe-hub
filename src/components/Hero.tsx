@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { CTAGlow } from "@/components/ui/cta-glow";
 import { ArrowRight } from "lucide-react";
 import FloatingHeader from "./FloatingHeader";
 
@@ -32,14 +32,13 @@ const Hero = () => {
 
           {/* CTA Button */}
           <div className="mt-20">
-            <Button 
-              size="lg" 
-              variant="gradient"
-              className="text-lg px-8 py-6 rounded-2xl transition-all duration-300 hover:scale-105"
+            <CTAGlow 
+              size="xl"
+              className="font-bricolage font-bold"
             >
               Organize Your Studies Now
               <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
+            </CTAGlow>
           </div>
         </div>
       </div>
