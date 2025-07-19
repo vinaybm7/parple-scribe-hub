@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Sparkles, Users, Download } from "lucide-react";
+import { ArrowRight, Users, Download } from "lucide-react";
 
 const Hero = () => {
   return (
@@ -10,7 +10,11 @@ const Hero = () => {
           <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold leading-tight text-foreground">
             Think{" "}
             <span className="relative">
-              <Sparkles className="inline-block h-14 md:h-20 lg:h-24 w-14 md:w-20 lg:w-24 mx-2 text-primary animate-pulse" />
+              <img 
+                src="/lovable-uploads/d2c8f305-c178-42b3-97a8-ca5f71e9c55b.png" 
+                alt="Star" 
+                className="inline-block h-14 md:h-20 lg:h-24 w-14 md:w-20 lg:w-24 mx-2 animate-pulse object-contain drop-shadow-lg"
+              />
             </span>
             <span className="text-primary font-extrabold">visually,</span>
             <br />
