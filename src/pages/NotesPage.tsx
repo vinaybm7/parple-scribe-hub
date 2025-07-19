@@ -95,12 +95,12 @@ const NotesPage = () => {
       <Header />
       
       {/* Hero Section */}
-      <section className="pt-24 pb-12 hero-gradient text-white">
+      <section className="pt-24 pb-12 bg-gradient-to-r from-background to-accent/20">
         <div className="container mx-auto px-4 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">
+          <h1 className="text-4xl md:text-5xl font-bold mb-4 text-foreground">
             Browse Engineering Notes
           </h1>
-          <p className="text-lg text-white/80 mb-8 max-w-2xl mx-auto">
+          <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
             Access our comprehensive collection of engineering notes and study materials
           </p>
           
@@ -112,7 +112,7 @@ const NotesPage = () => {
               placeholder="Search for notes, subjects, or topics..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-12 h-12 bg-white/20 backdrop-blur-sm border-white/30 text-white placeholder-white/60"
+              className="pl-12 h-12 bg-background border-border"
             />
           </div>
         </div>
