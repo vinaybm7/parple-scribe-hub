@@ -1,22 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import FloatingHeader from "./FloatingHeader";
-import { BackgroundGradientAnimation } from "./BackgroundGradientAnimation";
 
 const Hero = () => {
   return (
-    <BackgroundGradientAnimation
-      gradientBackgroundStart="rgb(108, 0, 162)"
-      gradientBackgroundEnd="rgb(0, 17, 82)"
-      firstColor="147, 51, 234"
-      secondColor="221, 74, 255"
-      thirdColor="168, 85, 247"
-      fourthColor="192, 132, 252"
-      fifthColor="196, 181, 253"
-      pointerColor="147, 51, 234"
-    >
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-background">
       <FloatingHeader />
-      <div className="relative z-50 container mx-auto px-4 text-center pt-32 pb-16 min-h-screen flex items-center justify-center">
+      <div className="relative z-10 container mx-auto px-4 text-center pt-32 pb-16">
         {/* Main Headline */}
         <div className="max-w-5xl mx-auto space-y-16">
           <h1 className="font-bricolage text-5xl md:text-7xl lg:text-8xl font-extrabold leading-tight text-foreground mt-16 mb-12">
@@ -53,7 +43,7 @@ const Hero = () => {
           </div>
         </div>
       </div>
-    </BackgroundGradientAnimation>
+    </section>
   );
 };
 
