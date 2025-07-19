@@ -9,8 +9,8 @@ const Hero = () => {
         <div className="max-w-5xl mx-auto space-y-8">
           <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold leading-tight text-foreground">
             Learn{" "}
-            <span className="relative">
-              <Sparkles className="inline-block h-14 md:h-20 lg:h-24 w-14 md:w-20 lg:w-24 mx-2 text-primary sparkle-float" />
+            <span className="relative twinkling-stars">
+              <Sparkles className="inline-block h-14 md:h-20 lg:h-24 w-14 md:w-20 lg:w-24 mx-2 text-primary" />
             </span>
             <span className="text-primary font-extrabold">effortlessly,</span>
             <br />

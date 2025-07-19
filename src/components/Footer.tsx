@@ -4,27 +4,6 @@ import { Link } from "react-router-dom";
 const Footer = () => {
   return (
     <footer className="bg-gradient-to-br from-primary via-primary-dark to-primary text-white">
-      {/* Download Section */}
-      <div className="container mx-auto px-4 py-8 border-b border-white/20">
-        <div className="text-center mb-6">
-          <h3 className="text-2xl font-bold mb-4">Access Engineering Excellence</h3>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <button className="flex items-center space-x-2 bg-white/20 hover:bg-white/30 px-6 py-3 rounded-xl transition-colors backdrop-blur-sm border border-white/30">
-              <Download className="h-5 w-5" />
-              <span className="font-medium">Download Notes</span>
-            </button>
-            <button className="flex items-center space-x-2 bg-white/20 hover:bg-white/30 px-6 py-3 rounded-xl transition-colors backdrop-blur-sm border border-white/30">
-              <Book className="h-5 w-5" />
-              <span className="font-medium">Browse Subjects</span>
-            </button>
-            <button className="flex items-center space-x-2 bg-white/20 hover:bg-white/30 px-6 py-3 rounded-xl transition-colors backdrop-blur-sm border border-white/30">
-              <GraduationCap className="h-5 w-5" />
-              <span className="font-medium">Study Guides</span>
-            </button>
-          </div>
-        </div>
-      </div>
-
       {/* Main Footer Content */}
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">

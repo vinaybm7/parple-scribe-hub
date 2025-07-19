@@ -166,18 +166,40 @@
     background-clip: text;
   }
   
-  .sparkle-float {
-    animation: sparkleFloat 4s ease-in-out infinite;
+  .twinkling-stars {
+    position: relative;
+    display: inline-block;
   }
   
-  @keyframes sparkleFloat {
+  .twinkling-stars::before,
+  .twinkling-stars::after {
+    content: '✦';
+    position: absolute;
+    color: hsl(var(--primary));
+    font-size: 0.6em;
+    animation: twinkle 2s ease-in-out infinite;
+  }
+  
+  .twinkling-stars::before {
+    top: -8px;
+    left: -12px;
+    animation-delay: 0s;
+  }
+  
+  .twinkling-stars::after {
+    bottom: -8px;
+    right: -12px;
+    animation-delay: 1s;
+  }
+  
+  @keyframes twinkle {
     0%, 100% {
-      transform: translateY(0px) rotate(0deg);
-      opacity: 0.9;
+      opacity: 0.3;
+      transform: scale(0.8);
     }
     50% {
-      transform: translateY(-3px) rotate(1deg);
       opacity: 1;
+      transform: scale(1.2);
     }
   }
 }
