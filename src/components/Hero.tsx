@@ -31,7 +31,7 @@ const Hero = () => {
           </p>
 
           {/* CTA Button */}
-          <div className="pt-8">
+          <div className="pt-12">
             <Button 
               size="lg" 
               variant="gradient"
@@ -40,25 +40,6 @@ const Hero = () => {
               Get started
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
-          </div>
-
-          {/* Stats */}
-          <div className="pt-16 grid grid-cols-1 md:grid-cols-3 gap-8 max-w-3xl mx-auto">
-            <div className="bg-card border border-border/50 rounded-2xl p-6 text-center shadow-card hover:shadow-lg transition-all duration-300">
-              <BookOpen className="h-8 w-8 mx-auto mb-2 text-primary" />
-              <div className="text-2xl font-bold text-foreground">500+</div>
-              <div className="text-muted-foreground">Notes Available</div>
-            </div>
-            <div className="bg-card border border-border/50 rounded-2xl p-6 text-center shadow-card hover:shadow-lg transition-all duration-300">
-              <Users className="h-8 w-8 mx-auto mb-2 text-primary" />
-              <div className="text-2xl font-bold text-foreground">10K+</div>
-              <div className="text-muted-foreground">Students Helped</div>
-            </div>
-            <div className="bg-card border border-border/50 rounded-2xl p-6 text-center shadow-card hover:shadow-lg transition-all duration-300">
-              <Download className="h-8 w-8 mx-auto mb-2 text-primary" />
-              <div className="text-2xl font-bold text-foreground">50K+</div>
-              <div className="text-muted-foreground">Downloads</div>
-            </div>
           </div>
         </div>
       </div>
