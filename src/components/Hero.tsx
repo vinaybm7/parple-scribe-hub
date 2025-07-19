@@ -6,10 +6,10 @@ const Hero = () => {
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-background">
       <FloatingHeader />
-      <div className="relative z-10 container mx-auto px-4 text-center">
+      <div className="relative z-10 container mx-auto px-4 text-center pt-32 pb-16">
         {/* Main Headline */}
-        <div className="max-w-5xl mx-auto space-y-8">
-          <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold leading-tight text-foreground">
+        <div className="max-w-5xl mx-auto space-y-16">
+          <h1 className="font-bricolage text-5xl md:text-7xl lg:text-8xl font-extrabold leading-tight text-foreground mt-16 mb-12">
             From{" "}
             <span className="text-gradient font-extrabold">Scattered</span>{" "}
             <span className="text-foreground font-extrabold">Notes,</span>
@@ -25,13 +25,13 @@ const Hero = () => {
             <span className="text-foreground font-extrabold">Success</span>
           </h1>
 
-          <p className="text-lg md:text-xl lg:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+          <p className="text-lg md:text-xl lg:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed mb-16">
             Transform your engineering study chaos into organized, searchable knowledge 
             that actually helps you succeed.
           </p>
 
           {/* CTA Button */}
-          <div className="pt-12">
+          <div className="mt-20">
             <Button 
               size="lg" 
               variant="gradient"
