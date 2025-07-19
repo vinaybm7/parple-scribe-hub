@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Star, Users, Download } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import FloatingHeader from "./FloatingHeader";
 
 const Hero = () => {
@@ -11,10 +11,8 @@ const Hero = () => {
         <div className="max-w-5xl mx-auto space-y-8">
           <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold leading-tight text-foreground">
             From{" "}
-            <span className="relative twinkling-stars">
-              <Star className="inline-block h-10 md:h-14 lg:h-16 w-10 md:w-14 lg:w-16 mx-2 text-primary" />
-            </span>
-            <span className="text-primary font-extrabold">Scattered Notes,</span>
+            <span className="text-gradient font-extrabold">Scattered</span>{" "}
+            <span className="text-foreground font-extrabold">Notes,</span>
             <br />
             to{" "}
             <span className="relative inline-block group">
