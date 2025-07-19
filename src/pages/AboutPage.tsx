@@ -1,7 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { BookOpen, Users, Target, Heart, Award, Zap } from "lucide-react";
+import { Brain, Users, Target, Heart, Award, Zap } from "lucide-react";
 
 const AboutPage = () => {
   return (
@@ -89,7 +89,7 @@ const AboutPage = () => {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div className="text-center">
               <div className="mb-4 inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10">
-                <BookOpen className="h-8 w-8 text-primary" />
+                <Brain className="h-8 w-8 text-primary" />
               </div>
               <div className="text-3xl font-bold text-foreground mb-2">500+</div>
               <div className="text-muted-foreground">Notes Available</div>

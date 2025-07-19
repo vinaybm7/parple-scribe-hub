@@ -1,9 +1,9 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { BookOpen, Download, Search, Users, Zap, Shield } from "lucide-react";
+import { Brain, Download, Search, Users, Zap, Shield } from "lucide-react";
 
 const features = [
   {
-    icon: BookOpen,
+    icon: Brain,
     title: "Comprehensive Notes",
     description: "Detailed notes covering all engineering subjects with diagrams and examples"
   },

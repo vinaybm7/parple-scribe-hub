@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { ArrowRight, BookOpen, Users, Download } from "lucide-react";
+import { ArrowRight, Sparkles, Users, Download } from "lucide-react";
 
 const Hero = () => {
   return (
@@ -10,7 +10,7 @@ const Hero = () => {
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold leading-tight text-foreground">
             Think{" "}
             <span className="relative">
-              <BookOpen className="inline-block h-12 md:h-16 lg:h-20 w-12 md:w-16 lg:w-20 mx-2 text-primary" />
+              <Sparkles className="inline-block h-12 md:h-16 lg:h-20 w-12 md:w-16 lg:w-20 mx-2 text-primary animate-pulse" />
             </span>
             <span className="text-primary font-extrabold">visually,</span>
             <br />

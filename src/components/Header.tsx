@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Menu, X, BookOpen, Search } from "lucide-react";
+import { Menu, X, Brain, Search } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const Header = () => {
@@ -11,7 +11,7 @@ const Header = () => {
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         {/* Logo */}
         <Link to="/" className="flex items-center space-x-2">
-          <BookOpen className="h-8 w-8 text-primary" />
+          <Brain className="h-8 w-8 text-primary" />
           <span className="text-2xl font-bold text-gradient">Parple Notes</span>
         </Link>
 

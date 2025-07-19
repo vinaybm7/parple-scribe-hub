@@ -2,7 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { Code, Cpu, Zap, Cog, Calculator, Atom, ArrowRight, BookOpen } from "lucide-react";
+import { Code, Cpu, Zap, Cog, Calculator, Atom, ArrowRight, Brain } from "lucide-react";
 
 const subjects = [
   {
@@ -135,7 +135,7 @@ const SubjectsPage = () => {
                         variant="outline" 
                         className="group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary transition-all duration-200"
                       >
-                        <BookOpen className="h-4 w-4 mr-2" />
+                        <Brain className="h-4 w-4 mr-2" />
                         Browse Notes
                         <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform duration-200" />
                       </Button>

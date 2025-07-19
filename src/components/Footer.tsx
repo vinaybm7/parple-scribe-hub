@@ -1,4 +1,4 @@
-import { BookOpen, Mail, Heart } from "lucide-react";
+import { Brain, Mail, Heart } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const Footer = () => {
@@ -9,7 +9,7 @@ const Footer = () => {
           {/* Brand */}
           <div className="space-y-4">
             <Link to="/" className="flex items-center space-x-2">
-              <BookOpen className="h-8 w-8 text-primary" />
+              <Brain className="h-8 w-8 text-primary" />
               <span className="text-2xl font-bold text-gradient">Parple Notes</span>
             </Link>
             <p className="text-muted-foreground">
