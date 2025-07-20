@@ -71,7 +71,7 @@ const NotesPage = () => {
       <section className="py-12">
         <div className="container mx-auto px-4">
           {filteredYears.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
               {filteredYears.map((year) => (
               <Link key={year.id} to={`/notes/year/${year.id}`}>
                 <Card className="group hover:shadow-card transition-all duration-300 hover:scale-105 border-border/50 hover:border-primary/20 cursor-pointer h-full">

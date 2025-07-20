@@ -209,9 +209,23 @@ const AdminDashboard = () => {
     if (!confirm('Are you sure you want to delete this file?')) return;
     
     try {
-      const { error } = await deleteFile(fileName);
-      if (error) throw error;
+      console.log('Deleting file:', fileName);
       
+      // Delete file from storage
+      const { error: storageError } = await deleteFile(fileName);
+      if (storageError) {
+        console.error('Storage delete error:', storageError);
+        throw storageError;
+      }
+      
+      // Delete metadata from database
+      const { error: metadataError } = await deleteFileMetadata(fileName);
+      if (metadataError) {
+        console.error('Metadata delete error:', metadataError);
+        throw metadataError;
+      }
+      
+      console.log('File and metadata deleted successfully');
       loadFiles();
       showSuccessToast('File deleted successfully');
     } catch (error) {
@@ -315,7 +329,7 @@ const AdminDashboard = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="title">Title *</Label>
                     <Input

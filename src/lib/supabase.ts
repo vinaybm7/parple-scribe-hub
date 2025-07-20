@@ -24,8 +24,9 @@ export const uploadFile = async (file: File, path: string) => {
     const { data, error } = await supabase.storage
       .from('notes')
       .upload(path, file, {
-        cacheControl: '3600',
-        upsert: false
+        cacheControl: '31536000', // 1 year cache for better performance
+        upsert: false,
+        duplex: 'half' // Optimize for upload performance
       })
     
     if (error) {
@@ -117,6 +118,8 @@ export interface FileMetadata {
 // Save file metadata to database
 export const saveFileMetadata = async (metadata: FileMetadata) => {
   try {
+    console.log('Attempting to save file metadata:', metadata)
+    
     const { data, error } = await supabase
       .from('file_metadata')
       .insert([metadata])
@@ -124,8 +127,9 @@ export const saveFileMetadata = async (metadata: FileMetadata) => {
     
     if (error) {
       console.error('Error saving file metadata:', error)
+      console.error('Error details:', JSON.stringify(error, null, 2))
     } else {
-      console.log('File metadata saved:', data)
+      console.log('File metadata saved successfully:', data)
     }
     
     return { data, error }
@@ -151,17 +155,18 @@ export const getFileMetadata = async (filePath: string) => {
   }
 }
 
-// Get all file metadata for a category
+// Get all file metadata for a category (optimized)
 export const getFileMetadataByCategory = async (year: string, semester: string, subject: string, category: string) => {
   try {
     const { data, error } = await supabase
       .from('file_metadata')
-      .select('*')
+      .select('id, file_path, original_title, file_size, file_type, created_at') // Select only needed fields
       .eq('year', year)
       .eq('semester', semester)
       .eq('subject', subject)
       .eq('category', category)
-      .order('created_at', { ascending: false })
+      .order('created_at', { ascending: true })
+      .limit(50) // Limit results for better performance
     
     return { data, error }
   } catch (err) {
@@ -170,13 +175,22 @@ export const getFileMetadataByCategory = async (year: string, semester: string, 
   }
 }
 
-// Get all file metadata (for admin dashboard)
+// Get all file metadata (for admin dashboard) - optimized
 export const getAllFileMetadata = async () => {
   try {
+    console.log('Fetching all file metadata from database...')
+    
     const { data, error } = await supabase
       .from('file_metadata')
-      .select('*')
-      .order('created_at', { ascending: false })
+      .select('id, file_path, original_title, subject, category, file_size, file_type, created_at, updated_at') // Select only needed fields
+      .order('created_at', { ascending: true })
+      .limit(100) // Limit for better performance
+    
+    if (error) {
+      console.error('Error fetching file metadata:', error)
+    } else {
+      console.log('Successfully fetched file metadata:', data?.length || 0, 'files')
+    }
     
     return { data, error }
   } catch (err) {

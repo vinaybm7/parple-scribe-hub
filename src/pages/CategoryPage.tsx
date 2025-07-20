@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -75,6 +75,9 @@ const CategoryPage = () => {
   const [loading, setLoading] = useState(true);
   const [selectedFile, setSelectedFile] = useState<StudyMaterial | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const ITEMS_PER_PAGE = 12;
 
   useEffect(() => {
     loadMaterials();
@@ -167,12 +170,14 @@ const CategoryPage = () => {
     return '📁';
   };
 
-  const filterMaterials = (materialList: StudyMaterial[]) => {
+  const filterMaterials = useCallback((materialList: StudyMaterial[]) => {
     if (!searchTerm) return materialList;
     return materialList.filter(material =>
       (material.original_title || material.name).toLowerCase().includes(searchTerm.toLowerCase())
     );
-  };
+  }, [searchTerm]);
+
+  const filteredMaterials = useMemo(() => filterMaterials(materials), [materials, filterMaterials]);
 
   const getFullFilePath = (fileName: string) => {
     const fullPath = `${getSubjectPath()}/${category}/${fileName}`;
@@ -260,7 +265,6 @@ const CategoryPage = () => {
   }
 
   const IconComponent = categoryConfig.icon;
-  const filteredMaterials = filterMaterials(materials);
 
   return (
     <div className="min-h-screen bg-background">
@@ -289,15 +293,15 @@ const CategoryPage = () => {
           </div>
           
           {/* Category Header */}
-          <div className="flex items-center gap-4 mb-6">
-            <div className={`w-16 h-16 rounded-full ${categoryConfig.color.icon} flex items-center justify-center`}>
+          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 mb-6 text-center sm:text-left">
+            <div className={`w-16 h-16 rounded-full ${categoryConfig.color.icon} flex items-center justify-center flex-shrink-0`}>
               <IconComponent className={`h-8 w-8 ${categoryConfig.color.text}`} />
             </div>
             <div>
-              <h1 className={`text-4xl font-bold ${categoryConfig.color.text} mb-2`}>
+              <h1 className={`text-2xl sm:text-3xl lg:text-4xl font-bold ${categoryConfig.color.text} mb-2`}>
                 {categoryConfig.name}
               </h1>
-              <p className="text-lg text-muted-foreground">{categoryConfig.description}</p>
+              <p className="text-base sm:text-lg text-muted-foreground">{categoryConfig.description}</p>
             </div>
           </div>
           
@@ -324,7 +328,7 @@ const CategoryPage = () => {
               <p className="text-muted-foreground">Loading materials...</p>
             </div>
           ) : filteredMaterials.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
               {filteredMaterials.map((material) => (
                 <MaterialCard key={material.id} material={material} />
               ))}
