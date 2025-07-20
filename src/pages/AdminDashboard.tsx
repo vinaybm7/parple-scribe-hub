@@ -48,6 +48,12 @@ const AdminDashboard = () => {
     category: "modules"
   });
   const [alert, setAlert] = useState<{ type: 'success' | 'error', message: string } | null>(null);
+  
+  // Advanced filtering state
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterYear, setFilterYear] = useState("all");
+  const [filterSubject, setFilterSubject] = useState("all");
+  const [filterCategory, setFilterCategory] = useState("all");
 
   const subjects = {
     1: ["Scientific Foundation of Health & Wellness", "Samskruthi Kannada", "POP", "Physics", "Nano Technology", "Maths", "IOT", "Indian Constitution", "IE Electronics", "IE Electrical", "English", "Cyber Security", "Cloud Computing", "Civil", "Chemistry", "CAED", "C Programming", "Balake Kannada", "AI"],
@@ -247,6 +253,52 @@ const AdminDashboard = () => {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   };
 
+  // Helper functions for file management
+  const getYearFromPath = (path?: string) => {
+    if (!path) return 'N/A';
+    const match = path.match(/year-(\d+)/);
+    return match ? match[1] : 'N/A';
+  };
+
+  const getSemesterFromPath = (path?: string) => {
+    if (!path) return 'N/A';
+    const match = path.match(/semester-(\d+)/);
+    return match ? match[1] : 'N/A';
+  };
+
+  const getCategoryName = (categoryId?: string) => {
+    const category = CATEGORIES.find(cat => cat.id === categoryId);
+    return category ? category.name : categoryId || 'Unknown';
+  };
+
+  // Get unique subjects for filter dropdown
+  const uniqueSubjects = [...new Set(files.map(file => file.subject).filter(Boolean))];
+
+  // Advanced filtering logic
+  const filteredFiles = files.filter(file => {
+    // Search filter
+    if (searchTerm && !file.displayName?.toLowerCase().includes(searchTerm.toLowerCase())) {
+      return false;
+    }
+    
+    // Year filter
+    if (filterYear !== 'all' && getYearFromPath(file.fullPath) !== filterYear) {
+      return false;
+    }
+    
+    // Subject filter
+    if (filterSubject !== 'all' && file.subject !== filterSubject) {
+      return false;
+    }
+    
+    // Category filter
+    if (filterCategory !== 'all' && file.category !== filterCategory) {
+      return false;
+    }
+    
+    return true;
+  });
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -284,22 +336,38 @@ const AdminDashboard = () => {
           <p className="text-lg text-muted-foreground">Manage study materials and notes</p>
         </div>
 
-        {/* Category Preview Cards */}
+        {/* File Management Stats */}
         <div className="mb-8">
-          <h2 className="text-2xl font-semibold text-foreground mb-4">Material Categories</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <h2 className="text-2xl font-semibold text-foreground mb-4">File Management Overview</h2>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <Card className="bg-blue-50 border-blue-200 border-2">
+              <CardContent className="p-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+                    <FileText className="h-5 w-5 text-blue-700" />
+                  </div>
+                  <div>
+                    <p className="text-2xl font-bold text-blue-700">{files.length}</p>
+                    <p className="text-sm text-muted-foreground">Total Files</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
             {CATEGORIES.map((category) => {
               const IconComponent = category.icon;
+              const categoryCount = files.filter(f => f.category === category.id).length;
               return (
                 <Card key={category.id} className={`${category.color.bg} ${category.color.border} border-2`}>
-                  <CardContent className="p-6">
-                    <div className="flex items-center gap-3 mb-3">
+                  <CardContent className="p-4">
+                    <div className="flex items-center gap-3">
                       <div className={`w-10 h-10 rounded-full ${category.color.icon} flex items-center justify-center`}>
                         <IconComponent className={`h-5 w-5 ${category.color.text}`} />
                       </div>
-                      <h3 className={`text-lg font-semibold ${category.color.text}`}>{category.name}</h3>
+                      <div>
+                        <p className={`text-2xl font-bold ${category.color.text}`}>{categoryCount}</p>
+                        <p className="text-sm text-muted-foreground">{category.name}</p>
+                      </div>
                     </div>
-                    <p className="text-sm text-muted-foreground">{category.description}</p>
                   </CardContent>
                 </Card>
               );
@@ -517,61 +585,169 @@ const AdminDashboard = () => {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <FileText className="h-5 w-5" />
-                  Uploaded Files ({files.length})
+                  File Management ({files.length} files)
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                {files.length === 0 ? (
+                {/* Advanced Filters */}
+                <div className="mb-6 space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div className="space-y-2">
+                      <Label>Search Files</Label>
+                      <Input
+                        placeholder="Search by title..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Filter by Year</Label>
+                      <Select value={filterYear} onValueChange={setFilterYear}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="All Years" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all">All Years</SelectItem>
+                          <SelectItem value="1">1st Year</SelectItem>
+                          <SelectItem value="2">2nd Year</SelectItem>
+                          <SelectItem value="3">3rd Year</SelectItem>
+                          <SelectItem value="4">4th Year</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Filter by Subject</Label>
+                      <Select value={filterSubject} onValueChange={setFilterSubject}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="All Subjects" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all">All Subjects</SelectItem>
+                          {uniqueSubjects.map((subject) => (
+                            <SelectItem key={subject} value={subject}>{subject}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Filter by Category</Label>
+                      <Select value={filterCategory} onValueChange={setFilterCategory}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="All Categories" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all">All Categories</SelectItem>
+                          {CATEGORIES.map((category) => (
+                            <SelectItem key={category.id} value={category.id}>{category.name}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                  
+                  {/* Clear Filters */}
+                  {(searchTerm || filterYear !== 'all' || filterSubject !== 'all' || filterCategory !== 'all') && (
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={() => {
+                        setSearchTerm('');
+                        setFilterYear('all');
+                        setFilterSubject('all');
+                        setFilterCategory('all');
+                      }}
+                    >
+                      Clear All Filters
+                    </Button>
+                  )}
+                </div>
+
+                {/* File List */}
+                {filteredFiles.length === 0 ? (
                   <div className="text-center py-8">
                     <FileText className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-                    <p className="text-muted-foreground">No files uploaded yet</p>
+                    <p className="text-muted-foreground">
+                      {files.length === 0 ? 'No files uploaded yet' : 'No files match your filters'}
+                    </p>
                   </div>
                 ) : (
-                  <div className="space-y-4">
-                    {files.map((file) => (
-                      <div key={file.id} className="flex items-center justify-between p-4 border rounded-lg">
-                        <div className="flex items-center gap-3">
-                          <FileText className="h-8 w-8 text-primary" />
-                          <div>
-                            <h3 className="font-medium text-foreground">{file.displayName || file.name}</h3>
-                            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                              <span>{formatFileSize(file.metadata?.size || 0)}</span>
-                              <Badge variant="secondary">{file.metadata?.mimetype?.split('/')[1]?.toUpperCase()}</Badge>
-                              {file.subject && <Badge variant="outline">{file.subject}</Badge>}
-                              {file.category && <Badge variant="outline">{file.category}</Badge>}
+                  <div className="space-y-3">
+                    {filteredFiles.map((file) => (
+                      <div key={file.id} className="border rounded-lg p-4 hover:bg-muted/50 transition-colors">
+                        <div className="flex items-start justify-between">
+                          <div className="flex items-start gap-3 flex-1">
+                            <FileText className="h-8 w-8 text-primary mt-1 flex-shrink-0" />
+                            <div className="flex-1 min-w-0">
+                              {/* File Title */}
+                              <h3 className="font-semibold text-foreground text-lg mb-1">
+                                {file.displayName || file.name}
+                              </h3>
+                              
+                              {/* File Path & Context */}
+                              <div className="text-sm text-muted-foreground mb-2">
+                                <span className="font-medium">Path:</span> Year {getYearFromPath(file.fullPath)} → Semester {getSemesterFromPath(file.fullPath)} → {file.subject} → {getCategoryName(file.category)}
+                              </div>
+                              
+                              {/* File Details */}
+                              <div className="flex flex-wrap items-center gap-2 mb-2">
+                                <Badge variant="secondary" className="text-xs">
+                                  {file.metadata?.mimetype?.split('/')[1]?.toUpperCase() || 'FILE'}
+                                </Badge>
+                                <Badge variant="outline" className="text-xs">
+                                  {formatFileSize(file.metadata?.size || 0)}
+                                </Badge>
+                                <Badge variant="outline" className="text-xs bg-blue-50 text-blue-700 border-blue-200">
+                                  {file.subject}
+                                </Badge>
+                                <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">
+                                  {getCategoryName(file.category)}
+                                </Badge>
+                                <span className="text-xs text-muted-foreground">
+                                  Uploaded: {new Date(file.created_at).toLocaleDateString()}
+                                </span>
+                              </div>
+                              
+                              {/* Description if available */}
+                              {file.description && (
+                                <p className="text-sm text-muted-foreground italic">
+                                  "{file.description}"
+                                </p>
+                              )}
                             </div>
-                            <p className="text-xs text-muted-foreground">
-                              Uploaded: {new Date(file.created_at).toLocaleDateString()}
-                            </p>
                           </div>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => window.open(getFileUrl(file.fullPath || file.name), '_blank')}
-                          >
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => {
-                              const link = document.createElement('a');
-                              link.href = getFileUrl(file.fullPath || file.name);
-                              link.download = file.displayName || file.name;
-                              link.click();
-                            }}
-                          >
-                            <Download className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="destructive"
-                            size="sm"
-                            onClick={() => handleDelete(file.fullPath || file.name)}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
+                          
+                          {/* Action Buttons */}
+                          <div className="flex items-center gap-2 ml-4 flex-shrink-0">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => window.open(getFileUrl(file.fullPath || file.name), '_blank')}
+                              title="View File"
+                            >
+                              <Eye className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => {
+                                const link = document.createElement('a');
+                                link.href = getFileUrl(file.fullPath || file.name);
+                                link.download = file.displayName || file.name;
+                                link.click();
+                              }}
+                              title="Download File"
+                            >
+                              <Download className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="destructive"
+                              size="sm"
+                              onClick={() => handleDelete(file.fullPath || file.name)}
+                              title="Delete File"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
                         </div>
                       </div>
                     ))}
