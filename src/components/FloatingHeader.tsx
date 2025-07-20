@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Menu, X, Brain, Search } from "lucide-react";
+import { CTAGlow } from "@/components/ui/cta-glow";
+import { Menu, X, Brain, Search, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const FloatingHeader = () => {
@@ -44,11 +45,14 @@ const FloatingHeader = () => {
             </Link>
           </nav>
 
-          {/* Login */}
+          {/* Get Started CTA */}
           <div className="hidden md:flex items-center">
-            <Button variant="ghost" size="sm" className="text-foreground rounded-full px-4 py-2 font-medium hover:bg-muted">
-              Login
-            </Button>
+            <Link to="/notes">
+              <Button size="sm" className="font-medium bg-primary text-primary-foreground hover:bg-primary/90 rounded-full">
+                Get Started
+                <ArrowRight className="ml-1 h-4 w-4" />
+              </Button>
+            </Link>
           </div>
 
           {/* Mobile menu button */}
@@ -93,9 +97,12 @@ const FloatingHeader = () => {
                 About us
               </Link>
               <div className="pt-2 border-t border-border/20">
-                <Button variant="ghost" size="sm" className="w-full justify-start">
-                  Login
-                </Button>
+                <Link to="/notes" onClick={() => setIsMenuOpen(false)}>
+                  <Button size="sm" className="w-full font-medium bg-primary text-primary-foreground hover:bg-primary/90 rounded-full">
+                    Get Started
+                    <ArrowRight className="ml-1 h-4 w-4" />
+                  </Button>
+                </Link>
               </div>
             </nav>
           </div>

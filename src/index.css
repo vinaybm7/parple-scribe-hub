@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -57,19 +59,22 @@
     --shadow-card: 0 4px 20px -4px hsla(270, 100%, 65%, 0.08);
     --shadow-glow: 0 0 40px hsla(270, 100%, 65%, 0.2);
     
-    /* Rising Sun Gradients */
+    /* Rising Sun Gradients - Pure Purple Version */
     --gradient-rising-sun: radial-gradient(ellipse 1000px 500px at 50% 100%, 
-      hsla(280, 100%, 75%, 0.5) 0%, 
-      hsla(270, 100%, 65%, 0.4) 20%, 
-      hsla(260, 100%, 55%, 0.3) 40%, 
-      hsla(250, 100%, 45%, 0.2) 70%, 
+      hsla(270, 100%, 50%, 0.8) 0%, 
+      hsla(270, 100%, 55%, 0.6) 20%, 
+      hsla(270, 100%, 60%, 0.4) 40%, 
+      hsla(270, 100%, 65%, 0.3) 60%, 
+      hsla(270, 100%, 70%, 0.2) 80%, 
+      hsla(270, 100%, 75%, 0.1) 90%, 
       transparent 100%);
-    --gradient-rising-sun-hover: radial-gradient(ellipse 1200px 600px at 50% 100%, 
-      hsla(280, 100%, 80%, 0.7) 0%, 
-      hsla(270, 100%, 70%, 0.6) 20%, 
-      hsla(260, 100%, 60%, 0.5) 40%, 
-      hsla(250, 100%, 50%, 0.4) 70%, 
-      hsla(240, 100%, 40%, 0.2) 90%, 
+    --gradient-rising-sun-hover: radial-gradient(ellipse 1100px 550px at 50% 100%, 
+      hsla(270, 100%, 45%, 0.9) 0%, 
+      hsla(270, 100%, 50%, 0.7) 20%, 
+      hsla(270, 100%, 55%, 0.5) 40%, 
+      hsla(270, 100%, 60%, 0.4) 60%, 
+      hsla(270, 100%, 65%, 0.3) 80%, 
+      hsla(270, 100%, 70%, 0.15) 90%, 
       transparent 100%);
     --gradient-cta-base: linear-gradient(135deg, hsl(280, 100%, 70%), hsl(270, 100%, 60%));
     --gradient-cta-hover: linear-gradient(135deg, hsl(280, 100%, 75%), hsl(270, 100%, 65%));
@@ -144,6 +149,12 @@
 }
 
 @layer components {
+  .hero-heading {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-weight: 800;
+    font-variation-settings: 'opsz' 96;
+  }
+  
   .hero-gradient {
     background: var(--hero-gradient-light);
   }
@@ -190,27 +201,7 @@
   }
   
   .cta-gradient {
-    background: var(--gradient-cta-base);
-    box-shadow: var(--gradient-cta-glow);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-  
-  .cta-gradient:hover {
-    background: var(--gradient-cta-hover);
-    box-shadow: var(--gradient-cta-glow-hover);
-    transform: scale(1.05);
-    animation: breathe 2s ease-in-out infinite;
-  }
-  
-  @keyframes breathe {
-    0%, 100% {
-      box-shadow: var(--gradient-cta-glow-hover);
-      transform: scale(1.05);
-    }
-    50% {
-      box-shadow: 0 0 80px hsla(280, 100%, 70%, 1), 0 0 160px hsla(270, 100%, 60%, 0.7);
-      transform: scale(1.08);
-    }
+    background: hsl(var(--primary));
   }
   
   .wavy-underline {
@@ -225,37 +216,41 @@
     bottom: -16px;
     left: 0;
     width: 100%;
-    height: 16px;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 20'%3E%3Cpath d='M0,10 Q20,0 40,10 T80,10 T120,10 T160,10 T200,10 T240,10 T280,10 T320,10 T360,10 T400,10' stroke='%238B5CF6' stroke-width='10' fill='none'/%3E%3C/svg%3E");
-    background-repeat: repeat-x;
-    background-size: 120px 16px;
-    opacity: 0;
-    transform: scaleX(0);
-    transform-origin: left;
-    animation: drawWave 2s ease-out 0.5s forwards;
+    height: 4px;
+    background: linear-gradient(90deg, #8B5CF6 0%, #8B5CF6 100%);
+    clip-path: polygon(
+      0% 50%, 2% 0%, 4% 100%, 6% 0%, 8% 100%, 10% 0%, 12% 100%, 14% 0%, 16% 100%, 18% 0%, 20% 100%,
+      22% 0%, 24% 100%, 26% 0%, 28% 100%, 30% 0%, 32% 100%, 34% 0%, 36% 100%, 38% 0%, 40% 100%,
+      42% 0%, 44% 100%, 46% 0%, 48% 100%, 50% 0%, 52% 100%, 54% 0%, 56% 100%, 58% 0%, 60% 100%,
+      62% 0%, 64% 100%, 66% 0%, 68% 100%, 70% 0%, 72% 100%, 74% 0%, 76% 100%, 78% 0%, 80% 100%,
+      82% 0%, 84% 100%, 86% 0%, 88% 100%, 90% 0%, 92% 100%, 94% 0%, 96% 100%, 98% 0%, 100% 50%
+    );
   }
   
   .gradient-hover-area {
     background: var(--gradient-rising-sun);
-    transition: background 0.6s ease;
   }
   
-  .gradient-hover-area:hover {
-    background: var(--gradient-rising-sun-hover);
-  }
-  
-  @keyframes drawWave {
+  @keyframes drawWavyLine {
     0% {
-      opacity: 0;
       transform: scaleX(0);
     }
-    50% {
-      opacity: 1;
-    }
     100% {
-      opacity: 1;
       transform: scaleX(1);
     }
+  }
+  
+  @keyframes aurora {
+    from {
+      background-position: 50% 50%, 50% 50%;
+    }
+    to {
+      background-position: 350% 50%, 350% 50%;
+    }
+  }
+  
+  .animate-aurora {
+    animation: aurora 60s linear infinite;
   }
   
   .twinkling-stars {
