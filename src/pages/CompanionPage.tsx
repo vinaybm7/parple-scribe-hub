@@ -4,10 +4,16 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Heart, MessageCircle, Sparkles, User } from 'lucide-react';
 import CompanionInterface from '@/components/companion/CompanionInterface';
 import PersonalitySelector from '@/components/companion/PersonalitySelector';
+import CompanionErrorBoundary from '@/components/companion/CompanionErrorBoundary';
+import CompanionOnboarding from '@/components/companion/CompanionOnboarding';
 
 const CompanionPage = () => {
   const [selectedAvatar, setSelectedAvatar] = useState<string | null>(null);
   const [isInChat, setIsInChat] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(() => {
+    // Check if user has seen onboarding before
+    return !localStorage.getItem('companion-onboarding-completed');
+  });
 
   const handleStartChat = () => {
     if (selectedAvatar) {
@@ -20,18 +26,31 @@ const CompanionPage = () => {
     setSelectedAvatar(null);
   };
 
+  const handleOnboardingComplete = () => {
+    localStorage.setItem('companion-onboarding-completed', 'true');
+    setShowOnboarding(false);
+  };
+
+  const handleSkipOnboarding = () => {
+    localStorage.setItem('companion-onboarding-completed', 'true');
+    setShowOnboarding(false);
+  };
+
   // If in chat mode, show the companion interface
   if (isInChat && selectedAvatar) {
     return (
-      <CompanionInterface 
-        avatarId={selectedAvatar} 
-        onBack={handleBackToSelection}
-      />
+      <CompanionErrorBoundary>
+        <CompanionInterface 
+          avatarId={selectedAvatar} 
+          onBack={handleBackToSelection}
+        />
+      </CompanionErrorBoundary>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-indigo-50 dark:from-pink-950/20 dark:via-purple-950/20 dark:to-indigo-950/20">
+    <CompanionErrorBoundary>
+      <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-indigo-50 dark:from-pink-950/20 dark:via-purple-950/20 dark:to-indigo-950/20">
       {/* Hero Section */}
       <div className="container mx-auto px-4 py-12">
         <div className="text-center mb-12">
@@ -81,7 +100,16 @@ const CompanionPage = () => {
           </div>
         </div>
       </div>
+
+      {/* Onboarding Modal */}
+      {showOnboarding && (
+        <CompanionOnboarding
+          onComplete={handleOnboardingComplete}
+          onSkip={handleSkipOnboarding}
+        />
+      )}
     </div>
+    </CompanionErrorBoundary>
   );
 };
 
