@@ -47,6 +47,22 @@ export const generateAIResponse = async (userMessage: string): Promise<string> =
   }
 };
 
+export const generateGeminiResponse = async (prompt: string): Promise<string> => {
+  try {
+    console.log('Generating Gemini response for companion...');
+    
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    const text = response.text();
+    
+    console.log('Companion response generated successfully');
+    return text;
+  } catch (error) {
+    console.error('Error generating companion response:', error);
+    return "I'm having a little trouble thinking right now, but I'm here for you! 💕";
+  }
+};
+
 export const createChatMessage = (content: string, isUser: boolean): ChatMessage => {
   return {
     id: Date.now().toString() + Math.random().toString(36).substr(2, 9),

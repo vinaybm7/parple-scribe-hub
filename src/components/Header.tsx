@@ -36,6 +36,12 @@ const Header = () => {
             Subjects
           </Link>
           <Link
+            to="/companion"
+            className="text-foreground hover:text-primary transition-colors duration-200 font-medium px-4 py-2 rounded-full bg-gradient-to-r from-pink-500/10 to-purple-500/10 hover:from-pink-500/20 hover:to-purple-500/20 border border-pink-200 dark:border-pink-800"
+          >
+            AI Companion
+          </Link>
+          <Link
             to="/about"
             className="text-foreground hover:text-primary transition-colors duration-200 font-medium px-4 py-2 rounded-full bg-muted/50 hover:bg-muted"
           >
@@ -78,6 +84,13 @@ const Header = () => {
               onClick={() => setIsMenuOpen(false)}
             >
               Subjects
+            </Link>
+            <Link
+              to="/companion"
+              className="block text-foreground/80 hover:text-primary transition-colors font-medium bg-gradient-to-r from-pink-500/10 to-purple-500/10 px-3 py-2 rounded-lg border border-pink-200 dark:border-pink-800"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              AI Companion
             </Link>
             <Link
               to="/about"

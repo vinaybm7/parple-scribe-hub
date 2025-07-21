@@ -12,6 +12,7 @@ import SubjectPage from "./pages/SubjectPage";
 import CategoryPage from "./pages/CategoryPage";
 import SubjectsPage from "./pages/SubjectsPage";
 import AboutPage from "./pages/AboutPage";
+import CompanionPage from "./pages/CompanionPage";
 import AdminDashboard from "./pages/AdminDashboard";
 import NotFound from "./pages/NotFound";
 import ChatWidget from "./components/chat/ChatWidget";
@@ -43,6 +44,7 @@ const App = () => (
           <Route path="/notes/subject/:subjectId/:category" element={<CategoryPage />} />
           <Route path="/subjects" element={<SubjectsPage />} />
           <Route path="/about" element={<AboutPage />} />
+          <Route path="/companion" element={<CompanionPage />} />
           <Route path="/admin-dashboard-secure-vny-access" element={<AdminDashboard />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
