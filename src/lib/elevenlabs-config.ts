@@ -10,6 +10,17 @@ const ELEVENLABS_CONFIG = {
   }
 };
 
+// Debug logging
+console.log('ElevenLabs Config Debug:', {
+  hasApiKey: !!ELEVENLABS_CONFIG.apiKey,
+  apiKeyLength: ELEVENLABS_CONFIG.apiKey.length,
+  voiceIds: {
+    bella: !!ELEVENLABS_CONFIG.voiceIds.bella,
+    luna: !!ELEVENLABS_CONFIG.voiceIds.luna,
+    aria: !!ELEVENLABS_CONFIG.voiceIds.aria
+  }
+});
+
 // Voice ID mapping for each avatar
 export const getVoiceIdForAvatar = (avatarId: string): string => {
   const voiceIds = {

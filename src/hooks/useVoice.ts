@@ -52,20 +52,28 @@ export const useVoice = () => {
   const recognitionRef = useRef<SpeechRecognition | null>(null);
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
 
+  // Check ElevenLabs support dynamically
+  const checkElevenLabsSupport = useCallback(() => {
+    try {
+      const elevenLabsService = getElevenLabsService();
+      console.log('ElevenLabs service found:', !!elevenLabsService);
+      setIsElevenLabsSupported(true);
+      return true;
+    } catch (error) {
+      console.log('ElevenLabs not initialized, falling back to browser TTS:', error);
+      setIsElevenLabsSupported(false);
+      return false;
+    }
+  }, []);
+
   // Check for browser support
   useEffect(() => {
     const speechSupported = 'speechSynthesis' in window;
     const recognitionSupported = 'webkitSpeechRecognition' in window || 'SpeechRecognition' in window;
     setIsSupported(speechSupported && recognitionSupported);
 
-    // Check ElevenLabs support (requires API key and voice ID to be configured)
-    try {
-      const elevenLabsService = getElevenLabsService();
-      setIsElevenLabsSupported(true);
-    } catch (error) {
-      setIsElevenLabsSupported(false);
-      console.log('ElevenLabs not initialized, falling back to browser TTS');
-    }
+    // Initial ElevenLabs check
+    checkElevenLabsSupport();
 
     // Initialize speech recognition
     if (recognitionSupported) {
@@ -98,9 +106,15 @@ export const useVoice = () => {
     setIsSpeaking(true);
     onStart?.();
 
+    // Dynamically check ElevenLabs support each time
+    const elevenLabsAvailable = checkElevenLabsSupport();
+    console.log('ElevenLabs check result:', elevenLabsAvailable);
+    console.log('Voice settings useElevenLabs:', voiceSettings.useElevenLabs);
+
     try {
       // Use ElevenLabs if enabled and supported
-      if (voiceSettings.useElevenLabs && isElevenLabsSupported) {
+      if (voiceSettings.useElevenLabs && elevenLabsAvailable) {
+        console.log('Attempting to use ElevenLabs TTS...');
         const elevenLabsService = getElevenLabsService();
         
         // Convert text to speech using ElevenLabs

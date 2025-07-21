@@ -155,6 +155,21 @@ const CompanionChat = ({ avatarId, onMoodChange, onTypingChange, onSpeakingChang
           <span className="font-semibold">Companion Chat</span>
         </div>
         <div className="flex items-center space-x-2">
+          {/* Debug button to test ElevenLabs */}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => {
+              console.log('Testing ElevenLabs...');
+              console.log('isElevenLabsSupported:', isElevenLabsSupported);
+              console.log('voiceSettings:', voiceSettings);
+              speakMessage('Hello, this is a test of ElevenLabs voice synthesis.');
+            }}
+            className="p-2 text-xs"
+            title="Test ElevenLabs Voice"
+          >
+            🎙️
+          </Button>
           <Button
             variant="ghost"
             size="sm"
