@@ -97,7 +97,7 @@ const FileViewerModal = ({ isOpen, onClose, fileUrl, fileName, fileType }: FileV
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-[95vw] w-[95vw] max-h-[95vh] h-[95vh] p-0" aria-describedby="file-viewer-description">
+      <DialogContent className="max-w-[95vw] w-[95vw] max-h-[95vh] h-[95vh] p-0 flex flex-col" aria-describedby="file-viewer-description">
         {/* Header */}
         <DialogHeader className="px-6 py-4 border-b bg-background">
           <div className="flex items-center justify-between">
@@ -143,51 +143,38 @@ const FileViewerModal = ({ isOpen, onClose, fileUrl, fileName, fileType }: FileV
           File viewer modal for {fileName}. Use ESC key or click the X button to close.
         </div>
         
-        {/* Main Content - Responsive Flexbox Layout */}
-        <div className="flex-1 flex overflow-hidden">
+        {/* Main Content - Responsive Flexbox Layout, fills all available height */}
+        <div className="flex-1 h-0 flex overflow-hidden transition-all duration-500 ease-in-out">
           {/* PDF Viewer Container - Responsive width with smooth transitions */}
-          <div 
-            className={`
-              flex-1 
-              ${isChatOpen ? 'flex-[0_0_70%]' : 'flex-[1_1_100%]'} 
-              transition-all 
-              duration-300 
-              ease-in-out 
-              overflow-hidden
+          <div
+            className={`transition-all duration-500 ease-in-out h-full flex flex-col
+              ${isChatOpen ? 'basis-[70%] max-w-[70%]' : 'basis-full max-w-full'}
             `}
           >
-            {/* PDF Content - Full height and width */}
-            <div className={`
-              w-full 
-              h-full 
-              ${isChatOpen ? 'p-4' : 'p-0'} 
-              transition-all 
-              duration-300
-            `}>
-              {renderFileContent()}
+            {/* PDF Content - Full height and width, no extra wrappers */}
+            <div className="flex-1 h-0 w-full flex flex-col">
+              {fileType.includes('pdf') ? (
+                <iframe
+                  src={`${fileUrl}#toolbar=1&navpanes=1&scrollbar=1`}
+                  title={fileName}
+                  className="w-full h-full border-0 rounded-lg bg-white shadow-lg"
+                  style={{ minHeight: 0 }}
+                />
+              ) : renderFileContent()}
             </div>
           </div>
 
           {/* Bella Chat Panel - Slides in/out smoothly */}
-          <div 
-            className={`
-              ${isChatOpen ? 'flex-[0_0_30%] opacity-100' : 'flex-[0_0_0%] opacity-0'} 
-              transition-all 
-              duration-300 
-              ease-in-out 
-              overflow-hidden 
-              border-l 
-              bg-gradient-to-b 
-              from-pink-50 
-              to-purple-50 
-              dark:from-pink-950/20 
-              dark:to-purple-950/20
+          <div
+            className={`transition-all duration-500 ease-in-out overflow-hidden h-full flex flex-col
+              ${isChatOpen ? 'basis-[30%] max-w-[30%] opacity-100' : 'basis-0 max-w-0 opacity-0 pointer-events-none'}
+              border-l bg-gradient-to-b from-pink-50 to-purple-50 dark:from-pink-950/20 dark:to-purple-950/20
             `}
           >
             {isChatOpen && (
-              <div className="w-full h-full">
-                <ChatInterface 
-                  isOpen={true} 
+              <div className="w-full h-full flex-1 flex flex-col">
+                <ChatInterface
+                  isOpen={true}
                   onClose={() => setIsChatOpen(false)}
                   isEmbedded={true}
                 />
