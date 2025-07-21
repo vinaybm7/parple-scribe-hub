@@ -15,6 +15,7 @@ import { supabase, uploadFile, getFileUrl, listFiles, deleteFile, isAdmin, saveF
 import { CATEGORIES, getCategoryOptions } from "@/lib/categories";
 import { showSuccessToast, showErrorToast, showLoadingToast } from "@/lib/toast";
 import toast from "react-hot-toast";
+import imageCompression from 'browser-image-compression';
 
 interface UploadedFile {
   name: string;
@@ -54,6 +55,8 @@ const AdminDashboard = () => {
   const [filterYear, setFilterYear] = useState("all");
   const [filterSubject, setFilterSubject] = useState("all");
   const [filterCategory, setFilterCategory] = useState("all");
+
+  const [uploadProgress, setUploadProgress] = useState<number>(0);
 
   const subjects = {
     1: ["Scientific Foundation of Health & Wellness", "Samskruthi Kannada", "POP", "Physics", "Nano Technology", "Maths", "IOT", "Indian Constitution", "IE Electronics", "IE Electrical", "English", "Cyber Security", "Cloud Computing", "Civil", "Chemistry", "CAED", "C Programming", "Balake Kannada", "AI"],
@@ -153,26 +156,49 @@ const AdminDashboard = () => {
     setSelectedFile(null);
   };
 
+  // Helper to upload file with simulated progress
+  const uploadFileWithProgress = async (file: File, path: string, onProgress: (percent: number) => void) => {
+    // Supabase does not support native progress events, so we simulate progress
+    return new Promise<{ data: any, error: any }>(async (resolve) => {
+      let fakeProgress = 0;
+      onProgress(0);
+      const fakeInterval = setInterval(() => {
+        fakeProgress += Math.random() * 10 + 5;
+        if (fakeProgress >= 90) {
+          clearInterval(fakeInterval);
+        } else {
+          onProgress(Math.min(90, fakeProgress));
+        }
+      }, 150);
+      const { data, error } = await uploadFile(file, path);
+      clearInterval(fakeInterval);
+      onProgress(100);
+      resolve({ data, error });
+    });
+  };
+
   const handleUpload = async () => {
     if (!selectedFile || !uploadForm.title || !uploadForm.subject || !uploadForm.semester) {
       showErrorToast('Please fill in all required fields and select a file');
       return;
     }
-
     setUploading(true);
+    setUploadProgress(0);
     const loadingToast = showLoadingToast('Uploading file...');
-    
     try {
-      // Create file path: year/semester/subject/category/filename
-      // Use a separator that won't conflict with title content
-      const sanitizedTitle = uploadForm.title.replace(/[<>:"/\\|?*]/g, ''); // Remove only invalid filename characters
-      const fileName = `${sanitizedTitle}__TIMESTAMP__${Date.now()}.${selectedFile.name.split('.').pop()}`;
+      // Compress image if needed
+      let fileToUpload = selectedFile;
+      if (selectedFile.type.startsWith('image/')) {
+        fileToUpload = await imageCompression(selectedFile, { maxSizeMB: 2, maxWidthOrHeight: 1920 });
+      }
+      // Create file path
+      const sanitizedTitle = uploadForm.title.replace(/[<>:"/\\|?*]/g, '');
+      const fileName = `${sanitizedTitle}__TIMESTAMP__${Date.now()}.${fileToUpload.name.split('.').pop()}`;
       const filePath = `year-${uploadForm.year}/semester-${uploadForm.semester}/${uploadForm.subject}/${uploadForm.category}/${fileName}`;
-      
-      const { data, error } = await uploadFile(selectedFile, filePath);
+      // Upload with simulated progress
+      const { data, error } = await uploadFileWithProgress(fileToUpload, filePath, setUploadProgress);
       if (error) throw error;
-
-      // Save file metadata to database
+      // Save file metadata
       const metadata: FileMetadata = {
         file_path: filePath,
         original_title: uploadForm.title,
@@ -181,24 +207,12 @@ const AdminDashboard = () => {
         category: uploadForm.category,
         year: uploadForm.year,
         semester: uploadForm.semester,
-        file_size: selectedFile.size,
-        file_type: selectedFile.type
+        file_size: fileToUpload.size,
+        file_type: fileToUpload.type
       };
-      
       await saveFileMetadata(metadata);
-
-      // Reset form
       setSelectedFile(null);
-      setUploadForm({
-        title: "",
-        description: "",
-        subject: "",
-        semester: "",
-        year: "",
-        category: "modules"
-      });
-      
-      // Reload files
+      setUploadForm({ title: "", description: "", subject: "", semester: "", year: "", category: "modules" });
       loadFiles();
       toast.dismiss(loadingToast);
       showSuccessToast('File uploaded successfully!');
@@ -208,6 +222,7 @@ const AdminDashboard = () => {
       showErrorToast('Failed to upload file');
     } finally {
       setUploading(false);
+      setUploadProgress(0);
     }
   };
 
@@ -574,8 +589,16 @@ const AdminDashboard = () => {
                   disabled={uploading || !selectedFile}
                   className="w-full"
                 >
-                  {uploading ? "Uploading..." : "Upload File"}
+                  {uploading ? `Uploading... (${uploadProgress}%)` : "Upload File"}
                 </Button>
+                {uploading && (
+                  <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
+                    <div
+                      className="bg-blue-500 h-2 rounded-full transition-all duration-200"
+                      style={{ width: `${uploadProgress}%` }}
+                    ></div>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
