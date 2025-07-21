@@ -15,8 +15,8 @@ const Header = () => {
           <span className="text-2xl font-bold text-gradient">Parple Notes</span>
         </Link>
 
-        {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center space-x-2">
+        {/* Desktop Navigation - Center */}
+        <nav className="hidden md:flex items-center space-x-2 flex-1 justify-center">
           <Link
             to="/"
             className="text-foreground hover:text-primary transition-colors duration-200 font-medium px-4 py-2 rounded-full bg-muted/50 hover:bg-muted"
@@ -36,18 +36,22 @@ const Header = () => {
             Subjects
           </Link>
           <Link
-            to="/companion"
-            className="text-foreground hover:text-primary transition-colors duration-200 font-medium px-4 py-2 rounded-full bg-gradient-to-r from-pink-500/10 to-purple-500/10 hover:from-pink-500/20 hover:to-purple-500/20 border border-pink-200 dark:border-pink-800"
-          >
-            AI Companion
-          </Link>
-          <Link
             to="/about"
             className="text-foreground hover:text-primary transition-colors duration-200 font-medium px-4 py-2 rounded-full bg-muted/50 hover:bg-muted"
           >
             About us
           </Link>
         </nav>
+
+        {/* AI Companion Button - Right side for prominence */}
+        <div className="hidden md:flex items-center">
+          <Link
+            to="/companion"
+            className="text-white hover:text-white transition-all duration-200 font-medium px-6 py-2 rounded-full bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 shadow-lg hover:shadow-xl transform hover:scale-105"
+          >
+            💕 AI Companion
+          </Link>
+        </div>
 
 
 
@@ -87,10 +91,12 @@ const Header = () => {
             </Link>
             <Link
               to="/companion"
-              className="block text-foreground/80 hover:text-primary transition-colors font-medium bg-gradient-to-r from-pink-500/10 to-purple-500/10 px-3 py-2 rounded-lg border border-pink-200 dark:border-pink-800"
+              className="block text-white hover:text-white transition-all duration-200 font-medium bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 px-4 py-3 rounded-lg shadow-lg transform hover:scale-105 border-0"
               onClick={() => setIsMenuOpen(false)}
             >
-              AI Companion
+              <span className="flex items-center gap-2">
+                💕 AI Companion
+              </span>
             </Link>
             <Link
               to="/about"
