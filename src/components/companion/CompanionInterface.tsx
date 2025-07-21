@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { ArrowLeft, Settings, Heart } from 'lucide-react';
@@ -7,6 +7,7 @@ import AvatarDisplay from './AvatarDisplay';
 import CompanionChat from './CompanionChat';
 import CompanionSettings from './CompanionSettings';
 import Breadcrumbs from '@/components/ui/breadcrumbs';
+import { initializeElevenLabsForAvatar, getElevenLabsConfigStatus } from '@/lib/elevenlabs-config';
 
 interface CompanionInterfaceProps {
   avatarId: string;
@@ -24,6 +25,28 @@ const CompanionInterface = ({ avatarId, onBack }: CompanionInterfaceProps) => {
     luna: 'Luna', 
     aria: 'Aria'
   };
+
+  // Initialize ElevenLabs for the current avatar
+  useEffect(() => {
+    const configStatus = getElevenLabsConfigStatus();
+    console.log('ElevenLabs Configuration Status:', configStatus);
+
+    if (configStatus.isFullyConfigured) {
+      const elevenLabsService = initializeElevenLabsForAvatar(avatarId);
+      if (elevenLabsService) {
+        console.log(`ElevenLabs initialized successfully for ${avatarNames[avatarId as keyof typeof avatarNames]}`);
+      } else {
+        console.warn(`Failed to initialize ElevenLabs for ${avatarId}`);
+      }
+    } else {
+      console.warn('ElevenLabs not fully configured. Missing:', {
+        apiKey: !configStatus.hasApiKey,
+        voiceIds: Object.entries(configStatus.hasVoiceIds)
+          .filter(([_, hasVoice]) => !hasVoice)
+          .map(([avatar]) => avatar)
+      });
+    }
+  }, [avatarId]);
 
   const handleResetConversation = () => {
     // This would reset the conversation history

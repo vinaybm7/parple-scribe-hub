@@ -1,10 +1,13 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
+import { getElevenLabsService } from '@/lib/elevenlabs';
+import type { VoiceSettings as ElevenLabsVoiceSettings } from '@/lib/elevenlabs';
 
 interface VoiceSettings {
   enabled: boolean;
   speed: number;
   pitch: number;
   volume: number;
+  useElevenLabs: boolean; // Toggle between browser TTS and ElevenLabs
 }
 
 interface SpeechRecognitionSettings {
@@ -13,15 +16,31 @@ interface SpeechRecognitionSettings {
   continuous: boolean;
 }
 
+interface ElevenLabsSettings {
+  stability: number;
+  similarity_boost: number;
+  style: number;
+  use_speaker_boost: boolean;
+}
+
 export const useVoice = () => {
   const [isSupported, setIsSupported] = useState(false);
+  const [isElevenLabsSupported, setIsElevenLabsSupported] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [voiceSettings, setVoiceSettings] = useState<VoiceSettings>({
     enabled: true,
     speed: 1.0,
     pitch: 1.1,
-    volume: 0.8
+    volume: 0.8,
+    useElevenLabs: true // Default to ElevenLabs for better quality
+  });
+
+  const [elevenLabsSettings, setElevenLabsSettings] = useState<ElevenLabsSettings>({
+    stability: 0.75,
+    similarity_boost: 0.8,
+    style: 0.5,
+    use_speaker_boost: true
   });
   
   const [speechSettings, setSpeechSettings] = useState<SpeechRecognitionSettings>({
@@ -38,6 +57,15 @@ export const useVoice = () => {
     const speechSupported = 'speechSynthesis' in window;
     const recognitionSupported = 'webkitSpeechRecognition' in window || 'SpeechRecognition' in window;
     setIsSupported(speechSupported && recognitionSupported);
+
+    // Check ElevenLabs support (requires API key and voice ID to be configured)
+    try {
+      const elevenLabsService = getElevenLabsService();
+      setIsElevenLabsSupported(true);
+    } catch (error) {
+      setIsElevenLabsSupported(false);
+      console.log('ElevenLabs not initialized, falling back to browser TTS');
+    }
 
     // Initialize speech recognition
     if (recognitionSupported) {
@@ -61,37 +89,96 @@ export const useVoice = () => {
     };
   }, [speechSettings.continuous, speechSettings.language]);
 
-  // Text-to-speech function
-  const speak = useCallback((text: string, onStart?: () => void, onEnd?: () => void) => {
-    if (!isSupported || !voiceSettings.enabled || !text.trim()) return;
+  // Enhanced text-to-speech function with ElevenLabs support
+  const speak = useCallback(async (text: string, onStart?: () => void, onEnd?: () => void) => {
+    if (!voiceSettings.enabled || !text.trim()) return;
 
     // Cancel any ongoing speech
     speechSynthesis.cancel();
+    setIsSpeaking(true);
+    onStart?.();
 
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.rate = voiceSettings.speed;
-    utterance.pitch = voiceSettings.pitch;
-    utterance.volume = voiceSettings.volume;
+    try {
+      // Use ElevenLabs if enabled and supported
+      if (voiceSettings.useElevenLabs && isElevenLabsSupported) {
+        const elevenLabsService = getElevenLabsService();
+        
+        // Convert text to speech using ElevenLabs
+        const audioBuffer = await elevenLabsService.textToSpeech(text, {
+          stability: elevenLabsSettings.stability,
+          similarity_boost: elevenLabsSettings.similarity_boost,
+          style: elevenLabsSettings.style,
+          use_speaker_boost: elevenLabsSettings.use_speaker_boost
+        });
 
-    utterance.onstart = () => {
-      setIsSpeaking(true);
-      onStart?.();
-    };
+        // Play the audio
+        await elevenLabsService.playAudio(
+          audioBuffer,
+          () => {
+            // Audio started playing (already called onStart above)
+          },
+          () => {
+            setIsSpeaking(false);
+            onEnd?.();
+          }
+        );
+      } else {
+        // Fallback to browser TTS
+        if (!isSupported) {
+          console.warn('Browser TTS not supported');
+          setIsSpeaking(false);
+          onEnd?.();
+          return;
+        }
 
-    utterance.onend = () => {
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.rate = voiceSettings.speed;
+        utterance.pitch = voiceSettings.pitch;
+        utterance.volume = voiceSettings.volume;
+
+        utterance.onend = () => {
+          setIsSpeaking(false);
+          onEnd?.();
+        };
+
+        utterance.onerror = (event) => {
+          console.error('Speech synthesis error:', event.error);
+          setIsSpeaking(false);
+          onEnd?.();
+        };
+
+        utteranceRef.current = utterance;
+        speechSynthesis.speak(utterance);
+      }
+    } catch (error) {
+      console.error('Text-to-speech error:', error);
       setIsSpeaking(false);
       onEnd?.();
-    };
+      
+      // Fallback to browser TTS on ElevenLabs error
+      if (voiceSettings.useElevenLabs && isSupported) {
+        console.log('Falling back to browser TTS due to ElevenLabs error');
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.rate = voiceSettings.speed;
+        utterance.pitch = voiceSettings.pitch;
+        utterance.volume = voiceSettings.volume;
 
-    utterance.onerror = (event) => {
-      console.error('Speech synthesis error:', event.error);
-      setIsSpeaking(false);
-      onEnd?.();
-    };
+        utterance.onend = () => {
+          setIsSpeaking(false);
+          onEnd?.();
+        };
 
-    utteranceRef.current = utterance;
-    speechSynthesis.speak(utterance);
-  }, [isSupported, voiceSettings]);
+        utterance.onerror = (event) => {
+          console.error('Fallback speech synthesis error:', event.error);
+          setIsSpeaking(false);
+          onEnd?.();
+        };
+
+        utteranceRef.current = utterance;
+        speechSynthesis.speak(utterance);
+      }
+    }
+  }, [isSupported, isElevenLabsSupported, voiceSettings, elevenLabsSettings]);
 
   // Speech recognition function
   const startListening = useCallback((
@@ -151,17 +238,24 @@ export const useVoice = () => {
     setSpeechSettings(prev => ({ ...prev, ...newSettings }));
   }, []);
 
+  const updateElevenLabsSettings = useCallback((newSettings: Partial<ElevenLabsSettings>) => {
+    setElevenLabsSettings(prev => ({ ...prev, ...newSettings }));
+  }, []);
+
   return {
     isSupported,
+    isElevenLabsSupported,
     isSpeaking,
     isListening,
     voiceSettings,
     speechSettings,
+    elevenLabsSettings,
     speak,
     startListening,
     stopListening,
     stopSpeaking,
     updateVoiceSettings,
-    updateSpeechSettings
+    updateSpeechSettings,
+    updateElevenLabsSettings
   };
 };
