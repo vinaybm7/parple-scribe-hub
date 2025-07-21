@@ -30,10 +30,10 @@ const Header = () => {
             Browse Notes
           </Link>
           <Link
-            to="/subjects"
-            className="text-foreground hover:text-primary transition-colors duration-200 font-medium px-4 py-2 rounded-full bg-muted/50 hover:bg-muted"
+            to="/companion"
+            className="text-white hover:text-white transition-all duration-200 font-medium px-4 py-2 rounded-full bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 shadow-lg hover:shadow-xl transform hover:scale-105"
           >
-            Subjects
+            💕 AI Companion
           </Link>
           <Link
             to="/about"
@@ -42,16 +42,6 @@ const Header = () => {
             About us
           </Link>
         </nav>
-
-        {/* AI Companion Button - Right side for prominence */}
-        <div className="hidden md:flex items-center">
-          <Link
-            to="/companion"
-            className="text-white hover:text-white transition-all duration-200 font-medium px-6 py-2 rounded-full bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 shadow-lg hover:shadow-xl transform hover:scale-105"
-          >
-            💕 AI Companion
-          </Link>
-        </div>
 
 
 
@@ -81,13 +71,6 @@ const Header = () => {
               onClick={() => setIsMenuOpen(false)}
             >
               Browse Notes
-            </Link>
-            <Link
-              to="/subjects"
-              className="block text-foreground/80 hover:text-primary transition-colors font-medium"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Subjects
             </Link>
             <Link
               to="/companion"

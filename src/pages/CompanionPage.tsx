@@ -6,6 +6,7 @@ import CompanionInterface from '@/components/companion/CompanionInterface';
 import PersonalitySelector from '@/components/companion/PersonalitySelector';
 import CompanionErrorBoundary from '@/components/companion/CompanionErrorBoundary';
 import CompanionOnboarding from '@/components/companion/CompanionOnboarding';
+import Breadcrumbs from '@/components/ui/breadcrumbs';
 
 const CompanionPage = () => {
   const [selectedAvatar, setSelectedAvatar] = useState<string | null>(null);
@@ -53,6 +54,12 @@ const CompanionPage = () => {
       <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-indigo-50 dark:from-pink-950/20 dark:via-purple-950/20 dark:to-indigo-950/20">
       {/* Hero Section */}
       <div className="container mx-auto px-4 py-12">
+        {/* Breadcrumbs */}
+        <Breadcrumbs 
+          items={[
+            { label: 'AI Companion', current: true }
+          ]} 
+        />
         <div className="text-center mb-12">
           <div className="flex justify-center mb-6">
             <div className="relative">

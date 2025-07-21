@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import AvatarDisplay from './AvatarDisplay';
 import CompanionChat from './CompanionChat';
 import CompanionSettings from './CompanionSettings';
+import Breadcrumbs from '@/components/ui/breadcrumbs';
 
 interface CompanionInterfaceProps {
   avatarId: string;
@@ -73,6 +74,14 @@ const CompanionInterface = ({ avatarId, onBack }: CompanionInterfaceProps) => {
 
       {/* Main Interface */}
       <div className="container mx-auto px-4 py-6">
+        {/* Breadcrumbs */}
+        <Breadcrumbs 
+          items={[
+            { label: 'AI Companion', href: '/companion' },
+            { label: `Chat with ${avatarNames[avatarId as keyof typeof avatarNames]}`, current: true }
+          ]} 
+        />
+        
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-7xl mx-auto">
           {/* Left Side - Avatar Display */}
           <div className="flex justify-center lg:justify-end">
