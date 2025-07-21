@@ -4,6 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
 import { Send, Mic, MicOff, Volume2, VolumeX, Heart, Sparkles } from 'lucide-react';
 import { useCompanion } from '@/hooks/useCompanion';
+import { useVoice } from '@/hooks/useVoice';
 
 interface CompanionChatProps {
   avatarId: string;
@@ -28,6 +29,28 @@ const CompanionChat = ({ avatarId, onMoodChange, onTypingChange, onSpeakingChang
   const messagesEndRef = useRef<HTMLDivElement>(null);
   
   const { sendMessage, isLoading, generateResponse } = useCompanion(avatarId);
+  const { speak, isSpeaking, isElevenLabsSupported, voiceSettings, updateVoiceSettings } = useVoice();
+
+  // Define speakMessage function
+  const speakMessage = async (text: string) => {
+    if (!isSoundEnabled) return;
+    
+    try {
+      await speak(text, 
+        () => {
+          // On speech start
+          onSpeakingChange(true);
+        },
+        () => {
+          // On speech end
+          onSpeakingChange(false);
+        }
+      );
+    } catch (error) {
+      console.error('Error speaking message:', error);
+      onSpeakingChange(false);
+    }
+  };
 
   // Initial greeting
   useEffect(() => {
@@ -50,6 +73,13 @@ const CompanionChat = ({ avatarId, onMoodChange, onTypingChange, onSpeakingChang
 
     setMessages([initialMessage]);
     onMoodChange('caring');
+
+    // Speak the initial greeting with ElevenLabs voice
+    if (isSoundEnabled) {
+      setTimeout(() => {
+        speakMessage(initialMessage.content);
+      }, 1000); // Delay to ensure ElevenLabs is initialized
+    }
   }, [avatarId, onMoodChange]);
 
   // Auto-scroll to bottom
@@ -95,22 +125,6 @@ const CompanionChat = ({ avatarId, onMoodChange, onTypingChange, onSpeakingChang
     } catch (error) {
       console.error('Error generating response:', error);
       onTypingChange(false);
-    }
-  };
-
-  const speakMessage = (text: string) => {
-    if ('speechSynthesis' in window) {
-      onSpeakingChange(true);
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.rate = 0.9;
-      utterance.pitch = 1.1;
-      utterance.volume = 0.8;
-      
-      utterance.onend = () => {
-        onSpeakingChange(false);
-      };
-
-      speechSynthesis.speak(utterance);
     }
   };
 
