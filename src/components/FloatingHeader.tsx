@@ -32,10 +32,10 @@ const FloatingHeader = () => {
               Browse Notes
             </Link>
             <Link
-              to="/subjects"
+              to="/companion"
               className="text-foreground hover:text-primary transition-colors duration-200 font-medium px-4 py-2 rounded-full bg-muted/50 hover:bg-muted"
             >
-              Subjects
+              AI Companion
             </Link>
             <Link
               to="/about"
@@ -83,11 +83,11 @@ const FloatingHeader = () => {
                 Browse Notes
               </Link>
               <Link
-                to="/subjects"
+                to="/companion"
                 className="block text-foreground/80 hover:text-primary transition-colors font-medium py-2"
                 onClick={() => setIsMenuOpen(false)}
               >
-                Subjects
+                AI Companion
               </Link>
               <Link
                 to="/about"

@@ -31,9 +31,9 @@ const Header = () => {
           </Link>
           <Link
             to="/companion"
-            className="text-white hover:text-white transition-all duration-200 font-medium px-4 py-2 rounded-full bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 shadow-lg hover:shadow-xl transform hover:scale-105"
+            className="text-foreground hover:text-primary transition-colors duration-200 font-medium px-4 py-2 rounded-full bg-muted/50 hover:bg-muted"
           >
-            💕 AI Companion
+            AI Companion
           </Link>
           <Link
             to="/about"
@@ -74,12 +74,10 @@ const Header = () => {
             </Link>
             <Link
               to="/companion"
-              className="block text-white hover:text-white transition-all duration-200 font-medium bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 px-4 py-3 rounded-lg shadow-lg transform hover:scale-105 border-0"
+              className="block text-foreground/80 hover:text-primary transition-colors font-medium py-2"
               onClick={() => setIsMenuOpen(false)}
             >
-              <span className="flex items-center gap-2">
-                💕 AI Companion
-              </span>
+              AI Companion
             </Link>
             <Link
               to="/about"
