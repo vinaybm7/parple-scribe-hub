@@ -4,12 +4,13 @@ import { Input } from '@/components/ui/input';
 import { Send, Loader2, Mic, MicOff } from 'lucide-react';
 
 interface ChatInputProps {
-  onSendMessage: (message: string) => void;
+  onSendMessage: (message: string, context?: string) => void;
   isLoading: boolean;
   disabled?: boolean;
+  context?: string;
 }
 
-const ChatInput = ({ onSendMessage, isLoading, disabled = false }: ChatInputProps) => {
+const ChatInput = ({ onSendMessage, isLoading, disabled = false, context }: ChatInputProps) => {
   const [message, setMessage] = useState('');
   const [isListening, setIsListening] = useState(false);
   const [speechSupported, setSpeechSupported] = useState(false);
@@ -57,7 +58,7 @@ const ChatInput = ({ onSendMessage, isLoading, disabled = false }: ChatInputProp
 
   const handleSend = () => {
     if (message.trim() && !isLoading && !disabled) {
-      onSendMessage(message.trim());
+      onSendMessage(message.trim(), context);
       setMessage('');
     }
   };

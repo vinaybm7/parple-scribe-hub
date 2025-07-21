@@ -10,9 +10,11 @@ import { useChat } from '@/hooks/useChat';
 interface ChatInterfaceProps {
   isOpen: boolean;
   onClose: () => void;
+  context?: string;
+  isEmbedded?: boolean;
 }
 
-const ChatInterface = ({ isOpen, onClose }: ChatInterfaceProps) => {
+const ChatInterface = ({ isOpen, onClose, context, isEmbedded = false }: ChatInterfaceProps) => {
   const { messages, isLoading, sendMessage, clearChat, bellaState, resetBella } = useChat();
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -45,9 +47,18 @@ const ChatInterface = ({ isOpen, onClose }: ChatInterfaceProps) => {
 
   if (!isOpen) return null;
 
+  // Different styling for embedded vs floating mode
+  const containerClass = isEmbedded 
+    ? "h-full flex flex-col" 
+    : "fixed top-24 right-4 w-96 sm:w-[420px] h-[700px] z-[70] animate-in slide-in-from-top-2 duration-300";
+  
+  const cardClass = isEmbedded
+    ? "h-full flex flex-col border-0 shadow-none bg-transparent"
+    : "h-full flex flex-col shadow-2xl border-2 bg-gradient-to-b from-pink-50 to-purple-50 dark:from-pink-950/20 dark:to-purple-950/20";
+
   return (
-    <div className="fixed top-24 right-4 w-96 sm:w-[420px] h-[700px] z-50 animate-in slide-in-from-top-2 duration-300">
-      <Card className="h-full flex flex-col shadow-2xl border-2 bg-gradient-to-b from-pink-50 to-purple-50 dark:from-pink-950/20 dark:to-purple-950/20">
+    <div className={containerClass}>
+      <Card className={cardClass}>
         {/* Header with Controls */}
         <div className="flex items-center justify-between p-3 border-b">
           <CardTitle className="flex items-center gap-2 text-lg">
@@ -172,7 +183,7 @@ const ChatInterface = ({ isOpen, onClose }: ChatInterfaceProps) => {
         
         {/* Input Area - Fixed at bottom */}
         <div className="border-t bg-background">
-          <ChatInput onSendMessage={sendMessage} isLoading={isLoading} />
+          <ChatInput onSendMessage={sendMessage} isLoading={isLoading} context={context} />
         </div>
       </Card>
       

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { MessageCircle, X, Bot, Heart } from 'lucide-react';
 import ChatInterface from './ChatInterface';
@@ -7,6 +7,29 @@ import { useChat } from '@/hooks/useChat';
 const ChatWidget = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { bellaState } = useChat();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // Monitor for modal state changes
+  useEffect(() => {
+    const checkModalState = () => {
+      const modalOpen = document.querySelector('[data-state="open"]') !== null;
+      setIsModalOpen(modalOpen);
+    };
+
+    // Check initially
+    checkModalState();
+
+    // Set up observer for DOM changes
+    const observer = new MutationObserver(checkModalState);
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['data-state']
+    });
+
+    return () => observer.disconnect();
+  }, []);
 
   const toggleChat = () => {
     setIsOpen(!isOpen);
@@ -28,10 +51,15 @@ const ChatWidget = () => {
     }
   };
 
+  // Don't render the chat widget if a modal is open
+  if (isModalOpen) {
+    return null;
+  }
+
   return (
     <>
       {/* Floating Chat Button */}
-      <div className="fixed top-16 right-6 z-50">
+      <div className="fixed top-16 right-6 z-[70]">
         <Button
           onClick={toggleChat}
           className={`w-16 h-16 rounded-full shadow-2xl hover:shadow-3xl transition-all duration-300 ${getButtonStyle()} p-0 overflow-hidden ring-2 ring-white/20 hover:ring-white/40`}
@@ -47,10 +75,6 @@ const ChatWidget = () => {
             />
           )}
         </Button>
-        
-
-        
-
       </div>
 
       {/* Chat Interface */}

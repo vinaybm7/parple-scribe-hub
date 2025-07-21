@@ -22,7 +22,7 @@ export const useChat = () => {
     initializeChat();
   }, []);
 
-  const sendMessage = useCallback(async (userMessage: string) => {
+  const sendMessage = useCallback(async (userMessage: string, context?: string) => {
     if (!userMessage.trim() || isLoading) return;
 
     // Add user message
@@ -31,8 +31,13 @@ export const useChat = () => {
     setIsLoading(true);
 
     try {
+      // Prepare message with context if provided
+      const messageWithContext = context 
+        ? `Context: ${context}\n\nUser question: ${userMessage}`
+        : userMessage;
+
       // Generate Bella's response
-      const bellaResponse = await bella.generateResponse(userMessage);
+      const bellaResponse = await bella.generateResponse(messageWithContext);
       const updatedBellaState = bella.getState();
       
       const bellaChatMessage = createBellaChatMessage(
