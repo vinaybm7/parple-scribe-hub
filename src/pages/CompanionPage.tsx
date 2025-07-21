@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Heart, MessageCircle, Sparkles, User } from 'lucide-react';
 import CompanionInterface from '@/components/companion/CompanionInterface';
+import PersonalitySelector from '@/components/companion/PersonalitySelector';
 
 const CompanionPage = () => {
   const [selectedAvatar, setSelectedAvatar] = useState<string | null>(null);
@@ -48,58 +49,12 @@ const CompanionPage = () => {
           </p>
         </div>
 
-        {/* Avatar Selection */}
-        <div className="max-w-4xl mx-auto mb-12">
-          <h2 className="text-2xl font-semibold text-center mb-8">Choose Your Companion</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* Avatar Options */}
-            {[
-              { id: 'bella', name: 'Bella', personality: 'Caring & Supportive', color: 'pink' },
-              { id: 'luna', name: 'Luna', personality: 'Playful & Energetic', color: 'purple' },
-              { id: 'aria', name: 'Aria', personality: 'Calm & Wise', color: 'indigo' }
-            ].map((avatar) => (
-              <Card 
-                key={avatar.id}
-                className={`cursor-pointer transition-all duration-300 hover:scale-105 ${
-                  selectedAvatar === avatar.id 
-                    ? `ring-2 ring-${avatar.color}-500 shadow-lg` 
-                    : 'hover:shadow-md'
-                }`}
-                onClick={() => setSelectedAvatar(avatar.id)}
-              >
-                <CardHeader className="text-center">
-                  <div className={`w-24 h-24 mx-auto rounded-full bg-gradient-to-br from-${avatar.color}-400 to-${avatar.color}-600 flex items-center justify-center mb-4`}>
-                    <User className="w-12 h-12 text-white" />
-                  </div>
-                  <CardTitle className="text-xl">{avatar.name}</CardTitle>
-                  <p className="text-sm text-muted-foreground">{avatar.personality}</p>
-                </CardHeader>
-                <CardContent className="text-center">
-                  <Button 
-                    variant={selectedAvatar === avatar.id ? "default" : "outline"}
-                    className={selectedAvatar === avatar.id ? `bg-${avatar.color}-500 hover:bg-${avatar.color}-600` : ''}
-                  >
-                    {selectedAvatar === avatar.id ? 'Selected' : 'Choose'}
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-
-        {/* Get Started Button */}
-        {selectedAvatar && (
-          <div className="text-center">
-            <Button 
-              size="lg" 
-              onClick={handleStartChat}
-              className="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white px-8 py-3 text-lg"
-            >
-              <MessageCircle className="w-5 h-5 mr-2" />
-              Start Chatting
-            </Button>
-          </div>
-        )}
+        {/* Personality Selection */}
+        <PersonalitySelector
+          selectedAvatar={selectedAvatar}
+          onAvatarSelect={setSelectedAvatar}
+          onConfirm={handleStartChat}
+        />
 
         {/* Features Preview */}
         <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8">

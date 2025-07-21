@@ -5,6 +5,7 @@ import { ArrowLeft, Settings, Heart } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import AvatarDisplay from './AvatarDisplay';
 import CompanionChat from './CompanionChat';
+import CompanionSettings from './CompanionSettings';
 
 interface CompanionInterfaceProps {
   avatarId: string;
@@ -15,11 +16,24 @@ const CompanionInterface = ({ avatarId, onBack }: CompanionInterfaceProps) => {
   const [currentMood, setCurrentMood] = useState<'happy' | 'excited' | 'calm' | 'focused' | 'caring'>('caring');
   const [isTyping, setIsTyping] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   const avatarNames = {
     bella: 'Bella',
     luna: 'Luna', 
     aria: 'Aria'
+  };
+
+  const handleResetConversation = () => {
+    // This would reset the conversation history
+    console.log('Reset conversation');
+    setIsSettingsOpen(false);
+  };
+
+  const handleChangeAvatar = () => {
+    // This would go back to avatar selection
+    setIsSettingsOpen(false);
+    onBack();
   };
 
   return (
@@ -46,7 +60,11 @@ const CompanionInterface = ({ avatarId, onBack }: CompanionInterfaceProps) => {
               </div>
             </div>
             
-            <Button variant="ghost" size="sm">
+            <Button 
+              variant="ghost" 
+              size="sm"
+              onClick={() => setIsSettingsOpen(true)}
+            >
               <Settings className="w-4 h-4" />
             </Button>
           </div>
@@ -132,6 +150,15 @@ const CompanionInterface = ({ avatarId, onBack }: CompanionInterfaceProps) => {
           </div>
         </div>
       </div>
+
+      {/* Settings Modal */}
+      <CompanionSettings
+        avatarId={avatarId}
+        isOpen={isSettingsOpen}
+        onClose={() => setIsSettingsOpen(false)}
+        onResetConversation={handleResetConversation}
+        onChangeAvatar={handleChangeAvatar}
+      />
     </div>
   );
 };
