@@ -47,10 +47,6 @@ export const useCompanion = (avatarId: string) => {
       
       // Fallback response
       const fallbackResponses = {
-        bella: {
-          message: "I'm having a little trouble thinking right now, but I'm still here for you! 💕 Could you try asking me again?",
-          mood: 'caring' as const
-        },
         luna: {
           message: "Oops! My brain had a little hiccup there! ✨ Let's try that again, shall we?",
           mood: 'excited' as const
@@ -61,7 +57,7 @@ export const useCompanion = (avatarId: string) => {
         }
       };
 
-      return fallbackResponses[avatarId as keyof typeof fallbackResponses] || fallbackResponses.bella;
+      return fallbackResponses[avatarId as keyof typeof fallbackResponses] || fallbackResponses.luna;
     } finally {
       setIsLoading(false);
     }

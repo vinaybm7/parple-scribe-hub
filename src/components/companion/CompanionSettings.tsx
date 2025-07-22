@@ -39,12 +39,11 @@ const CompanionSettings = ({
   const [responseDelay, setResponseDelay] = useState([1.5]);
 
   const avatarInfo = {
-    bella: { name: 'Bella', icon: Heart, color: 'pink' },
     luna: { name: 'Luna', icon: Sparkles, color: 'purple' },
     aria: { name: 'Aria', icon: Moon, color: 'indigo' }
   };
 
-  const currentAvatar = avatarInfo[avatarId as keyof typeof avatarInfo] || avatarInfo.bella;
+  const currentAvatar = avatarInfo[avatarId as keyof typeof avatarInfo] || avatarInfo.luna;
   const IconComponent = currentAvatar.icon;
 
   if (!isOpen) return null;

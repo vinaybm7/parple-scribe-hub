@@ -54,13 +54,21 @@ export const useVoice = () => {
 
   // Check ElevenLabs support dynamically
   const checkElevenLabsSupport = useCallback(() => {
+    console.log('🔍 Checking ElevenLabs support...');
     try {
       const elevenLabsService = getElevenLabsService();
-      console.log('ElevenLabs service found:', !!elevenLabsService);
-      setIsElevenLabsSupported(true);
-      return true;
+      console.log('🔍 ElevenLabs service found:', !!elevenLabsService);
+      if (elevenLabsService) {
+        console.log('🔍 ElevenLabs service is available and ready');
+        setIsElevenLabsSupported(true);
+        return true;
+      } else {
+        console.log('🔍 ElevenLabs service is null');
+        setIsElevenLabsSupported(false);
+        return false;
+      }
     } catch (error) {
-      console.log('ElevenLabs not initialized, falling back to browser TTS:', error);
+      console.log('🔍 ElevenLabs not initialized, falling back to browser TTS:', error);
       setIsElevenLabsSupported(false);
       return false;
     }
@@ -99,7 +107,13 @@ export const useVoice = () => {
 
   // Enhanced text-to-speech function with ElevenLabs support
   const speak = useCallback(async (text: string, onStart?: () => void, onEnd?: () => void) => {
-    if (!voiceSettings.enabled || !text.trim()) return;
+    console.log('🎤 speak() called with text:', text.substring(0, 50) + '...');
+    console.log('🎤 Voice settings:', { enabled: voiceSettings.enabled, useElevenLabs: voiceSettings.useElevenLabs });
+    
+    if (!voiceSettings.enabled || !text.trim()) {
+      console.log('🎤 Voice disabled or empty text, skipping');
+      return;
+    }
 
     // Cancel any ongoing speech
     speechSynthesis.cancel();
@@ -108,15 +122,16 @@ export const useVoice = () => {
 
     // Dynamically check ElevenLabs support each time
     const elevenLabsAvailable = checkElevenLabsSupport();
-    console.log('ElevenLabs check result:', elevenLabsAvailable);
-    console.log('Voice settings useElevenLabs:', voiceSettings.useElevenLabs);
+    console.log('🎤 ElevenLabs check result:', elevenLabsAvailable);
+    console.log('🎤 Voice settings useElevenLabs:', voiceSettings.useElevenLabs);
 
     try {
       // Use ElevenLabs if enabled and supported
       if (voiceSettings.useElevenLabs && elevenLabsAvailable) {
-        console.log('Attempting to use ElevenLabs TTS...');
+        console.log('🎤 Attempting to use ElevenLabs TTS...');
         const elevenLabsService = getElevenLabsService();
         
+        console.log('🎤 Converting text to speech with ElevenLabs...');
         // Convert text to speech using ElevenLabs
         const audioBuffer = await elevenLabsService.textToSpeech(text, {
           stability: elevenLabsSettings.stability,
@@ -125,21 +140,26 @@ export const useVoice = () => {
           use_speaker_boost: elevenLabsSettings.use_speaker_boost
         });
 
+        console.log('🎤 Audio buffer received, size:', audioBuffer.byteLength, 'bytes');
+
         // Play the audio
         await elevenLabsService.playAudio(
           audioBuffer,
           () => {
+            console.log('🎤 ElevenLabs audio started playing');
             // Audio started playing (already called onStart above)
           },
           () => {
+            console.log('🎤 ElevenLabs audio finished playing');
             setIsSpeaking(false);
             onEnd?.();
           }
         );
       } else {
+        console.log('🎤 Using browser TTS fallback');
         // Fallback to browser TTS
         if (!isSupported) {
-          console.warn('Browser TTS not supported');
+          console.warn('🎤 Browser TTS not supported');
           setIsSpeaking(false);
           onEnd?.();
           return;
@@ -150,13 +170,18 @@ export const useVoice = () => {
         utterance.pitch = voiceSettings.pitch;
         utterance.volume = voiceSettings.volume;
 
+        utterance.onstart = () => {
+          console.log('🎤 Browser TTS started');
+        };
+
         utterance.onend = () => {
+          console.log('🎤 Browser TTS ended');
           setIsSpeaking(false);
           onEnd?.();
         };
 
         utterance.onerror = (event) => {
-          console.error('Speech synthesis error:', event.error);
+          console.error('🎤 Speech synthesis error:', event.error);
           setIsSpeaking(false);
           onEnd?.();
         };
@@ -165,31 +190,44 @@ export const useVoice = () => {
         speechSynthesis.speak(utterance);
       }
     } catch (error) {
-      console.error('Text-to-speech error:', error);
+      console.error('🎤 Text-to-speech error:', error);
       setIsSpeaking(false);
       onEnd?.();
       
       // Fallback to browser TTS on ElevenLabs error
       if (voiceSettings.useElevenLabs && isSupported) {
-        console.log('Falling back to browser TTS due to ElevenLabs error');
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.rate = voiceSettings.speed;
-        utterance.pitch = voiceSettings.pitch;
-        utterance.volume = voiceSettings.volume;
+        console.log('🎤 Falling back to browser TTS due to ElevenLabs error');
+        try {
+          const utterance = new SpeechSynthesisUtterance(text);
+          utterance.rate = voiceSettings.speed;
+          utterance.pitch = voiceSettings.pitch;
+          utterance.volume = voiceSettings.volume;
 
-        utterance.onend = () => {
+          utterance.onstart = () => {
+            console.log('🎤 Fallback browser TTS started');
+            setIsSpeaking(true);
+            onStart?.();
+          };
+
+          utterance.onend = () => {
+            console.log('🎤 Fallback browser TTS ended');
+            setIsSpeaking(false);
+            onEnd?.();
+          };
+
+          utterance.onerror = (event) => {
+            console.error('🎤 Fallback speech synthesis error:', event.error);
+            setIsSpeaking(false);
+            onEnd?.();
+          };
+
+          utteranceRef.current = utterance;
+          speechSynthesis.speak(utterance);
+        } catch (fallbackError) {
+          console.error('🎤 Fallback TTS also failed:', fallbackError);
           setIsSpeaking(false);
           onEnd?.();
-        };
-
-        utterance.onerror = (event) => {
-          console.error('Fallback speech synthesis error:', event.error);
-          setIsSpeaking(false);
-          onEnd?.();
-        };
-
-        utteranceRef.current = utterance;
-        speechSynthesis.speak(utterance);
+        }
       }
     }
   }, [isSupported, isElevenLabsSupported, voiceSettings, elevenLabsSettings]);

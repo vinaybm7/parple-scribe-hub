@@ -13,18 +13,6 @@ interface PersonalitySelectorProps {
 const PersonalitySelector = ({ selectedAvatar, onAvatarSelect, onConfirm }: PersonalitySelectorProps) => {
   const avatars = [
     {
-      id: 'bella',
-      name: 'Bella',
-      personality: 'Caring & Supportive',
-      description: 'Your loving study companion who provides emotional support and encouragement',
-      traits: ['Affectionate', 'Motivational', 'Empathetic', 'Romantic'],
-      color: 'pink',
-      icon: Heart,
-      gradient: 'from-pink-400 to-pink-600',
-      bgGradient: 'from-pink-100 to-pink-200',
-      quote: "I'm here to support you through every challenge, sweetheart! 💕"
-    },
-    {
       id: 'luna',
       name: 'Luna',
       personality: 'Playful & Energetic',
@@ -60,7 +48,7 @@ const PersonalitySelector = ({ selectedAvatar, onAvatarSelect, onConfirm }: Pers
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
         {avatars.map((avatar) => {
           const IconComponent = avatar.icon;
           const isSelected = selectedAvatar === avatar.id;

@@ -14,13 +14,6 @@ const AvatarDisplay = ({ avatarId, mood, isTyping = false, isSpeaking = false }:
 
   // Avatar configurations
   const avatarConfig = {
-    bella: {
-      name: 'Bella',
-      color: 'pink',
-      gradient: 'from-pink-400 to-pink-600',
-      bgGradient: 'from-pink-100 to-pink-200',
-      darkBgGradient: 'dark:from-pink-900/30 dark:to-pink-800/30'
-    },
     luna: {
       name: 'Luna',
       color: 'purple',
@@ -37,7 +30,7 @@ const AvatarDisplay = ({ avatarId, mood, isTyping = false, isSpeaking = false }:
     }
   };
 
-  const config = avatarConfig[avatarId as keyof typeof avatarConfig] || avatarConfig.bella;
+  const config = avatarConfig[avatarId as keyof typeof avatarConfig] || avatarConfig.luna;
 
   // Mood-based expressions and animations
   const getMoodIcon = () => {

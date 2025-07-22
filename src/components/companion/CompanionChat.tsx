@@ -5,6 +5,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Send, Mic, MicOff, Volume2, VolumeX, Heart, Sparkles } from 'lucide-react';
 import { useCompanion } from '@/hooks/useCompanion';
 import { useVoice } from '@/hooks/useVoice';
+import { initializeElevenLabsForAvatar } from '@/lib/elevenlabs-config';
 
 interface CompanionChatProps {
   avatarId: string;
@@ -30,42 +31,86 @@ const CompanionChat = ({ avatarId, onMoodChange, onTypingChange, onSpeakingChang
   
   const { sendMessage, isLoading, generateResponse } = useCompanion(avatarId);
   const { speak, isSpeaking, isElevenLabsSupported, voiceSettings, updateVoiceSettings } = useVoice();
+  
+  // Initialize ElevenLabs service for the avatar
+  useEffect(() => {
+    console.log('🔊 Initializing ElevenLabs service for avatar:', avatarId);
+    
+    try {
+      // Force update voice settings to ensure ElevenLabs is enabled
+      updateVoiceSettings({
+        ...voiceSettings,
+        useElevenLabs: true,
+        enabled: true
+      });
+      
+      // Initialize the service
+      const elevenLabsService = initializeElevenLabsForAvatar(avatarId);
+      
+      if (elevenLabsService) {
+        console.log('✅ ElevenLabs service initialized successfully');
+        console.log('🔊 Current voice settings:', voiceSettings);
+      } else {
+        console.warn('⚠️ Failed to initialize ElevenLabs service, falling back to browser TTS');
+      }
+    } catch (error) {
+      console.error('❌ Error initializing ElevenLabs:', error);
+    }
+  }, [avatarId]);
+  
+  // Log voice settings and support status
+  useEffect(() => {
+    console.log('🔊 Voice settings updated:', {
+      ...voiceSettings,
+      // Don't log the full API key for security
+      apiKey: voiceSettings.useElevenLabs ? '*** (set)' : 'not set'
+    });
+    console.log('🔊 ElevenLabs supported:', isElevenLabsSupported);
+  }, [voiceSettings, isElevenLabsSupported]);
 
   // Define speakMessage function
   const speakMessage = async (text: string) => {
-    if (!isSoundEnabled) return;
+    console.log('💬 speakMessage called with:', text.substring(0, 50) + '...');
+    console.log('💬 isSoundEnabled:', isSoundEnabled);
+    
+    if (!isSoundEnabled) {
+      console.log('💬 Sound disabled, skipping speech');
+      return;
+    }
     
     try {
+      console.log('💬 Calling speak function...');
       await speak(text, 
         () => {
           // On speech start
+          console.log('💬 Speech started');
           onSpeakingChange(true);
         },
         () => {
           // On speech end
+          console.log('💬 Speech ended');
           onSpeakingChange(false);
         }
       );
     } catch (error) {
-      console.error('Error speaking message:', error);
+      console.error('💬 Error speaking message:', error);
       onSpeakingChange(false);
     }
   };
 
   // Initial greeting
   useEffect(() => {
-    const avatarNames = { bella: 'Bella', luna: 'Luna', aria: 'Aria' };
-    const avatarName = avatarNames[avatarId as keyof typeof avatarNames] || 'Bella';
+    const avatarNames = { luna: 'Luna', aria: 'Aria' };
+    const avatarName = avatarNames[avatarId as keyof typeof avatarNames] || 'Luna';
     
     const greetings = {
-      bella: `Hi there, sweetheart! 💕 I'm ${avatarName}, and I'm absolutely thrilled to be your study companion! I'm here to support you, motivate you, and maybe even make you smile along the way. What's on your mind today?`,
       luna: `Hey there! ✨ I'm ${avatarName}, your energetic study buddy! I'm super excited to help you tackle whatever challenges come your way. Ready to make today amazing together?`,
       aria: `Hello, dear student. 🌙 I'm ${avatarName}, and I'm here to provide you with calm guidance and wisdom. Whether you need help with studies or just want to chat, I'm here for you.`
     };
 
     const initialMessage: Message = {
       id: '1',
-      content: greetings[avatarId as keyof typeof greetings] || greetings.bella,
+      content: greetings[avatarId as keyof typeof greetings] || greetings.luna,
       isUser: false,
       timestamp: new Date(),
       mood: 'caring'
@@ -118,8 +163,15 @@ const CompanionChat = ({ avatarId, onMoodChange, onTypingChange, onSpeakingChang
         onTypingChange(false);
 
         // Text-to-speech if enabled
+        console.log('💬 Response received, checking if should speak...');
+        console.log('💬 isSoundEnabled:', isSoundEnabled);
+        console.log('💬 Response message:', response.message.substring(0, 50) + '...');
+        
         if (isSoundEnabled) {
+          console.log('💬 Calling speakMessage for response...');
           speakMessage(response.message);
+        } else {
+          console.log('💬 Sound disabled, not speaking response');
         }
       }, 1000 + Math.random() * 1000); // Simulate typing delay
     } catch (error) {

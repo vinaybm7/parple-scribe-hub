@@ -38,9 +38,27 @@ interface ElevenLabsVoice {
 class ElevenLabsService {
   private config: ElevenLabsConfig;
   private baseUrl = 'https://api.elevenlabs.io/v1';
+  private audioContext: AudioContext | null = null;
+  private currentSource: AudioBufferSourceNode | null = null;
 
   constructor(config: ElevenLabsConfig) {
     this.config = config;
+  }
+
+  /**
+   * Get or create AudioContext singleton
+   */
+  private getAudioContext(): AudioContext {
+    if (!this.audioContext) {
+      this.audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+    }
+    
+    // Resume context if it's suspended (required by some browsers)
+    if (this.audioContext.state === 'suspended') {
+      this.audioContext.resume();
+    }
+    
+    return this.audioContext;
   }
 
   /**
@@ -73,9 +91,12 @@ class ElevenLabsService {
       use_speaker_boost: true // Enhanced clarity
     };
 
-    const requestBody: TextToSpeechRequest = {
-      text: text.trim(),
-      model_id: "eleven_multilingual_v2", // Latest model with better quality
+    // Ensure text is properly formatted and not too long
+    const processedText = text.trim().substring(0, 5000); // Limit text length
+    
+    const requestBody = {
+      text: processedText,
+      model_id: "eleven_multilingual_v2",
       voice_settings: {
         ...defaultSettings,
         ...voiceSettings
@@ -83,24 +104,64 @@ class ElevenLabsService {
     };
 
     try {
-      const response = await fetch(`${this.baseUrl}/text-to-speech/${this.config.voiceId}`, {
+      console.log('🔊 ElevenLabs: Making TTS API request...');
+      console.log('🔊 Voice ID:', this.config.voiceId);
+      console.log('🔊 Text length:', processedText.length);
+      
+      // Log request details without sensitive data
+      const loggableBody = {
+        ...requestBody,
+        text: processedText.length > 50 
+          ? `${processedText.substring(0, 50)}... (${processedText.length} chars)` 
+          : processedText
+      };
+      console.log('🔊 Request details:', JSON.stringify(loggableBody, null, 2));
+
+      const endpoint = `${this.baseUrl}/text-to-speech/${encodeURIComponent(this.config.voiceId)}`;
+      console.log('🔊 API Endpoint:', endpoint);
+      
+      const response = await fetch(endpoint, {
         method: 'POST',
         headers: {
           'Accept': 'audio/mpeg',
           'Content-Type': 'application/json',
-          'xi-api-key': this.config.apiKey
+          'xi-api-key': this.config.apiKey,
+          'User-Agent': 'ParpleScribeHub/1.0'
         },
         body: JSON.stringify(requestBody)
       });
 
+      console.log('🔊 ElevenLabs API response status:', response.status);
+      
       if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`ElevenLabs API error: ${response.status} - ${errorText}`);
+        let errorDetails = '';
+        try {
+          const errorData = await response.json();
+          errorDetails = JSON.stringify(errorData, null, 2);
+        } catch (e) {
+          errorDetails = await response.text();
+        }
+        
+        console.error('🔊 ElevenLabs API error:', {
+          status: response.status,
+          statusText: response.statusText,
+          details: errorDetails,
+          headers: Object.fromEntries(response.headers.entries())
+        });
+        
+        throw new Error(`ElevenLabs API error (${response.status}): ${response.statusText}`);
       }
 
-      return await response.arrayBuffer();
+      const arrayBuffer = await response.arrayBuffer();
+      
+      if (!arrayBuffer || arrayBuffer.byteLength === 0) {
+        throw new Error('Received empty audio response from ElevenLabs');
+      }
+      
+      console.log('🔊 ElevenLabs: Received audio buffer, size:', arrayBuffer.byteLength, 'bytes');
+      return arrayBuffer;
     } catch (error) {
-      console.error('ElevenLabs TTS Error:', error);
+      console.error('🔊 ElevenLabs TTS Error:', error);
       throw error;
     }
   }
@@ -174,6 +235,22 @@ class ElevenLabsService {
   }
 
   /**
+   * Stop any currently playing audio
+   */
+  stopAudio(): void {
+    if (this.currentSource) {
+      try {
+        this.currentSource.stop();
+        this.currentSource.disconnect();
+      } catch (error) {
+        // Source might already be stopped
+        console.log('Audio source already stopped');
+      }
+      this.currentSource = null;
+    }
+  }
+
+  /**
    * Play audio from ArrayBuffer
    * @param audioBuffer - Audio data as ArrayBuffer
    * @param onStart - Callback when audio starts playing
@@ -186,28 +263,69 @@ class ElevenLabsService {
     onEnd?: () => void
   ): Promise<void> {
     try {
-      // Create audio context
-      const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+      console.log('🔊 ElevenLabs: Starting audio playback...');
+      
+      // Stop any currently playing audio
+      this.stopAudio();
+      
+      // Get audio context
+      const audioContext = this.getAudioContext();
+      console.log('🔊 AudioContext state:', audioContext.state);
       
       // Decode audio data
-      const audioBufferDecoded = await audioContext.decodeAudioData(audioBuffer);
+      console.log('🔊 Decoding audio data...');
+      const audioBufferDecoded = await audioContext.decodeAudioData(audioBuffer.slice(0));
+      console.log('🔊 Audio decoded successfully, duration:', audioBufferDecoded.duration, 'seconds');
       
       // Create audio source
       const source = audioContext.createBufferSource();
       source.buffer = audioBufferDecoded;
       source.connect(audioContext.destination);
       
+      // Store reference to current source
+      this.currentSource = source;
+      
       // Set up event listeners
       source.onended = () => {
+        console.log('🔊 Audio playback completed');
+        this.currentSource = null;
         onEnd?.();
       };
       
-      // Start playing
+      // Handle any errors during playback using the onended callback
+      // Note: We use onended for error handling since onerror is not available in TypeScript types
+      // but is supported in some browsers. This is a workaround for better compatibility.
+      const handleError = () => {
+        console.error('🔊 Audio playback error occurred');
+        this.currentSource = null;
+        onEnd?.();
+      };
+      
+      // Set a timeout to detect if playback fails to start
+      const errorTimeout = setTimeout(() => {
+        if (this.currentSource) {
+          console.error('🔊 Playback start timed out');
+          handleError();
+        }
+      }, 5000); // 5 second timeout
+      
+      // Clear timeout if playback starts successfully
+      source.onended = () => {
+        clearTimeout(errorTimeout);
+        console.log('🔊 Audio playback completed');
+        this.currentSource = null;
+        onEnd?.();
+      };
+      
+      // Start playback
+      console.log('🔊 Starting audio playback...');
       onStart?.();
       source.start(0);
       
     } catch (error) {
-      console.error('Audio playback error:', error);
+      console.error('🔊 Error during audio playback:', error);
+      this.currentSource = null;
+      onEnd?.();
       throw error;
     }
   }
@@ -221,19 +339,43 @@ class ElevenLabsService {
   }
 }
 
-// Export singleton instance (will be configured with API key and voice ID)
+// Export singleton instance
 let elevenLabsService: ElevenLabsService | null = null;
 
-export const initializeElevenLabs = (apiKey: string, voiceId: string): ElevenLabsService => {
+export function initializeElevenLabs(apiKey: string, voiceId: string): ElevenLabsService {
+  console.log('🔄 Initializing ElevenLabs service...');
+  console.log('🔑 API Key:', apiKey ? '*** (set)' : 'NOT SET');
+  console.log('🗣️ Voice ID:', voiceId || 'NOT SET');
+  
+  if (!apiKey) {
+    throw new Error('ElevenLabs API key is required');
+  }
+  
+  if (!voiceId) {
+    throw new Error('Voice ID is required');
+  }
+  
   elevenLabsService = new ElevenLabsService({ apiKey, voiceId });
+  console.log('✅ ElevenLabs service initialized successfully');
   return elevenLabsService;
-};
+}
 
-export const getElevenLabsService = (): ElevenLabsService => {
+export function getElevenLabsService(): ElevenLabsService {
   if (!elevenLabsService) {
     throw new Error('ElevenLabs service not initialized. Call initializeElevenLabs first.');
   }
   return elevenLabsService;
+}
+
+// Helper function to check if ElevenLabs is properly configured
+export function isElevenLabsReady(): boolean {
+  try {
+    const service = getElevenLabsService();
+    return service !== null;
+  } catch (error) {
+    console.error('❌ ElevenLabs not ready:', error);
+    return false;
+  }
 };
 
 export { ElevenLabsService };
