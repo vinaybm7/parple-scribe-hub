@@ -98,8 +98,17 @@ const CompanionChat = ({ avatarId, onMoodChange, onTypingChange, onSpeakingChang
     }
   };
 
-  // Initial greeting
+  // Initial greeting - only once per session
   useEffect(() => {
+    const sessionKey = `welcomeShown_${avatarId}`;
+    const welcomeShown = sessionStorage.getItem(sessionKey);
+    
+    // If welcome was already shown in this session, don't show it again
+    if (welcomeShown) {
+      console.log('Welcome message already shown in this session');
+      return;
+    }
+
     const avatarNames = { luna: 'Luna', aria: 'Aria' };
     const avatarName = avatarNames[avatarId as keyof typeof avatarNames] || 'Luna';
     
@@ -118,12 +127,18 @@ const CompanionChat = ({ avatarId, onMoodChange, onTypingChange, onSpeakingChang
 
     setMessages([initialMessage]);
     onMoodChange('caring');
+    
+    // Mark welcome as shown for this session
+    sessionStorage.setItem(sessionKey, 'true');
 
     // Speak the initial greeting with ElevenLabs voice
     if (isSoundEnabled) {
+      console.log('Playing welcome message with ElevenLabs');
       setTimeout(() => {
         speakMessage(initialMessage.content);
       }, 1000); // Delay to ensure ElevenLabs is initialized
+    } else {
+      console.log('Sound is disabled, not playing welcome message');
     }
   }, [avatarId, onMoodChange]);
 
