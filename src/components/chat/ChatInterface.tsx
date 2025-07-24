@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
@@ -17,6 +17,58 @@ interface ChatInterfaceProps {
 const ChatInterface = ({ isOpen, onClose, context, isEmbedded = false }: ChatInterfaceProps) => {
   const { messages, isLoading, sendMessage, clearChat, bellaState, resetBella } = useChat();
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [widgetLoaded, setWidgetLoaded] = useState(false);
+
+  // Initialize Live2D widget
+  useEffect(() => {
+    if (typeof window === 'undefined' || !isOpen || widgetLoaded) return;
+
+    const loadLive2DWidget = () => {
+      // @ts-ignore
+      if (window.L2Dwidget) {
+        // @ts-ignore
+        window.L2Dwidget.init({
+          model: {
+            jsonPath: 'https://cdn.jsdelivr.net/gh/evrstr/live2d-widget-models/live2d_evrstr/tia/model.json',
+            scale: 1.1
+          },
+          display: {
+            position: 'right',
+            width: 200,
+            height: 200,
+            hOffset: 0,
+            vOffset: 0
+          },
+          mobile: {
+            show: true,
+            scale: 0.8
+          },
+          react: {
+            opacityDefault: 1,
+            opacityOnHover: 0.8
+          },
+          dialog: {
+            enable: false
+          }
+        });
+        setWidgetLoaded(true);
+      } else {
+        // If L2Dwidget is not available, load the script
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/live2d-widget@3.1.4/lib/L2Dwidget.min.js';
+        script.onload = () => {
+          loadLive2DWidget();
+        };
+        document.body.appendChild(script);
+      }
+    };
+
+    loadLive2DWidget();
+
+    return () => {
+      // Cleanup if needed
+    };
+  }, [isOpen, widgetLoaded]);
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
@@ -96,41 +148,10 @@ const ChatInterface = ({ isOpen, onClose, context, isEmbedded = false }: ChatInt
           </div>
         </div>
 
-        {/* Bella's Avatar Section */}
-        <div className="flex flex-col items-center p-4 bg-gradient-to-r from-pink-100 to-purple-100 dark:from-pink-900/30 dark:to-purple-900/30">
-          <div className="relative w-40 h-40 rounded-full border-4 border-pink-300 shadow-lg overflow-hidden bg-pink-50">
-            <video 
-              autoPlay
-              loop
-              muted
-              playsInline
-              className="w-full h-full object-cover"
-              style={{
-                objectPosition: 'center top',
-                transform: 'scale(1.05)' // Reduced scale to show more of the video
-              }}
-              onError={(e) => {
-                console.log('Video failed to load, falling back to image');
-                // Create an img element as fallback
-                const img = document.createElement('img');
-                img.src = '/bella-avatar.webp';
-                img.alt = 'Bella Avatar';
-                img.className = 'w-full h-full object-cover';
-                img.style.objectPosition = 'center center';
-                e.currentTarget.parentNode?.replaceChild(img, e.currentTarget);
-              }}
-            >
-              <source src="/Anime_Shy_Girl_Video_Generated (online-video-cutter.com).mp4" type="video/mp4" />
-              {/* Fallback image if video doesn't load */}
-              <img 
-                src="/bella-avatar.webp" 
-                alt="Bella Avatar" 
-                className="w-full h-full object-cover"
-                style={{
-                  objectPosition: 'center center'
-                }}
-              />
-            </video>
+        {/* Live2D Widget Section */}
+        <div className="flex flex-col items-center p-2 bg-gradient-to-r from-pink-100 to-purple-100 dark:from-pink-900/30 dark:to-purple-900/30">
+          <div id="live2d-widget" className="relative w-full flex justify-center items-center" style={{ height: '200px' }}>
+            {/* Live2D widget will be injected here */}
           </div>
           
           {/* Bella's Status */}
