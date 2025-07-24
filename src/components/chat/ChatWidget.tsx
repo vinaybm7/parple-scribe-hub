@@ -15,24 +15,28 @@ const loadLive2DWidget = () => {
         // @ts-ignore
         window.L2Dwidget.init({
           model: {
-            jsonPath: 'https://cdn.jsdelivr.net/gh/evrstr/live2d-widget-models/live2d_evrstr/rfb_1601/model.json'
+            jsonPath: 'https://cdn.jsdelivr.net/gh/evrstr/live2d-widget-models/live2d_evrstr/rfb_1601/model.json',
+            scale: 1.5 // Increased scale for larger size
           },
           display: {
             position: 'right',
-            width: 85,
-            height: 200,
-            hOffset: 20,
-            vOffset: -20,
+            width: 200,  // Increased width
+            height: 350, // Increased height
+            hOffset: 30, // Adjusted horizontal offset
+            vOffset: -20, // Adjusted vertical offset
             superSample: 2,
           },
           mobile: {
             show: true,
-            scale: 0.3,
+            scale: 0.8, // Increased mobile scale
             motion: true
           },
           react: {
             opacityDefault: 1,
             opacityOnHover: 0.8
+          },
+          dialog: {
+            enable: false // Disable default dialog
           }
         });
       }
@@ -83,26 +87,31 @@ const ChatWidget = () => {
   // Add click handler for the Live2D widget
   useEffect(() => {
     const handleWidgetClick = (e: MouseEvent) => {
-      const widget = document.querySelector('#live2d-widget');
-      if (widget && (widget === e.target || widget.contains(e.target as Node))) {
+      // Check if the click is on the canvas or its container
+      const canvas = document.querySelector('canvas');
+      const widgetContainer = document.querySelector('#live2d-widget');
+      
+      if ((canvas && (canvas === e.target || canvas.contains(e.target as Node))) ||
+          (widgetContainer && widgetContainer.contains(e.target as Node))) {
         setIsOpen(true);
       }
     };
 
-    // Add click event listener after a short delay to ensure widget is loaded
-    const timer = setTimeout(() => {
-      const widget = document.querySelector('#live2d-widget');
-      if (widget) {
-        widget.addEventListener('click', handleWidgetClick);
+    // Add click event listener to the document
+    document.addEventListener('click', handleWidgetClick);
+    
+    // Also add mousedown to prevent default behavior that might interfere
+    const preventDefault = (e: MouseEvent) => {
+      const canvas = document.querySelector('canvas');
+      if (canvas && (canvas === e.target || canvas.contains(e.target as Node))) {
+        e.preventDefault();
       }
-    }, 2000);
+    };
+    document.addEventListener('mousedown', preventDefault);
 
     return () => {
-      clearTimeout(timer);
-      const widget = document.querySelector('#live2d-widget');
-      if (widget) {
-        widget.removeEventListener('click', handleWidgetClick);
-      }
+      document.removeEventListener('click', handleWidgetClick);
+      document.removeEventListener('mousedown', preventDefault);
     };
   }, []);
 
