@@ -1,11 +1,11 @@
 import { initializeElevenLabs } from './elevenlabs';
 
-// ElevenLabs configuration - Hardcoded values for reliability
+// ElevenLabs configuration - Using environment variables
 const ELEVENLABS_CONFIG = {
-  apiKey: 'sk_971ee974018db43973b8cf86d1f335df06eacc1d27b426bc',
+  apiKey: import.meta.env.VITE_ELEVENLABS_API_KEY || '',
   voiceIds: {
-    luna: 'BpjGufoPiobT79j2vtj4',
-    aria: 'jqcCZkN6Knx8BJ5TBdYR'
+    luna: import.meta.env.VITE_ELEVENLABS_LUNA_VOICE_ID || 'BpjGufoPiobT79j2vtj4',
+    aria: import.meta.env.VITE_ELEVENLABS_ARIA_VOICE_ID || 'jqcCZkN6Knx8BJ5TBdYR'
   }
 };
 
