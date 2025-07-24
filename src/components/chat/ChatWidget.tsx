@@ -16,19 +16,19 @@ const loadLive2DWidget = () => {
         window.L2Dwidget.init({
           model: {
             jsonPath: 'https://cdn.jsdelivr.net/gh/evrstr/live2d-widget-models/live2d_evrstr/rfb_1601/model.json',
-            scale: 1.5 // Increased scale for larger size
+            scale: 1.2 // Slightly larger than original
           },
           display: {
             position: 'right',
-            width: 200,  // Increased width
-            height: 350, // Increased height
-            hOffset: 30, // Adjusted horizontal offset
-            vOffset: -20, // Adjusted vertical offset
+            width: 120,
+            height: 240,
+            hOffset: 20,
+            vOffset: -20,
             superSample: 2,
           },
           mobile: {
             show: true,
-            scale: 0.8, // Increased mobile scale
+            scale: 0.5,
             motion: true
           },
           react: {
@@ -36,7 +36,7 @@ const loadLive2DWidget = () => {
             opacityOnHover: 0.8
           },
           dialog: {
-            enable: false // Disable default dialog
+            enable: false
           }
         });
       }
@@ -87,31 +87,52 @@ const ChatWidget = () => {
   // Add click handler for the Live2D widget
   useEffect(() => {
     const handleWidgetClick = (e: MouseEvent) => {
-      // Check if the click is on the canvas or its container
-      const canvas = document.querySelector('canvas');
+      // Get the widget container and canvas
       const widgetContainer = document.querySelector('#live2d-widget');
+      const canvas = document.querySelector('canvas');
       
-      if ((canvas && (canvas === e.target || canvas.contains(e.target as Node))) ||
-          (widgetContainer && widgetContainer.contains(e.target as Node))) {
-        setIsOpen(true);
+      // Check if the click is on the widget or canvas
+      const clickedOnWidget = widgetContainer && widgetContainer.contains(e.target as Node);
+      const clickedOnCanvas = canvas && (canvas === e.target || canvas.contains(e.target as Node));
+      
+      if (clickedOnWidget || clickedOnCanvas) {
+        e.stopPropagation();
+        e.preventDefault();
+        setIsOpen(prev => !prev); // Toggle chat on each click
+        return false;
       }
     };
 
-    // Add click event listener to the document
-    document.addEventListener('click', handleWidgetClick);
-    
-    // Also add mousedown to prevent default behavior that might interfere
-    const preventDefault = (e: MouseEvent) => {
-      const canvas = document.querySelector('canvas');
-      if (canvas && (canvas === e.target || canvas.contains(e.target as Node))) {
-        e.preventDefault();
+    // Add event listeners
+    const addListeners = () => {
+      const widget = document.querySelector('#live2d-widget') as HTMLElement;
+      if (widget) {
+        widget.style.pointerEvents = 'auto';
+        widget.style.cursor = 'pointer';
+        widget.addEventListener('click', handleWidgetClick, true);
+      }
+      
+      const canvas = document.querySelector('canvas') as HTMLCanvasElement;
+      if (canvas) {
+        canvas.style.pointerEvents = 'auto';
+        canvas.style.cursor = 'pointer';
+        canvas.addEventListener('click', handleWidgetClick, true);
       }
     };
-    document.addEventListener('mousedown', preventDefault);
+
+    // Try to add listeners immediately
+    addListeners();
+    
+    // And also after a delay in case widget isn't ready yet
+    const timer = setTimeout(addListeners, 2000);
 
     return () => {
-      document.removeEventListener('click', handleWidgetClick);
-      document.removeEventListener('mousedown', preventDefault);
+      clearTimeout(timer);
+      const widget = document.querySelector('#live2d-widget');
+      const canvas = document.querySelector('canvas');
+      
+      if (widget) widget.removeEventListener('click', handleWidgetClick, true);
+      if (canvas) canvas.removeEventListener('click', handleWidgetClick, true);
     };
   }, []);
 
