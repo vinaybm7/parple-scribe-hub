@@ -13,18 +13,19 @@ const loadLive2DWidget = () => {
       // @ts-ignore
       if (window.L2Dwidget) {
         // @ts-ignore
+        // @ts-ignore - L2Dwidget is loaded dynamically
         window.L2Dwidget.init({
           model: {
             jsonPath: 'https://cdn.jsdelivr.net/gh/evrstr/live2d-widget-models/live2d_evrstr/rfb_1601/model.json',
-            scale: 1.2 // Slightly larger than original
+            scale: 1.1 // Adjusted to 1.1x as requested
           },
           display: {
             position: 'right',
             width: 120,
-            height: 240,
+            height: 250,
             hOffset: 20,
             vOffset: -20,
-            superSample: 2,
+            superSample: 2
           },
           mobile: {
             show: true,
