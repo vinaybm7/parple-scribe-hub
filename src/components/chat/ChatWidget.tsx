@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { MessageCircle, X, Bot, Heart } from 'lucide-react';
 import ChatInterface from './ChatInterface';
 import { useChat } from '@/hooks/useChat';
+import { useLocation } from 'react-router-dom';
 
 // Load Live2D widget script dynamically
 const loadLive2DWidget = () => {
@@ -52,17 +53,25 @@ const ChatWidget = () => {
   const { bellaState } = useChat();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const widgetInitialized = useRef(false);
+  const location = useLocation();
 
-  // Initialize Live2D widget
+  // Initialize Live2D widget (only if not on companion pages)
   useEffect(() => {
-    if (!widgetInitialized.current) {
+    if (!widgetInitialized.current && 
+        location.pathname !== '/admin-dashboard-secure-vny-access' && 
+        !location.pathname.startsWith('/companion')) {
       loadLive2DWidget();
       widgetInitialized.current = true;
     }
-  }, []);
+  }, [location.pathname]);
 
-  // Monitor for modal state changes
+  // Monitor for modal state changes (only if not on companion pages)
   useEffect(() => {
+    if (location.pathname === '/admin-dashboard-secure-vny-access' || 
+        location.pathname.startsWith('/companion')) {
+      return;
+    }
+
     const checkModalState = () => {
       const modalOpen = document.querySelector('[data-state="open"]') !== null;
       setIsModalOpen(modalOpen);
@@ -78,23 +87,34 @@ const ChatWidget = () => {
     });
 
     return () => observer.disconnect();
-  }, []);
+  }, [location.pathname]);
 
   // Don't render the chat widget if a modal is open
   if (isModalOpen) {
     return null;
   }
 
-  // Add click handler for the Live2D widget
+  // Add click handler for the Live2D widget (Bella only, not Aria)
   useEffect(() => {
+    // Don't add click handlers on companion pages
+    if (location.pathname === '/admin-dashboard-secure-vny-access' || 
+        location.pathname.startsWith('/companion')) {
+      return;
+    }
     const handleWidgetClick = (e: MouseEvent) => {
-      // Get the widget container and canvas
+      // Get the widget container and canvas (only for Bella, not Aria)
       const widgetContainer = document.querySelector('#live2d-widget');
+      const ariaContainer = document.querySelector('#aria-live2d-widget');
       const canvas = document.querySelector('canvas');
       
-      // Check if the click is on the widget or canvas
+      // Don't handle clicks on Aria's Live2D widget
+      if (ariaContainer && ariaContainer.contains(e.target as Node)) {
+        return;
+      }
+      
+      // Check if the click is on Bella's widget or canvas
       const clickedOnWidget = widgetContainer && widgetContainer.contains(e.target as Node);
-      const clickedOnCanvas = canvas && (canvas === e.target || canvas.contains(e.target as Node));
+      const clickedOnCanvas = canvas && (canvas === e.target || canvas.contains(e.target as Node)) && !ariaContainer?.contains(canvas);
       
       if (clickedOnWidget || clickedOnCanvas) {
         e.stopPropagation();
@@ -104,7 +124,7 @@ const ChatWidget = () => {
       }
     };
 
-    // Add event listeners
+    // Add event listeners (only for Bella's widget, not Aria's)
     const addListeners = () => {
       const widget = document.querySelector('#live2d-widget') as HTMLElement;
       if (widget) {
@@ -113,8 +133,10 @@ const ChatWidget = () => {
         widget.addEventListener('click', handleWidgetClick, true);
       }
       
+      // Only add canvas listener if it's not in Aria's container
       const canvas = document.querySelector('canvas') as HTMLCanvasElement;
-      if (canvas) {
+      const ariaContainer = document.querySelector('#aria-live2d-widget');
+      if (canvas && !ariaContainer?.contains(canvas)) {
         canvas.style.pointerEvents = 'auto';
         canvas.style.cursor = 'pointer';
         canvas.addEventListener('click', handleWidgetClick, true);
@@ -131,11 +153,22 @@ const ChatWidget = () => {
       clearTimeout(timer);
       const widget = document.querySelector('#live2d-widget');
       const canvas = document.querySelector('canvas');
+      const ariaContainer = document.querySelector('#aria-live2d-widget');
       
       if (widget) widget.removeEventListener('click', handleWidgetClick, true);
-      if (canvas) canvas.removeEventListener('click', handleWidgetClick, true);
+      if (canvas && !ariaContainer?.contains(canvas)) {
+        canvas.removeEventListener('click', handleWidgetClick, true);
+      }
     };
-  }, []);
+  }, [location.pathname]);
+
+  // Don't render ChatWidget on admin dashboard page or companion pages
+  console.log('ChatWidget - Current pathname:', location.pathname);
+  if (location.pathname === '/admin-dashboard-secure-vny-access' || 
+      location.pathname.startsWith('/companion')) {
+    console.log('ChatWidget - Hiding widget for companion page');
+    return null;
+  }
 
   return (
     <>

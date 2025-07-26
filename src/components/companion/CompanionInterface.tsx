@@ -105,24 +105,37 @@ const CompanionInterface = ({ avatarId, onBack }: CompanionInterfaceProps) => {
           ]} 
         />
         
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-7xl mx-auto">
+        <div className="flex flex-col lg:flex-row gap-6 max-w-7xl mx-auto items-start -mt-4">
           {/* Left Side - Avatar Display */}
-          <div className="flex justify-center lg:justify-end">
-            <Card className="w-full max-w-md bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm shadow-xl">
-              <CardContent className="p-0">
+          <div className="flex-shrink-0">
+            {avatarId === 'aria' || avatarId === 'luna' ? (
+              // For Aria and Luna: No card wrapper, direct placement for Live2D
+              <div className="w-full lg:w-96">
                 <AvatarDisplay
                   avatarId={avatarId}
                   mood={currentMood}
                   isTyping={isTyping}
                   isSpeaking={isSpeaking}
                 />
-              </CardContent>
-            </Card>
+              </div>
+            ) : (
+              // For others: Keep card wrapper
+              <Card className="w-full max-w-md bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm shadow-xl">
+                <CardContent className="p-0 h-full">
+                  <AvatarDisplay
+                    avatarId={avatarId}
+                    mood={currentMood}
+                    isTyping={isTyping}
+                    isSpeaking={isSpeaking}
+                  />
+                </CardContent>
+              </Card>
+            )}
           </div>
 
           {/* Right Side - Chat Interface */}
-          <div className="flex justify-center lg:justify-start">
-            <Card className="w-full max-w-md h-[600px] bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm shadow-xl">
+          <div className="flex-1 max-w-md lg:max-w-none">
+            <Card className={`w-full bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm shadow-xl ${avatarId === 'aria' || avatarId === 'luna' ? 'h-[700px]' : 'h-[600px]'}`}>
               <CardContent className="p-0 h-full">
                 <CompanionChat
                   avatarId={avatarId}
