@@ -42,7 +42,8 @@ const subjectData = {
     { id: 30, name: "Civil", code: "CIV102", color: "from-lime-100 to-lime-200", icon: "🏗️" },
     { id: 31, name: "Chemistry", code: "CHEM102", color: "from-rose-100 to-rose-200", icon: "🧪" },
     { id: 32, name: "C++", code: "CPP102", color: "from-violet-100 to-violet-200", icon: "💻" },
-    { id: 33, name: "Basic Electronics", code: "BE102", color: "from-amber-100 to-amber-200", icon: "🔌" }
+    { id: 33, name: "Basic Electronics", code: "BE102", color: "from-amber-100 to-amber-200", icon: "🔌" },
+    { id: 34, name: "CAED", code: "CAED102", color: "from-slate-100 to-slate-200", icon: "📐" }
   ],
 
   // Add more semesters as needed...
