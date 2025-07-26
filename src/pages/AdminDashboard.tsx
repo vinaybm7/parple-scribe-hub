@@ -29,6 +29,7 @@ interface UploadedFile {
   };
   fullPath?: string;
   displayName?: string;
+  description?: string;
   subject?: string;
   category?: string;
 }
@@ -58,10 +59,15 @@ const AdminDashboard = () => {
 
   const [uploadProgress, setUploadProgress] = useState<number>(0);
 
-  const subjects = {
-    1: ["Scientific Foundation of Health & Wellness", "Samskruthi Kannada", "POP", "Physics", "Nano Technology", "Maths", "IOT", "Indian Constitution", "IE Electronics", "IE Electrical", "English", "Cyber Security", "Cloud Computing", "Civil", "Chemistry", "CAED", "C Programming", "Balake Kannada", "AI"],
-    2: ["Web Dev", "Python", "Physics", "Mini Project", "Mechanical", "Maths", "Java", "Indian Constitution", "English", "Electrical", "Civil", "Chemistry", "C++", "Basic Electronics"]
-    // 3rd-8th semester subjects will be added later
+  const subjects: Record<string, string[]> = {
+    '1': ["Scientific Foundation of Health & Wellness", "Samskruthi Kannada", "POP", "Physics", "Nano Technology", "Maths", "IOT", "Indian Constitution", "IE Electronics", "IE Electrical", "English", "Cyber Security", "Cloud Computing", "Civil", "Chemistry", "CAED", "C Programming", "Balake Kannada", "AI"],
+    '2': ["Web Dev", "Python", "Physics", "Mini Project", "Mechanical", "Maths", "Java", "Indian Constitution", "English", "Electrical", "Civil", "Chemistry", "C++", "Basic Electronics", "CAED"],
+    '3': [],
+    '4': [],
+    '5': [],
+    '6': [],
+    '7': [],
+    '8': []
   };
 
   useEffect(() => {
@@ -178,7 +184,7 @@ const AdminDashboard = () => {
   };
 
   const handleUpload = async () => {
-    if (!selectedFile || !uploadForm.title || !uploadForm.subject || !uploadForm.semester) {
+    if (!selectedFile || !uploadForm.title || !uploadForm.subject || !uploadForm.semester || !uploadForm.year) {
       showErrorToast('Please fill in all required fields and select a file');
       return;
     }
@@ -480,8 +486,10 @@ const AdminDashboard = () => {
                         <SelectValue placeholder="Select subject" />
                       </SelectTrigger>
                       <SelectContent>
-                        {uploadForm.semester && subjects[parseInt(uploadForm.semester) as keyof typeof subjects]?.map((subject) => (
-                          <SelectItem key={subject} value={subject}>{subject}</SelectItem>
+                        {uploadForm.semester && subjects[uploadForm.semester]?.map((subject, index) => (
+                          <SelectItem key={`${subject}-${index}`} value={subject}>
+                            {subject}
+                          </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
