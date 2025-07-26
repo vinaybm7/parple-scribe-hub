@@ -47,7 +47,8 @@ const subjectNames = {
   30: "Civil",
   31: "Chemistry",
   32: "C++",
-  33: "Basic Electronics"
+  33: "Basic Electronics",
+  34: "CAED"
 };
 
 interface StudyMaterial {
