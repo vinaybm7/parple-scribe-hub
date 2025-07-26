@@ -59,7 +59,8 @@ const AdminDashboard = () => {
 
   const [uploadProgress, setUploadProgress] = useState<number>(0);
 
-  const subjects: Record<string, string[]> = {
+  // Map of semester to subjects
+  const semesterToSubjects: Record<string, string[]> = {
     '1': ["Scientific Foundation of Health & Wellness", "Samskruthi Kannada", "POP", "Physics", "Nano Technology", "Maths", "IOT", "Indian Constitution", "IE Electronics", "IE Electrical", "English", "Cyber Security", "Cloud Computing", "Civil", "Chemistry", "CAED", "C Programming", "Balake Kannada", "AI"],
     '2': ["Web Dev", "Python", "Physics", "Mini Project", "Mechanical", "Maths", "Java", "Indian Constitution", "English", "Electrical", "Civil", "Chemistry", "C++", "Basic Electronics", "CAED"],
     '3': [],
@@ -68,6 +69,11 @@ const AdminDashboard = () => {
     '6': [],
     '7': [],
     '8': []
+  };
+
+  // Get subjects based on selected semester
+  const getSubjectsForSemester = (semester: string) => {
+    return semesterToSubjects[semester] || [];
   };
 
   useEffect(() => {
@@ -431,7 +437,17 @@ const AdminDashboard = () => {
                   
                   <div className="space-y-2">
                     <Label htmlFor="year">Year *</Label>
-                    <Select value={uploadForm.year} onValueChange={(value) => setUploadForm({...uploadForm, year: value, semester: "", subject: ""})}>
+                    <Select 
+                      value={uploadForm.year} 
+                      onValueChange={(value) => {
+                        setUploadForm({
+                          ...uploadForm, 
+                          year: value, 
+                          semester: "", 
+                          subject: ""
+                        });
+                      }}
+                    >
                       <SelectTrigger>
                         <SelectValue placeholder="Select year" />
                       </SelectTrigger>
@@ -446,7 +462,17 @@ const AdminDashboard = () => {
 
                   <div className="space-y-2">
                     <Label htmlFor="semester">Semester *</Label>
-                    <Select value={uploadForm.semester} onValueChange={(value) => setUploadForm({...uploadForm, semester: value, subject: ""})}>
+                    <Select 
+                      value={uploadForm.semester} 
+                      onValueChange={(value) => {
+                        setUploadForm({
+                          ...uploadForm, 
+                          semester: value, 
+                          subject: ""
+                        });
+                      }}
+                      disabled={!uploadForm.year}
+                    >
                       <SelectTrigger>
                         <SelectValue placeholder="Select semester" />
                       </SelectTrigger>
@@ -486,7 +512,7 @@ const AdminDashboard = () => {
                         <SelectValue placeholder="Select subject" />
                       </SelectTrigger>
                       <SelectContent>
-                        {uploadForm.semester && subjects[uploadForm.semester]?.map((subject, index) => (
+                        {uploadForm.semester && getSubjectsForSemester(uploadForm.semester).map((subject, index) => (
                           <SelectItem key={`${subject}-${index}`} value={subject}>
                             {subject}
                           </SelectItem>
