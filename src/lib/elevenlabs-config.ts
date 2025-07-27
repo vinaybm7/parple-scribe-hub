@@ -11,52 +11,7 @@ console.log('🔍 ElevenLabs environment variables status:', {
   isProd: import.meta.env.PROD
 });
 
-// Get environment variables with fallbacks and trimming
-const getEnvVar = (key: string, fallback: string = ''): string => {
-  const value = import.meta.env[key];
-  console.log(`🔍 Getting env var ${key}:`, { value, type: typeof value, fallback });
-  
-  if (typeof value === 'string' && value.length > 0) {
-    return value.trim();
-  }
-  
-  // In production, try to get from window object as fallback (in case of build issues)
-  if (import.meta.env.PROD && typeof window !== 'undefined') {
-    const windowEnv = (window as any).__ENV__;
-    if (windowEnv && windowEnv[key]) {
-      console.log(`🔍 Found ${key} in window.__ENV__:`, windowEnv[key]);
-      return windowEnv[key].trim();
-    }
-  }
-  
-  return fallback;
-};
-
-// Production fallback values (as a last resort)
-const PRODUCTION_FALLBACKS = {
-  VITE_ELEVENLABS_API_KEY: 'sk_98ab9d165671e69015cfa701a96547907ad3394f406cd6ee',
-  VITE_ELEVENLABS_LUNA_VOICE_ID: 'BpjGufoPiobT79j2vtj4',
-  VITE_ELEVENLABS_ARIA_VOICE_ID: 'jqcCZkN6Knx8BJ5TBdYR'
-};
-
-// Enhanced environment variable getter with production fallbacks
-const getEnvVarWithFallback = (key: string, defaultFallback: string = ''): string => {
-  // First try the normal environment variable
-  let value = getEnvVar(key, '');
-  
-  // If not found and in production, use hardcoded fallbacks
-  if (!value && import.meta.env.PROD) {
-    value = PRODUCTION_FALLBACKS[key as keyof typeof PRODUCTION_FALLBACKS] || defaultFallback;
-    console.log(`🔧 Using production fallback for ${key}`);
-  }
-  
-  // If still not found, use default fallback
-  if (!value) {
-    value = defaultFallback;
-  }
-  
-  return value;
-};
+// Simplified approach - use the production environment helper directly
 
 // ElevenLabs configuration - Using production-safe environment variables
 const ELEVENLABS_CONFIG = {
