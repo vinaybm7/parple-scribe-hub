@@ -1,13 +1,14 @@
 import { initializeElevenLabs } from './elevenlabs';
 
-// Debug environment loading (development only)
-if (import.meta.env.DEV) {
-  console.log('🔍 ElevenLabs environment variables loaded:', {
-    VITE_ELEVENLABS_API_KEY: import.meta.env.VITE_ELEVENLABS_API_KEY ? '✅ Set' : '❌ Missing',
-    VITE_ELEVENLABS_LUNA_VOICE_ID: import.meta.env.VITE_ELEVENLABS_LUNA_VOICE_ID ? '✅ Set' : '❌ Missing',
-    VITE_ELEVENLABS_ARIA_VOICE_ID: import.meta.env.VITE_ELEVENLABS_ARIA_VOICE_ID ? '✅ Set' : '❌ Missing'
-  });
-}
+// Debug environment loading (always show in console for production debugging)
+console.log('🔍 ElevenLabs environment variables status:', {
+  VITE_ELEVENLABS_API_KEY: import.meta.env.VITE_ELEVENLABS_API_KEY ? '✅ Set' : '❌ Missing',
+  VITE_ELEVENLABS_LUNA_VOICE_ID: import.meta.env.VITE_ELEVENLABS_LUNA_VOICE_ID ? '✅ Set' : '❌ Missing',
+  VITE_ELEVENLABS_ARIA_VOICE_ID: import.meta.env.VITE_ELEVENLABS_ARIA_VOICE_ID ? '✅ Set' : '❌ Missing',
+  environment: import.meta.env.MODE,
+  isDev: import.meta.env.DEV,
+  isProd: import.meta.env.PROD
+});
 
 // Get environment variables with fallbacks and trimming
 const getEnvVar = (key: string, fallback: string = ''): string => {
@@ -27,13 +28,12 @@ const ELEVENLABS_CONFIG = {
   }
 };
 
-// Verify the API key and voice IDs (development only)
-if (import.meta.env.DEV) {
-  console.log('=== ElevenLabs Configuration ===');
-  console.log('Using API Key:', ELEVENLABS_CONFIG.apiKey ? '✅ Configured' : '❌ Missing');
-  console.log('Luna Voice ID:', ELEVENLABS_CONFIG.voiceIds.luna ? '✅ Set' : '❌ Missing');
-  console.log('Aria Voice ID:', ELEVENLABS_CONFIG.voiceIds.aria ? '✅ Set' : '❌ Missing');
-}
+// Verify the API key and voice IDs (always log for production debugging)
+console.log('=== ElevenLabs Configuration Status ===');
+console.log('API Key:', ELEVENLABS_CONFIG.apiKey ? '✅ Configured' : '❌ Missing');
+console.log('Luna Voice ID:', ELEVENLABS_CONFIG.voiceIds.luna ? '✅ Set' : '❌ Missing');
+console.log('Aria Voice ID:', ELEVENLABS_CONFIG.voiceIds.aria ? '✅ Set' : '❌ Missing');
+console.log('Environment:', import.meta.env.MODE);
 
 // Voice ID mapping for each avatar
 export const getVoiceIdForAvatar = (avatarId: string): string => {
@@ -61,13 +61,13 @@ export const initializeElevenLabsForAvatar = (avatarId: string) => {
     if (!apiKey || apiKey.length === 0) {
       const errorMsg = 'ElevenLabs API key is not configured';
       console.error(`❌ ${errorMsg}`);
-      if (import.meta.env.DEV) {
-        console.error(`❌ Environment check:`, {
-          raw: import.meta.env.VITE_ELEVENLABS_API_KEY,
-          processed: apiKey,
-          type: typeof import.meta.env.VITE_ELEVENLABS_API_KEY
-        });
-      }
+      console.error(`❌ Environment debug:`, {
+        raw: import.meta.env.VITE_ELEVENLABS_API_KEY,
+        processed: apiKey,
+        type: typeof import.meta.env.VITE_ELEVENLABS_API_KEY,
+        environment: import.meta.env.MODE,
+        allEnvKeys: Object.keys(import.meta.env).filter(key => key.startsWith('VITE_'))
+      });
       throw new Error(errorMsg);
     }
 
