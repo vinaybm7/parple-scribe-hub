@@ -208,6 +208,12 @@ const CategoryPage = () => {
   };
 
   const handleViewFile = (material: StudyMaterial) => {
+    console.log('Opening file viewer for:', {
+      material,
+      file_path: material.file_path,
+      name: material.name,
+      original_title: material.original_title
+    });
     setSelectedFile(material);
     setIsModalOpen(true);
   };

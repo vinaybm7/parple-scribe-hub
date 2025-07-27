@@ -101,6 +101,8 @@ const SubjectPage = () => {
     additional: []
   });
   const [loading, setLoading] = useState(true);
+  const [selectedFile, setSelectedFile] = useState<StudyMaterial | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     loadMaterials();
@@ -162,11 +164,11 @@ const SubjectPage = () => {
     if (subject <= 19) {
       year = 1;
       semester = 1; // Subjects 1-19 are 1st semester
-    } else if (subject <= 33) {
+    } else if (subject <= 34) {
       year = 1;
-      semester = 2; // Subjects 20-33 are 2nd semester
+      semester = 2; // Subjects 20-34 are 2nd semester
     } else {
-      // For future subjects beyond 33
+      // For future subjects beyond 34
       year = Math.ceil((subject - 19) / 12) + 1;
       semester = ((subject - 20) % 12 < 6) ? (Math.ceil((subject - 19) / 6) * 2 - 1) : (Math.ceil((subject - 19) / 6) * 2);
     }
@@ -198,6 +200,22 @@ const SubjectPage = () => {
     );
   };
 
+  const getFullFilePath = (fileName: string, category: string) => {
+    const fullPath = `${getSubjectPath()}/${category}/${fileName}`;
+    console.log('Constructing full file path:', { fileName, category, subjectPath: getSubjectPath(), fullPath });
+    return fullPath;
+  };
+
+  const handleViewFile = (material: StudyMaterial) => {
+    setSelectedFile(material);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedFile(null);
+  };
+
   const MaterialCard = ({ material, category }: { material: StudyMaterial; category: string }) => (
     <Card className="group hover:shadow-card transition-all duration-300 hover:scale-105 border-border/50 hover:border-primary/20">
       <CardContent className="p-6">
@@ -224,7 +242,7 @@ const SubjectPage = () => {
             <Button
               size="sm"
               variant="outline"
-              onClick={() => window.open(getFileUrl(material.file_path || material.name), '_blank')}
+              onClick={() => handleViewFile(material)}
               className="flex-1"
             >
               <Eye className="h-4 w-4 mr-2" />
@@ -234,7 +252,7 @@ const SubjectPage = () => {
               size="sm"
               onClick={() => {
                 const link = document.createElement('a');
-                link.href = getFileUrl(material.file_path || material.name);
+                link.href = getFileUrl(material.file_path || getFullFilePath(material.name, category));
                 link.download = material.original_title || material.name.split('/').pop() || 'download';
                 link.click();
               }}
@@ -403,6 +421,17 @@ const SubjectPage = () => {
       </section>
 
       <Footer />
+      
+      {/* File Viewer Modal */}
+      {selectedFile && (
+        <FileViewerModal
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+          fileUrl={getFileUrl(selectedFile.file_path || getFullFilePath(selectedFile.name, 'modules'))}
+          fileName={selectedFile.original_title || selectedFile.name.split('/').pop() || 'Unknown File'}
+          fileType={selectedFile.metadata?.mimetype || ''}
+        />
+      )}
     </div>
   );
 };
