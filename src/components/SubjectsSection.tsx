@@ -1,49 +1,49 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Code, Cpu, Zap, Cog, Calculator, Atom } from "lucide-react";
+import { ArrowRight, Calculator, Atom, Code, Zap, Cog, Cpu } from "lucide-react";
 
 const subjects = [
   {
-    icon: Code,
-    name: "Computer Science",
-    description: "Programming, Data Structures, Algorithms, DBMS",
-    notesCount: 120,
-    color: "from-blue-500 to-purple-500"
-  },
-  {
-    icon: Zap,
-    name: "Electrical Engineering",
-    description: "Circuit Analysis, Power Systems, Electronics",
-    notesCount: 95,
-    color: "from-yellow-500 to-orange-500"
-  },
-  {
-    icon: Cog,
-    name: "Mechanical Engineering",
-    description: "Thermodynamics, Manufacturing, Machine Design",
-    notesCount: 88,
-    color: "from-gray-500 to-slate-600"
-  },
-  {
-    icon: Cpu,
-    name: "Electronics & Communication",
-    description: "Digital Electronics, Communication Systems",
-    notesCount: 76,
-    color: "from-green-500 to-teal-500"
-  },
-  {
     icon: Calculator,
-    name: "Mathematics",
-    description: "Calculus, Linear Algebra, Statistics",
-    notesCount: 64,
+    name: "Engineering Mathematics",
+    description: "Calculus, Linear Algebra, Differential Equations",
+    notesCount: 85,
     color: "from-pink-500 to-rose-500"
   },
   {
     icon: Atom,
-    name: "Physics",
-    description: "Quantum Mechanics, Thermodynamics, Optics",
-    notesCount: 52,
+    name: "Engineering Physics",
+    description: "Mechanics, Thermodynamics, Wave Optics",
+    notesCount: 72,
     color: "from-indigo-500 to-blue-500"
+  },
+  {
+    icon: Code,
+    name: "Programming Fundamentals",
+    description: "C Programming, Data Structures, Algorithms",
+    notesCount: 94,
+    color: "from-blue-500 to-purple-500"
+  },
+  {
+    icon: Zap,
+    name: "Basic Electrical Engineering",
+    description: "Circuit Analysis, Network Theory, AC/DC Circuits",
+    notesCount: 68,
+    color: "from-yellow-500 to-orange-500"
+  },
+  {
+    icon: Cog,
+    name: "Engineering Mechanics",
+    description: "Statics, Dynamics, Strength of Materials",
+    notesCount: 76,
+    color: "from-gray-500 to-slate-600"
+  },
+  {
+    icon: Cpu,
+    name: "Digital Electronics",
+    description: "Logic Gates, Boolean Algebra, Sequential Circuits",
+    notesCount: 58,
+    color: "from-green-500 to-teal-500"
   }
 ];
 

@@ -1,7 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { Brain, Users, Target, Heart, Award, Zap } from "lucide-react";
+import { Brain, Users, Target, Heart, Award, Zap, Bot, Mic, MessageCircle } from "lucide-react";
 
 const AboutPage = () => {
   return (
@@ -15,7 +15,7 @@ const AboutPage = () => {
             About Parple Notes
           </h1>
           <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Empowering engineering students across India with quality study materials and resources
+            Revolutionizing engineering education with AI-powered companions and personalized learning experiences
           </p>
         </div>
       </section>
@@ -28,9 +28,9 @@ const AboutPage = () => {
               Our <span className="text-gradient">Mission</span>
             </h2>
             <p className="text-lg text-muted-foreground leading-relaxed">
-              We believe that quality education should be accessible to everyone. Parple Notes was created 
-              to bridge the gap between complex engineering concepts and student understanding by providing 
-              comprehensive, well-structured study materials that make learning engaging and effective.
+              We're pioneering the future of engineering education through AI-powered learning companions. 
+              Our mission is to make complex engineering concepts accessible and engaging by providing 
+              personalized, interactive study experiences that adapt to each student's unique learning style.
             </p>
           </div>
 
@@ -38,11 +38,11 @@ const AboutPage = () => {
             <Card className="text-center hover:shadow-card transition-all duration-300">
               <CardContent className="p-8">
                 <div className="mb-4 inline-flex items-center justify-center w-16 h-16 rounded-2xl card-gradient">
-                  <Target className="h-8 w-8 text-primary" />
+                  <Bot className="h-8 w-8 text-primary" />
                 </div>
-                <h3 className="text-xl font-semibold text-foreground mb-4">Quality First</h3>
+                <h3 className="text-xl font-semibold text-foreground mb-4">AI-Powered Learning</h3>
                 <p className="text-muted-foreground">
-                  Every note is carefully reviewed and verified by subject matter experts to ensure accuracy and completeness.
+                  Advanced AI companions that understand your learning style and provide personalized guidance for better outcomes.
                 </p>
               </CardContent>
             </Card>
@@ -52,9 +52,9 @@ const AboutPage = () => {
                 <div className="mb-4 inline-flex items-center justify-center w-16 h-16 rounded-2xl card-gradient">
                   <Users className="h-8 w-8 text-primary" />
                 </div>
-                <h3 className="text-xl font-semibold text-foreground mb-4">Student-Centric</h3>
+                <h3 className="text-xl font-semibold text-foreground mb-4">Student-Centric Design</h3>
                 <p className="text-muted-foreground">
-                  Designed by students, for students. We understand the challenges and create content that truly helps.
+                  Built by students, for students. Our AI companions are designed to understand and address real learning challenges.
                 </p>
               </CardContent>
             </Card>
@@ -64,9 +64,9 @@ const AboutPage = () => {
                 <div className="mb-4 inline-flex items-center justify-center w-16 h-16 rounded-2xl card-gradient">
                   <Heart className="h-8 w-8 text-primary" />
                 </div>
-                <h3 className="text-xl font-semibold text-foreground mb-4">Free Access</h3>
+                <h3 className="text-xl font-semibold text-foreground mb-4">Accessible Innovation</h3>
                 <p className="text-muted-foreground">
-                  We believe education should be free. All our resources are available to students without any cost.
+                  Cutting-edge AI technology made accessible to every student, democratizing personalized education.
                 </p>
               </CardContent>
             </Card>
@@ -74,25 +74,76 @@ const AboutPage = () => {
         </div>
       </section>
 
-      {/* Stats Section */}
+      {/* AI Companions Section */}
       <section className="py-16 bg-muted/30">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+              Meet Your <span className="text-gradient">AI Companions</span>
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Luna and Aria are your personal AI study companions, each with unique personalities 
+              designed to make learning engaging and effective.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            <Card className="text-center hover:shadow-card transition-all duration-300">
+              <CardContent className="p-8">
+                <div className="mb-6 inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-r from-purple-400 to-purple-600 shadow-lg">
+                  <Bot className="h-10 w-10 text-white" />
+                </div>
+                <h3 className="text-2xl font-semibold text-foreground mb-4">Luna</h3>
+                <p className="text-muted-foreground mb-4">
+                  Your energetic and playful study buddy who makes learning fun and exciting. 
+                  Luna specializes in breaking down complex concepts into digestible, engaging lessons.
+                </p>
+                <div className="flex items-center justify-center gap-2">
+                  <Mic className="h-4 w-4 text-purple-500" />
+                  <span className="text-sm text-muted-foreground">Voice-powered interactions</span>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="text-center hover:shadow-card transition-all duration-300">
+              <CardContent className="p-8">
+                <div className="mb-6 inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-r from-indigo-400 to-indigo-600 shadow-lg">
+                  <Bot className="h-10 w-10 text-white" />
+                </div>
+                <h3 className="text-2xl font-semibold text-foreground mb-4">Aria</h3>
+                <p className="text-muted-foreground mb-4">
+                  Your calm and wise companion who brings peace and wisdom to your studies. 
+                  Aria focuses on deep understanding and thoughtful learning approaches.
+                </p>
+                <div className="flex items-center justify-center gap-2">
+                  <MessageCircle className="h-4 w-4 text-indigo-500" />
+                  <span className="text-sm text-muted-foreground">Thoughtful guidance</span>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Stats Section */}
+      <section className="py-16">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
               Our <span className="text-gradient">Impact</span>
             </h2>
             <p className="text-lg text-muted-foreground">
-              Numbers that showcase our commitment to student success
+              Transforming engineering education with AI-powered learning
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div className="text-center">
               <div className="mb-4 inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10">
-                <Brain className="h-8 w-8 text-primary" />
+                <Bot className="h-8 w-8 text-primary" />
               </div>
-              <div className="text-3xl font-bold text-foreground mb-2">500+</div>
-              <div className="text-muted-foreground">Notes Available</div>
+              <div className="text-3xl font-bold text-foreground mb-2">2</div>
+              <div className="text-muted-foreground">AI Companions</div>
             </div>
 
             <div className="text-center">
@@ -105,25 +156,25 @@ const AboutPage = () => {
 
             <div className="text-center">
               <div className="mb-4 inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10">
-                <Award className="h-8 w-8 text-primary" />
+                <MessageCircle className="h-8 w-8 text-primary" />
               </div>
-              <div className="text-3xl font-bold text-foreground mb-2">50,000+</div>
-              <div className="text-muted-foreground">Downloads</div>
+              <div className="text-3xl font-bold text-foreground mb-2">24/7</div>
+              <div className="text-muted-foreground">AI Support</div>
             </div>
 
             <div className="text-center">
               <div className="mb-4 inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10">
-                <Zap className="h-8 w-8 text-primary" />
+                <Brain className="h-8 w-8 text-primary" />
               </div>
-              <div className="text-3xl font-bold text-foreground mb-2">20+</div>
-              <div className="text-muted-foreground">Universities Covered</div>
+              <div className="text-3xl font-bold text-foreground mb-2">500+</div>
+              <div className="text-muted-foreground">Smart Notes</div>
             </div>
           </div>
         </div>
       </section>
 
       {/* Story Section */}
-      <section className="py-16">
+      <section className="py-16 bg-muted/30">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-8 text-center">
@@ -132,28 +183,29 @@ const AboutPage = () => {
             
             <div className="prose prose-lg mx-auto text-muted-foreground">
               <p className="mb-6">
-                Parple Notes was born from a simple observation: engineering students across India were struggling 
-                to find quality study materials that were both comprehensive and easy to understand. As engineering 
-                students ourselves, we experienced firsthand the challenges of navigating complex concepts with 
-                limited resources.
+                Parple Notes began with a simple observation: engineering students across India were struggling 
+                to find personalized, engaging study experiences. As engineering students ourselves, we knew that 
+                traditional learning methods weren't enough to tackle the complexity of modern engineering education.
               </p>
               
               <p className="mb-6">
-                What started as a small initiative to share notes among friends quickly grew into something much 
-                larger. We realized that there was a massive need for centralized, high-quality educational 
-                resources that could help students not just pass their exams, but truly understand the subjects 
-                they were studying.
+                What started as a platform for sharing notes evolved into something revolutionary when we introduced 
+                AI companions. We realized that students needed more than just static content - they needed interactive, 
+                personalized learning partners who could adapt to their unique learning styles and provide guidance 
+                whenever needed.
               </p>
               
               <p className="mb-6">
-                Today, Parple Notes serves thousands of engineering students across India, providing them with 
-                carefully curated study materials, comprehensive notes, and practical examples that make learning 
-                engineering subjects more accessible and enjoyable.
+                The breakthrough came with Luna and Aria - our AI companions powered by advanced language models and 
+                voice technology. These aren't just chatbots; they're sophisticated learning partners designed to 
+                understand, encourage, and guide students through their engineering journey with empathy and intelligence.
               </p>
               
               <p>
-                Our commitment remains unchanged: to democratize quality engineering education and help every 
-                student reach their full potential, regardless of their background or circumstances.
+                Today, Parple Notes represents the future of engineering education - where AI-powered personalization 
+                meets human-centered design to create learning experiences that are not just effective, but truly 
+                transformative. Our mission continues: to democratize personalized education and help every student 
+                unlock their full potential through the power of AI.
               </p>
             </div>
           </div>

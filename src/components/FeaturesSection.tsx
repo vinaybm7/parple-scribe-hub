@@ -1,36 +1,36 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { Brain, Download, Search, Users, Zap, Shield } from "lucide-react";
+import { Bot, Mic, MessageCircle, BookOpen, Target, BarChart3 } from "lucide-react";
 
 const features = [
   {
-    icon: Brain,
-    title: "Comprehensive Notes",
-    description: "Detailed notes covering all engineering subjects with diagrams and examples"
+    icon: Bot,
+    title: "AI Study Companions",
+    description: "Meet Luna & Aria - your personal AI companions who make learning engaging and fun"
   },
   {
-    icon: Download,
-    title: "Easy Downloads",
-    description: "Download PDF notes instantly with just one click, no registration required"
+    icon: Mic,
+    title: "Voice-Powered Learning",
+    description: "Natural speech interaction with ElevenLabs technology for immersive study sessions"
   },
   {
-    icon: Search,
-    title: "Smart Search",
-    description: "Find exactly what you need with our intelligent search and filtering system"
+    icon: MessageCircle,
+    title: "24/7 Study Support",
+    description: "Get instant help and guidance whenever you need it - your companions never sleep"
   },
   {
-    icon: Users,
-    title: "Student Community",
-    description: "Connect with fellow engineering students and share knowledge"
+    icon: BookOpen,
+    title: "Smart Note Organization",
+    description: "AI-powered content categorization and intelligent study material recommendations"
   },
   {
-    icon: Zap,
-    title: "Regular Updates",
-    description: "Fresh content added regularly to keep up with latest curriculum"
+    icon: Target,
+    title: "Personalized Learning Paths",
+    description: "Companion-guided study plans tailored to your learning style and pace"
   },
   {
-    icon: Shield,
-    title: "Quality Assured",
-    description: "All notes are verified and reviewed by subject matter experts"
+    icon: BarChart3,
+    title: "AI-Powered Analytics",
+    description: "Track your progress with intelligent insights and personalized study recommendations"
   }
 ];
 
@@ -40,12 +40,12 @@ const FeaturesSection = () => {
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-            Everything you need to{" "}
-            <span className="text-gradient">excel in engineering</span>
+            AI-powered learning that{" "}
+            <span className="text-gradient">adapts to you</span>
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            From basic concepts to advanced topics, we've got you covered with 
-            comprehensive study materials and resources.
+            Experience the future of education with AI companions who understand your learning style 
+            and provide personalized guidance every step of the way.
           </p>
         </div>
 

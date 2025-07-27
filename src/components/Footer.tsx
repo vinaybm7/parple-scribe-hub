@@ -7,27 +7,27 @@ const Footer = () => {
       {/* Main Footer Content */}
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          {/* Company */}
+          {/* Platform */}
           <div>
             <h4 className="font-semibold text-white mb-6 text-lg">Platform</h4>
             <div className="space-y-3">
               <Link to="/about" className="block text-white/80 hover:text-white transition-colors">
                 About
               </Link>
+              <Link to="/companion" className="block text-white/80 hover:text-white transition-colors">
+                AI Companions
+              </Link>
+              <Link to="/voice-learning" className="block text-white/80 hover:text-white transition-colors">
+                Voice Learning
+              </Link>
               <Link to="/contact" className="block text-white/80 hover:text-white transition-colors">
                 Support Hub
-              </Link>
-              <Link to="/contributors" className="block text-white/80 hover:text-white transition-colors">
-                Contributors
               </Link>
               <Link to="/feedback" className="block text-white/80 hover:text-white transition-colors">
                 Feedback
               </Link>
               <Link to="/privacy" className="block text-white/80 hover:text-white transition-colors">
                 Privacy Policy
-              </Link>
-              <Link to="/terms" className="block text-white/80 hover:text-white transition-colors">
-                Terms of Service
               </Link>
             </div>
           </div>
@@ -36,45 +36,45 @@ const Footer = () => {
           <div>
             <h4 className="font-semibold text-white mb-6 text-lg">Study Resources</h4>
             <div className="space-y-3">
-              <Link to="/guides/study-tips" className="block text-white/80 hover:text-white transition-colors">
-                Engineering Study Guide
+              <Link to="/guides/ai-study-guide" className="block text-white/80 hover:text-white transition-colors">
+                AI Study Guide
               </Link>
-              <Link to="/guides/students" className="block text-white/80 hover:text-white transition-colors">
-                Notes for Students
+              <Link to="/guides/voice-learning" className="block text-white/80 hover:text-white transition-colors">
+                Voice Learning Tips
               </Link>
-              <Link to="/guides/exam-prep" className="block text-white/80 hover:text-white transition-colors">
-                Exam Preparation
+              <Link to="/guides/companion-tips" className="block text-white/80 hover:text-white transition-colors">
+                Companion Study Tips
               </Link>
-              <Link to="/guides/visual-learning" className="block text-white/80 hover:text-white transition-colors">
-                Visual Learning Tips
+              <Link to="/guides/personal-paths" className="block text-white/80 hover:text-white transition-colors">
+                Personal Learning Paths
               </Link>
               <Link to="/guides/smart-notes" className="block text-white/80 hover:text-white transition-colors">
-                How to take Smart Notes
+                AI-Enhanced Notes
               </Link>
-              <Link to="/guides/definitions" className="block text-white/80 hover:text-white transition-colors">
-                Engineering Definitions
+              <Link to="/guides/exam-prep-ai" className="block text-white/80 hover:text-white transition-colors">
+                Exam Prep with AI
               </Link>
             </div>
           </div>
 
-          {/* Subjects */}
+          {/* AI Features */}
           <div>
-            <h4 className="font-semibold text-white mb-6 text-lg">Engineering Fields</h4>
+            <h4 className="font-semibold text-white mb-6 text-lg">AI Features</h4>
             <div className="space-y-3">
-              <Link to="/subjects/computer-science" className="block text-white/80 hover:text-white transition-colors">
-                Computer Science vs IT
+              <Link to="/companions/luna" className="block text-white/80 hover:text-white transition-colors">
+                Meet Luna
               </Link>
-              <Link to="/subjects/electrical" className="block text-white/80 hover:text-white transition-colors">
-                Electrical vs Electronics
+              <Link to="/companions/aria" className="block text-white/80 hover:text-white transition-colors">
+                Meet Aria
               </Link>
-              <Link to="/subjects/mechanical" className="block text-white/80 hover:text-white transition-colors">
-                Mechanical vs Civil
+              <Link to="/guides/voice-interaction" className="block text-white/80 hover:text-white transition-colors">
+                Voice Interaction Guide
               </Link>
-              <Link to="/subjects/mathematics" className="block text-white/80 hover:text-white transition-colors">
-                Engineering Mathematics
+              <Link to="/guides/ai-techniques" className="block text-white/80 hover:text-white transition-colors">
+                AI Study Techniques
               </Link>
-              <Link to="/alternatives" className="block text-white/80 hover:text-white transition-colors">
-                Study Tool Alternatives
+              <Link to="/guides/learning-analytics" className="block text-white/80 hover:text-white transition-colors">
+                Learning Analytics
               </Link>
             </div>
           </div>
@@ -108,7 +108,7 @@ const Footer = () => {
             
             <div className="text-center md:text-right">
               <p className="text-white/80 text-sm">
-                © 2024 Parple Notes. Made with{" "}
+                © 2024 Parple Notes. AI-powered learning made with{" "}
                 <Heart className="inline h-4 w-4 text-red-400 mx-1" />
                 for engineering students in India
               </p>
