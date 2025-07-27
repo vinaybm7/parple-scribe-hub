@@ -106,9 +106,12 @@ const FileViewerModal = ({ isOpen, onClose, fileUrl, fileName, fileType }: FileV
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-[95vw] w-[95vw] max-h-[95vh] h-[95vh] p-0 flex flex-col" aria-describedby="file-viewer-description">
+      <DialogContent 
+        className="max-w-[95vw] w-[95vw] max-h-[95vh] h-[95vh] p-0 flex flex-col [&>button]:hidden" 
+        aria-describedby="file-viewer-description"
+      >
         {/* Header */}
-        <DialogHeader className="px-6 py-4 border-b bg-background">
+        <DialogHeader className="px-6 py-4 border-b bg-background relative">
           <div className="flex items-center justify-between">
             <DialogTitle className="text-lg font-semibold truncate pr-4">
               {fileName}
@@ -130,7 +133,7 @@ const FileViewerModal = ({ isOpen, onClose, fileUrl, fileName, fileType }: FileV
                 variant="outline"
                 size="sm"
                 onClick={handleDownload}
-                className="hidden sm:flex"
+                className="hidden md:flex"
               >
                 <Download className="h-4 w-4 mr-2" />
                 Download
@@ -139,10 +142,20 @@ const FileViewerModal = ({ isOpen, onClose, fileUrl, fileName, fileType }: FileV
                 variant="outline"
                 size="sm"
                 onClick={handleOpenInNewTab}
-                className="hidden sm:flex"
+                className="hidden md:flex"
               >
                 <ExternalLink className="h-4 w-4 mr-2" />
                 Open in New Tab
+              </Button>
+              {/* Close Button - Always visible */}
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={onClose}
+                className="h-9 w-9 p-0 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20 dark:hover:text-red-400 ml-2 rounded-full transition-colors flex-shrink-0"
+                title="Close"
+              >
+                <X className="h-5 w-5" />
               </Button>
             </div>
           </div>
@@ -213,6 +226,14 @@ const FileViewerModal = ({ isOpen, onClose, fileUrl, fileName, fileType }: FileV
           <Button variant="outline" onClick={handleOpenInNewTab} className="flex-1">
             <ExternalLink className="h-4 w-4 mr-2" />
             Open in New Tab
+          </Button>
+          <Button 
+            onClick={onClose} 
+            variant="outline" 
+            className="flex-1 border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300"
+          >
+            <X className="h-4 w-4 mr-2" />
+            Close
           </Button>
         </div>
       </DialogContent>
