@@ -2,6 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import Breadcrumbs from "@/components/ui/breadcrumbs";
 import { ArrowLeft, BookOpen } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
 
@@ -65,6 +66,17 @@ const SemesterPage = () => {
   const semester = parseInt(semesterId || "1");
   const subjects = subjectData[semester as keyof typeof subjectData] || [];
   const semesterTitle = semesterTitles[semester as keyof typeof semesterTitles] || "Semester";
+  
+  // Determine year based on semester
+  const getYearFromSemester = (sem: number) => {
+    if (sem <= 2) return 1;
+    if (sem <= 4) return 2;
+    if (sem <= 6) return 3;
+    return 4;
+  };
+  
+  const year = getYearFromSemester(semester);
+  const yearTitle = `${year}${year === 1 ? 'st' : year === 2 ? 'nd' : year === 3 ? 'rd' : 'th'} Year`;
 
   return (
     <div className="min-h-screen bg-background">
@@ -73,12 +85,13 @@ const SemesterPage = () => {
       {/* Header Section */}
       <section className="pt-24 pb-8">
         <div className="container mx-auto px-4">
-          <div className="flex items-center mb-6">
-            <Button variant="ghost" size="sm" className="mr-4" onClick={() => window.history.back()}>
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back
-            </Button>
-          </div>
+          <Breadcrumbs 
+            items={[
+              { label: 'Browse Notes', href: '/notes' },
+              { label: yearTitle, href: `/notes/year/${year}` },
+              { label: semesterTitle, current: true }
+            ]} 
+          />
           <h1 className="text-4xl font-bold text-foreground mb-2">{semesterTitle}</h1>
           <p className="text-lg text-muted-foreground">Select a subject to access study materials</p>
         </div>

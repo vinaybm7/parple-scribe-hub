@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import Breadcrumbs from "@/components/ui/breadcrumbs";
 import FileViewerModal from "@/components/FileViewerModal";
 import { ArrowLeft, Download, FileText, Calendar, User, Eye, Star, Search, BookOpen, FileQuestion, Library, ChevronRight } from "lucide-react";
 import { useParams, useNavigate } from "react-router-dom";
@@ -68,6 +69,26 @@ const SubjectPage = () => {
   const navigate = useNavigate();
   const subject = parseInt(subjectId || "1");
   const subjectName = subjectNames[subject as keyof typeof subjectNames] || "Unknown Subject";
+  
+  // Get year and semester for breadcrumbs
+  const getYearAndSemester = (subjectId: number) => {
+    let year, semester;
+    if (subjectId <= 19) {
+      year = 1;
+      semester = 1;
+    } else if (subjectId <= 33) {
+      year = 1;
+      semester = 2;
+    } else {
+      year = Math.ceil((subjectId - 19) / 12) + 1;
+      semester = ((subjectId - 20) % 12 < 6) ? (Math.ceil((subjectId - 19) / 6) * 2 - 1) : (Math.ceil((subjectId - 19) / 6) * 2);
+    }
+    return { year, semester };
+  };
+  
+  const { year, semester } = getYearAndSemester(subject);
+  const yearTitle = `${year}${year === 1 ? 'st' : year === 2 ? 'nd' : year === 3 ? 'rd' : 'th'} Year`;
+  const semesterTitle = `${semester}${semester === 1 ? 'st' : semester === 2 ? 'nd' : semester === 3 ? 'rd' : 'th'} Semester`;
   
   const [searchTerm, setSearchTerm] = useState("");
   const [materials, setMaterials] = useState<{
@@ -310,12 +331,14 @@ const SubjectPage = () => {
       {/* Header Section */}
       <section className="pt-24 pb-8">
         <div className="container mx-auto px-4">
-          <div className="flex items-center mb-6">
-            <Button variant="ghost" size="sm" className="mr-4" onClick={() => window.history.back()}>
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Subjects
-            </Button>
-          </div>
+          <Breadcrumbs 
+            items={[
+              { label: 'Browse Notes', href: '/notes' },
+              { label: yearTitle, href: `/notes/year/${year}` },
+              { label: semesterTitle, href: `/notes/semester/${semester}` },
+              { label: subjectName, current: true }
+            ]} 
+          />
           <h1 className="text-4xl font-bold text-foreground mb-2">{subjectName}</h1>
           <p className="text-lg text-muted-foreground mb-6">Study materials organized by category</p>
           

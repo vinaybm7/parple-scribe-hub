@@ -2,6 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import Breadcrumbs from "@/components/ui/breadcrumbs";
 import { ArrowLeft, BookOpen } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
 
@@ -45,14 +46,12 @@ const YearPage = () => {
       {/* Header Section */}
       <section className="pt-24 pb-8">
         <div className="container mx-auto px-4">
-          <div className="flex items-center mb-6">
-            <Link to="/notes">
-              <Button variant="ghost" size="sm" className="mr-4">
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Back to Years
-              </Button>
-            </Link>
-          </div>
+          <Breadcrumbs 
+            items={[
+              { label: 'Browse Notes', href: '/notes' },
+              { label: yearTitle, current: true }
+            ]} 
+          />
           <h1 className="text-4xl font-bold text-foreground mb-2">{yearTitle}</h1>
           <p className="text-lg text-muted-foreground">Select a semester to browse notes</p>
         </div>

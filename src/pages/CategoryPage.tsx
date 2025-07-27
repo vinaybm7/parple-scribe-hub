@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import Breadcrumbs from "@/components/ui/breadcrumbs";
 import FileViewerModal from "@/components/FileViewerModal";
 import { ArrowLeft, Download, FileText, Eye, Search } from "lucide-react";
 import { listFiles, getFileUrl, getFileMetadataByCategory } from "@/lib/supabase";
@@ -70,6 +71,26 @@ const CategoryPage = () => {
   const subject = parseInt(subjectId || "1");
   const subjectName = subjectNames[subject as keyof typeof subjectNames] || "Unknown Subject";
   const categoryConfig = getCategoryById(category || 'modules');
+  
+  // Get year and semester for breadcrumbs
+  const getYearAndSemester = (subjectId: number) => {
+    let year, semester;
+    if (subjectId <= 19) {
+      year = 1;
+      semester = 1;
+    } else if (subjectId <= 33) {
+      year = 1;
+      semester = 2;
+    } else {
+      year = Math.ceil((subjectId - 19) / 12) + 1;
+      semester = ((subjectId - 20) % 12 < 6) ? (Math.ceil((subjectId - 19) / 6) * 2 - 1) : (Math.ceil((subjectId - 19) / 6) * 2);
+    }
+    return { year, semester };
+  };
+  
+  const { year, semester } = getYearAndSemester(subject);
+  const yearTitle = `${year}${year === 1 ? 'st' : year === 2 ? 'nd' : year === 3 ? 'rd' : 'th'} Year`;
+  const semesterTitle = `${semester}${semester === 1 ? 'st' : semester === 2 ? 'nd' : semester === 3 ? 'rd' : 'th'} Semester`;
   
   const [searchTerm, setSearchTerm] = useState("");
   const [materials, setMaterials] = useState<StudyMaterial[]>([]);
@@ -274,24 +295,15 @@ const CategoryPage = () => {
       {/* Header Section */}
       <section className="pt-24 pb-8">
         <div className="container mx-auto px-4">
-          <div className="flex items-center mb-6">
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              className="mr-4" 
-              onClick={() => navigate(`/notes/subject/${subjectId}`)}
-            >
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Subject
-            </Button>
-          </div>
-          
-          {/* Breadcrumb */}
-          <div className="flex items-center text-sm text-muted-foreground mb-4">
-            <span>{subjectName}</span>
-            <span className="mx-2">/</span>
-            <span className={categoryConfig.color.text}>{categoryConfig.name}</span>
-          </div>
+          <Breadcrumbs 
+            items={[
+              { label: 'Browse Notes', href: '/notes' },
+              { label: yearTitle, href: `/notes/year/${year}` },
+              { label: semesterTitle, href: `/notes/semester/${semester}` },
+              { label: subjectName, href: `/notes/subject/${subjectId}` },
+              { label: categoryConfig?.name || 'Category', current: true }
+            ]} 
+          />
           
           {/* Category Header */}
           <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 mb-6 text-center sm:text-left">

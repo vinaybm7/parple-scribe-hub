@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import Breadcrumbs from "@/components/ui/breadcrumbs";
 import { Search, GraduationCap, BookOpen, FileText, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { getAllFileMetadata } from "@/lib/supabase";
@@ -250,6 +251,11 @@ const NotesPage = () => {
       {/* Search Bar Section */}
       <section className="pt-24 pb-8">
         <div className="container mx-auto px-4">
+          <Breadcrumbs 
+            items={[
+              { label: 'Browse Notes', current: true }
+            ]} 
+          />
           <div className="max-w-2xl mx-auto relative">
             <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
             <Input
