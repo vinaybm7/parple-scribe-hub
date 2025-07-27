@@ -26,9 +26,9 @@ const ChatInterface = ({ isOpen, onClose, context, isEmbedded = false }: ChatInt
 
     const loadLive2DWidget = () => {
       try {
-        // @ts-ignore
+        // @ts-expect-error - L2Dwidget is loaded dynamically
         if (window.L2Dwidget) {
-          // @ts-ignore
+          // @ts-expect-error - L2Dwidget is loaded dynamically
           window.L2Dwidget.init({
             model: {
               jsonPath: 'https://cdn.jsdelivr.net/gh/evrstr/live2d-widget-models/live2d_evrstr/tia/model.json',

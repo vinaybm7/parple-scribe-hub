@@ -352,7 +352,7 @@ Bella:`;
       }
 
       // Remove excessive emojis if present
-      text = text.replace(/([😘💋🔥💕😍🌹✨💙💫🌟💪📚🎉🚀⭐🌈💎🏆])\1+/g, '$1');
+      text = text.replace(/([😘💋🔥💕😍🌹✨💙💫🌟💪📚🎉🚀⭐🌈💎🏆])\1+/gu, '$1');
       
       // Remove repetitive greetings and phrases
       const repetitivePatterns = [

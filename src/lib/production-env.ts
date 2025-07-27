@@ -20,7 +20,7 @@ export const PRODUCTION_ENV_VARS = {
 };
 
 // Track failed API keys to avoid retrying them
-let failedApiKeys = new Set<string>();
+const failedApiKeys = new Set<string>();
 
 // Get the next available API key from the pool
 export const getAvailableElevenLabsApiKey = (): string => {

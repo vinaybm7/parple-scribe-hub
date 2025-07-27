@@ -19,9 +19,9 @@ const loadLive2DWidget = () => {
     script.src = 'https://cdn.jsdelivr.net/npm/live2d-widget@3.1.4/lib/L2Dwidget.min.js';
     script.onload = () => {
       try {
-        // @ts-ignore
+        // @ts-expect-error - L2Dwidget is loaded dynamically
         if (window.L2Dwidget) {
-          // @ts-ignore - L2Dwidget is loaded dynamically
+          // @ts-expect-error - L2Dwidget is loaded dynamically
           window.L2Dwidget.init({
             model: {
               jsonPath: 'https://cdn.jsdelivr.net/gh/evrstr/live2d-widget-models/live2d_evrstr/rfb_1601/model.json',
