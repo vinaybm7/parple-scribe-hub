@@ -11,6 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Upload, FileText, Trash2, Download, Eye, AlertCircle, CheckCircle, X } from "lucide-react";
+import ElevenLabsKeyManager from "@/components/admin/ElevenLabsKeyManager";
 import { supabase, uploadFile, getFileUrl, listFiles, deleteFile, isAdmin, saveFileMetadata, getAllFileMetadata, deleteFileMetadata, FileMetadata } from "@/lib/supabase";
 import { CATEGORIES, getCategoryOptions } from "@/lib/categories";
 import { showSuccessToast, showErrorToast, showLoadingToast } from "@/lib/toast";
@@ -410,9 +411,10 @@ const AdminDashboard = () => {
         )}
 
         <Tabs defaultValue="upload" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="upload">Upload Files</TabsTrigger>
             <TabsTrigger value="manage">Manage Files</TabsTrigger>
+            <TabsTrigger value="elevenlabs">ElevenLabs Keys</TabsTrigger>
           </TabsList>
 
           <TabsContent value="upload">
@@ -812,6 +814,10 @@ const AdminDashboard = () => {
                 )}
               </CardContent>
             </Card>
+          </TabsContent>
+
+          <TabsContent value="elevenlabs">
+            <ElevenLabsKeyManager />
           </TabsContent>
         </Tabs>
       </div>

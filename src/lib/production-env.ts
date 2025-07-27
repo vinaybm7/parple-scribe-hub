@@ -1,8 +1,16 @@
+// ElevenLabs API Key Pool - Add new keys here when credits run out
+// The system will automatically try keys in order until one works
+export const ELEVENLABS_API_KEY_POOL = [
+  'sk_98ab9d165671e69015cfa701a96547907ad3394f406cd6ee', // Current key
+  // Add new API keys here when you get them:
+  // 'sk_new_key_here_when_credits_run_out',
+  // 'sk_another_backup_key_here',
+];
+
 // Production environment configuration
 // This ensures ElevenLabs works in production even if Vercel env vars fail
-
 export const PRODUCTION_ENV_VARS = {
-  VITE_ELEVENLABS_API_KEY: 'sk_98ab9d165671e69015cfa701a96547907ad3394f406cd6ee',
+  VITE_ELEVENLABS_API_KEY: ELEVENLABS_API_KEY_POOL[0], // Uses first available key
   VITE_ELEVENLABS_LUNA_VOICE_ID: 'BpjGufoPiobT79j2vtj4',
   VITE_ELEVENLABS_ARIA_VOICE_ID: 'jqcCZkN6Knx8BJ5TBdYR',
   VITE_ELEVENLABS_BELLA_VOICE_ID: 'eVItLK1UvXctxuaRV2Oq',
@@ -11,8 +19,49 @@ export const PRODUCTION_ENV_VARS = {
   VITE_GEMINI_API_KEY: 'AIzaSyCP8LBstvGY97T6aGKwedOmJTIgK1zp9qg'
 };
 
+// Track failed API keys to avoid retrying them
+let failedApiKeys = new Set<string>();
+
+// Get the next available API key from the pool
+export const getAvailableElevenLabsApiKey = (): string => {
+  // First try environment variable
+  const envKey = import.meta.env.VITE_ELEVENLABS_API_KEY;
+  if (typeof envKey === 'string' && envKey.length > 0 && !failedApiKeys.has(envKey)) {
+    console.log('✅ Using ElevenLabs API key from environment');
+    return envKey.trim();
+  }
+  
+  // Try keys from the pool
+  for (const apiKey of ELEVENLABS_API_KEY_POOL) {
+    if (!failedApiKeys.has(apiKey)) {
+      console.log(`🔧 Using ElevenLabs API key from pool (${apiKey.substring(0, 10)}...)`);
+      return apiKey;
+    }
+  }
+  
+  console.error('❌ All ElevenLabs API keys have failed or run out of credits');
+  return ELEVENLABS_API_KEY_POOL[0]; // Return first key as last resort
+};
+
+// Mark an API key as failed (out of credits or invalid)
+export const markApiKeyAsFailed = (apiKey: string, reason: string = 'Unknown error') => {
+  failedApiKeys.add(apiKey);
+  console.warn(`⚠️ Marked ElevenLabs API key as failed: ${apiKey.substring(0, 10)}... (${reason})`);
+  
+  // If all keys are failed, reset the failed set (maybe credits were refilled)
+  if (failedApiKeys.size >= ELEVENLABS_API_KEY_POOL.length) {
+    console.log('🔄 All API keys failed, resetting failed keys list (maybe credits were refilled)');
+    failedApiKeys.clear();
+  }
+};
+
 // Get environment variable with production fallback
 export const getProductionEnvVar = (key: string, fallback: string = ''): string => {
+  // Special handling for ElevenLabs API key
+  if (key === 'VITE_ELEVENLABS_API_KEY') {
+    return getAvailableElevenLabsApiKey();
+  }
+  
   // First try import.meta.env
   const envValue = import.meta.env[key];
   

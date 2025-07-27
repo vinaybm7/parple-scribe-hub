@@ -1,5 +1,5 @@
 import { initializeElevenLabs } from './elevenlabs';
-import { getProductionEnvVar } from './production-env';
+import { getProductionEnvVar, markApiKeyAsFailed, getAvailableElevenLabsApiKey } from './production-env';
 
 // Debug environment loading (always show in console for production debugging)
 console.log('🔍 ElevenLabs environment variables status:', {
@@ -39,30 +39,22 @@ export const getVoiceIdForAvatar = (avatarId: string): string => {
   return voiceIds[avatarId as keyof typeof voiceIds] || voiceIds.luna;
 };
 
-// Initialize ElevenLabs service for a specific avatar
-export const initializeElevenLabsForAvatar = (avatarId: string) => {
+// Initialize ElevenLabs service for a specific avatar with automatic API key rotation
+export const initializeElevenLabsForAvatar = (avatarId: string, retryCount: number = 0) => {
   try {
-    // Re-read environment variables in case they weren't loaded initially
-    const apiKey = getProductionEnvVar('VITE_ELEVENLABS_API_KEY');
+    // Get the next available API key
+    const apiKey = getAvailableElevenLabsApiKey();
     const voiceId = getVoiceIdForAvatar(avatarId);
 
     // Always log initialization attempts for debugging
-    console.log(`🔊 Initializing ElevenLabs for avatar: ${avatarId}`);
-    console.log(`🔊 API Key status: ${apiKey ? `Present (${apiKey.length} chars)` : 'MISSING'}`);
+    console.log(`🔊 Initializing ElevenLabs for avatar: ${avatarId} (attempt ${retryCount + 1})`);
+    console.log(`🔊 API Key status: ${apiKey ? `Present (${apiKey.substring(0, 10)}...)` : 'MISSING'}`);
     console.log(`🔊 Voice ID to be used: ${voiceId}`);
     console.log(`🔊 Environment mode: ${import.meta.env.MODE}`);
     
     if (!apiKey || apiKey.length === 0) {
       const errorMsg = 'ElevenLabs API key is not configured';
       console.error(`❌ ${errorMsg}`);
-      console.error(`❌ Environment debug:`, {
-        raw: import.meta.env.VITE_ELEVENLABS_API_KEY,
-        processed: apiKey,
-        type: typeof import.meta.env.VITE_ELEVENLABS_API_KEY,
-        environment: import.meta.env.MODE,
-        allEnvKeys: Object.keys(import.meta.env).filter(key => key.startsWith('VITE_')),
-        allEnvVars: import.meta.env
-      });
       throw new Error(errorMsg);
     }
 
@@ -94,6 +86,20 @@ export const initializeElevenLabsForAvatar = (avatarId: string) => {
     
   } catch (error) {
     console.error('❌ Failed to initialize ElevenLabs:', error);
+    
+    // If this was an API key related error and we haven't retried too many times
+    if (retryCount < 3 && error instanceof Error) {
+      const apiKey = getAvailableElevenLabsApiKey();
+      
+      // Mark the current API key as failed if it looks like a quota/auth error
+      if (error.message.includes('quota') || error.message.includes('credits') || 
+          error.message.includes('unauthorized') || error.message.includes('401')) {
+        markApiKeyAsFailed(apiKey, error.message);
+        console.log(`🔄 Retrying with next available API key...`);
+        return initializeElevenLabsForAvatar(avatarId, retryCount + 1);
+      }
+    }
+    
     // Don't throw here, let the caller handle the null return
     return null;
   }
