@@ -1,6 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Calculator, Atom, Code, Zap, Cog, Cpu } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const subjects = [
   {
@@ -93,10 +94,12 @@ const SubjectsSection = () => {
         </div>
 
         <div className="text-center">
-          <Button variant="outline" size="lg" className="border-primary/20 hover:bg-primary/5">
-            View All Subjects
-            <ArrowRight className="ml-2 h-4 w-4" />
-          </Button>
+          <Link to="/notes">
+            <Button variant="outline" size="lg" className="border-primary/20 hover:bg-primary/5">
+              View All Subjects
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </Link>
         </div>
       </div>
     </section>
