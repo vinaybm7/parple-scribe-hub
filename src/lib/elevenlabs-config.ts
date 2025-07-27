@@ -1,37 +1,39 @@
 import { initializeElevenLabs } from './elevenlabs';
 
-// ElevenLabs configuration - Using environment variables
+// Debug environment loading (development only)
+if (import.meta.env.DEV) {
+  console.log('🔍 ElevenLabs environment variables loaded:', {
+    VITE_ELEVENLABS_API_KEY: import.meta.env.VITE_ELEVENLABS_API_KEY ? '✅ Set' : '❌ Missing',
+    VITE_ELEVENLABS_LUNA_VOICE_ID: import.meta.env.VITE_ELEVENLABS_LUNA_VOICE_ID ? '✅ Set' : '❌ Missing',
+    VITE_ELEVENLABS_ARIA_VOICE_ID: import.meta.env.VITE_ELEVENLABS_ARIA_VOICE_ID ? '✅ Set' : '❌ Missing'
+  });
+}
+
+// Get environment variables with fallbacks and trimming
+const getEnvVar = (key: string, fallback: string = ''): string => {
+  const value = import.meta.env[key];
+  if (typeof value === 'string') {
+    return value.trim();
+  }
+  return fallback;
+};
+
+// ElevenLabs configuration - Using environment variables with proper handling
 const ELEVENLABS_CONFIG = {
-  apiKey: import.meta.env.VITE_ELEVENLABS_API_KEY || '',
+  apiKey: getEnvVar('VITE_ELEVENLABS_API_KEY'),
   voiceIds: {
-    luna: import.meta.env.VITE_ELEVENLABS_LUNA_VOICE_ID || 'BpjGufoPiobT79j2vtj4',
-    aria: import.meta.env.VITE_ELEVENLABS_ARIA_VOICE_ID || 'jqcCZkN6Knx8BJ5TBdYR'
+    luna: getEnvVar('VITE_ELEVENLABS_LUNA_VOICE_ID', 'BpjGufoPiobT79j2vtj4'),
+    aria: getEnvVar('VITE_ELEVENLABS_ARIA_VOICE_ID', 'jqcCZkN6Knx8BJ5TBdYR')
   }
 };
 
-// Verify the API key and voice IDs
-console.log('=== ElevenLabs Configuration ===');
-console.log('Using API Key:', ELEVENLABS_CONFIG.apiKey ? '*** (set)' : 'NOT SET');
-console.log('Luna Voice ID:', ELEVENLABS_CONFIG.voiceIds.luna);
-console.log('Aria Voice ID:', ELEVENLABS_CONFIG.voiceIds.aria);
-
-// Debug logging with more details
-console.log('=== ElevenLabs Config Debug ===');
-console.log('Environment Variables:', {
-  VITE_ELEVENLABS_API_KEY: import.meta.env.VITE_ELEVENLABS_API_KEY ? '*** (set)' : 'NOT SET',
-  VITE_ELEVENLABS_LUNA_VOICE_ID: import.meta.env.VITE_ELEVENLABS_LUNA_VOICE_ID ? '*** (set)' : 'NOT SET',
-  VITE_ELEVENLABS_ARIA_VOICE_ID: import.meta.env.VITE_ELEVENLABS_ARIA_VOICE_ID ? '*** (set)' : 'NOT SET'
-});
-
-console.log('ElevenLabs Config:', {
-  hasApiKey: !!ELEVENLABS_CONFIG.apiKey,
-  apiKeyStartsWith: ELEVENLABS_CONFIG.apiKey ? ELEVENLABS_CONFIG.apiKey.substring(0, 10) + '...' : 'N/A',
-  apiKeyLength: ELEVENLABS_CONFIG.apiKey ? ELEVENLABS_CONFIG.apiKey.length : 0,
-  voiceIds: {
-    luna: !!ELEVENLABS_CONFIG.voiceIds.luna,
-    aria: !!ELEVENLABS_CONFIG.voiceIds.aria
-  }
-});
+// Verify the API key and voice IDs (development only)
+if (import.meta.env.DEV) {
+  console.log('=== ElevenLabs Configuration ===');
+  console.log('Using API Key:', ELEVENLABS_CONFIG.apiKey ? '✅ Configured' : '❌ Missing');
+  console.log('Luna Voice ID:', ELEVENLABS_CONFIG.voiceIds.luna ? '✅ Set' : '❌ Missing');
+  console.log('Aria Voice ID:', ELEVENLABS_CONFIG.voiceIds.aria ? '✅ Set' : '❌ Missing');
+}
 
 // Voice ID mapping for each avatar
 export const getVoiceIdForAvatar = (avatarId: string): string => {
@@ -46,15 +48,26 @@ export const getVoiceIdForAvatar = (avatarId: string): string => {
 // Initialize ElevenLabs service for a specific avatar
 export const initializeElevenLabsForAvatar = (avatarId: string) => {
   try {
-    const apiKey = ELEVENLABS_CONFIG.apiKey;
+    // Re-read environment variables in case they weren't loaded initially
+    const apiKey = getEnvVar('VITE_ELEVENLABS_API_KEY');
     const voiceId = getVoiceIdForAvatar(avatarId);
 
-    console.log(`🔊 Initializing ElevenLabs for avatar: ${avatarId}`);
-    console.log(`🔊 Voice ID to be used: ${voiceId}`);
+    if (import.meta.env.DEV) {
+      console.log(`🔊 Initializing ElevenLabs for avatar: ${avatarId}`);
+      console.log(`🔊 API Key status: ${apiKey ? `Present (${apiKey.length} chars)` : 'MISSING'}`);
+      console.log(`🔊 Voice ID to be used: ${voiceId}`);
+    }
     
-    if (!apiKey) {
+    if (!apiKey || apiKey.length === 0) {
       const errorMsg = 'ElevenLabs API key is not configured';
       console.error(`❌ ${errorMsg}`);
+      if (import.meta.env.DEV) {
+        console.error(`❌ Environment check:`, {
+          raw: import.meta.env.VITE_ELEVENLABS_API_KEY,
+          processed: apiKey,
+          type: typeof import.meta.env.VITE_ELEVENLABS_API_KEY
+        });
+      }
       throw new Error(errorMsg);
     }
 
@@ -71,7 +84,9 @@ export const initializeElevenLabsForAvatar = (avatarId: string) => {
       throw new Error(errorMsg);
     }
 
-    console.log('🔊 Creating ElevenLabs service instance...');
+    if (import.meta.env.DEV) {
+      console.log('🔊 Creating ElevenLabs service instance...');
+    }
     const service = initializeElevenLabs(apiKey, voiceId);
     
     // Verify the service was created successfully
@@ -81,7 +96,9 @@ export const initializeElevenLabsForAvatar = (avatarId: string) => {
       throw new Error(errorMsg);
     }
 
-    console.log('✅ ElevenLabs service initialized successfully');
+    if (import.meta.env.DEV) {
+      console.log('✅ ElevenLabs service initialized successfully');
+    }
     return service;
     
   } catch (error) {
