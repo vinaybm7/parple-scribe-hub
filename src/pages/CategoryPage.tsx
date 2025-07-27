@@ -78,7 +78,7 @@ const CategoryPage = () => {
     if (subjectId <= 19) {
       year = 1;
       semester = 1;
-    } else if (subjectId <= 33) {
+    } else if (subjectId <= 34) {
       year = 1;
       semester = 2;
     } else {
@@ -113,7 +113,7 @@ const CategoryPage = () => {
       if (subject <= 19) {
         year = 1;
         semester = 1;
-      } else if (subject <= 33) {
+      } else if (subject <= 34) {
         year = 1;
         semester = 2;
       } else {
@@ -163,11 +163,11 @@ const CategoryPage = () => {
     if (subject <= 19) {
       year = 1;
       semester = 1; // Subjects 1-19 are 1st semester
-    } else if (subject <= 33) {
+    } else if (subject <= 34) {
       year = 1;
-      semester = 2; // Subjects 20-33 are 2nd semester
+      semester = 2; // Subjects 20-34 are 2nd semester
     } else {
-      // For future subjects beyond 33
+      // For future subjects beyond 34
       year = Math.ceil((subject - 19) / 12) + 1;
       semester = ((subject - 20) % 12 < 6) ? (Math.ceil((subject - 19) / 6) * 2 - 1) : (Math.ceil((subject - 19) / 6) * 2);
     }

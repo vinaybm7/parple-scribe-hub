@@ -76,7 +76,7 @@ const SubjectPage = () => {
     if (subjectId <= 19) {
       year = 1;
       semester = 1;
-    } else if (subjectId <= 33) {
+    } else if (subjectId <= 34) {
       year = 1;
       semester = 2;
     } else {
@@ -114,7 +114,7 @@ const SubjectPage = () => {
       if (subject <= 19) {
         year = 1;
         semester = 1;
-      } else if (subject <= 33) {
+      } else if (subject <= 34) {
         year = 1;
         semester = 2;
       } else {
