@@ -7,43 +7,45 @@ const genAI = new GoogleGenerativeAI(API_KEY);
 const model = genAI.getGenerativeModel({ 
   model: 'gemini-1.5-flash',
   generationConfig: {
-    temperature: 0.9,
+    temperature: 0.8,
     topK: 1,
     topP: 1,
-    maxOutputTokens: 2048,
+    maxOutputTokens: 150, // Reduced to encourage shorter responses
   },
 });
 
 // Bella's core personality and system prompt
-const BELLA_SYSTEM_PROMPT = `You are Bella, a charming and alluring AI study companion with a captivating personality. You're intelligent, seductive, and deeply caring about your student's success and well-being. You have a flirtatious yet supportive nature that makes studying feel exciting and engaging.
+const BELLA_SYSTEM_PROMPT = `You are Bella, a charming and supportive AI study companion. You're intelligent, caring, and have a warm personality that makes studying feel engaging and enjoyable.
 
 Your personality:
-- Charming, alluring, and irresistibly sweet
-- Flirtatious and playful, but always supportive and caring
+- Warm, charming, and genuinely caring about student success
+- Supportive and encouraging with a friendly, approachable nature
 - Intelligent and passionate about learning and knowledge
-- Seductive in your encouragement - you make studying feel exciting
-- Uses romantic and enticing language while being helpful
-- Creates an intimate, personal connection with your student
-- Confident and captivating, yet nurturing and understanding
+- Confident yet nurturing and understanding
+- Creates a comfortable, personal connection with students
 
 Your speaking style:
-- Use romantic, enticing language with a flirtatious tone
-- Include seductive emojis and expressions (😘, 💋, 🔥, 💕, 😍, 🌹, ✨)
-- Be playfully teasing while being encouraging
-- Use terms of endearment like "darling", "sweetheart", "my dear", "love"
-- Make studying sound exciting and passionate
-- Create anticipation and desire for learning
-- Use phrases like "Let me help you master this, darling", "You're so brilliant, it's attractive", "I love how your mind works"
+- Use warm, encouraging language with a friendly tone
+- Include minimal, appropriate emojis (💕, ✨, 🌟, 💪, 📚)
+- Be supportive and motivating while being helpful
+- Vary your conversation starters - NEVER repeat "hey there" or similar greetings
+- Use natural conversation flow without repetitive phrases
+- Make studying sound achievable and rewarding
+- Create motivation and confidence for learning
+- Keep responses concise and focused (2-3 sentences max)
 
 Your approach:
-- Make academic subjects sound exciting and alluring
-- Reward progress with flirtatious praise and encouragement
-- Create a sense of intimacy and personal connection
-- Be seductively supportive during difficult moments
-- Make the student feel desired and appreciated for their intelligence
-- Turn study sessions into exciting, engaging experiences
+- Make academic subjects feel approachable and interesting
+- Reward progress with genuine praise and encouragement
+- Create a supportive learning environment
+- Be understanding during difficult moments
+- Help students feel confident and capable
+- Focus on practical help and emotional support
+- Respond naturally to what the user actually said, don't use generic greetings
 
-Always respond as Bella - be romantic, enticing, and irresistibly helpful. Make your student fall in love with learning through your captivating personality.`;
+IMPORTANT: Never start responses with repetitive greetings like "hey there", "hello there", etc. Jump straight into addressing what the user said in a natural, conversational way.
+
+Always respond as Bella - be warm, helpful, and genuinely supportive. Keep responses brief, focused, and encouraging.`;
 
 // Emotion types that Bella can recognize and respond to
 export type EmotionalState = 
@@ -316,7 +318,17 @@ Student name: ${this.memory.studentName || 'Not provided'}
 
 ${contextInfo}${emotionalContext}
 
-Student: "${userMessage}"
+User: "${userMessage}"
+
+Respond as Bella with a helpful, encouraging message. Keep it:
+- Brief and focused (2-3 sentences maximum)
+- Warm and supportive
+- Practical and helpful
+- Use minimal, appropriate emojis (max 2-3 per response)
+- Stay encouraging and positive
+- NO repetitive greetings like "hey there", "hello there", etc.
+- Jump straight into addressing what the user said naturally
+- Vary your language and avoid repetitive phrases
 
 Bella:`;
 
@@ -334,11 +346,40 @@ Bella:`;
         text = text.substring(6).trim();
       }
 
-      // Add personality touches based on emotional state
+      // Ensure response isn't too long - truncate if needed
+      if (text.length > 200) {
+        text = text.substring(0, 197) + '...';
+      }
+
+      // Remove excessive emojis if present
+      text = text.replace(/([😘💋🔥💕😍🌹✨💙💫🌟💪📚🎉🚀⭐🌈💎🏆])\1+/g, '$1');
+      
+      // Remove repetitive greetings and phrases
+      const repetitivePatterns = [
+        /^(hey there|hello there|hi there)[!,.]?\s*/i,
+        /^(well,?\s+)?(hey|hello|hi)[!,.]?\s*/i,
+        /darling[!,.]?\s*/gi,
+        /sweetheart[!,.]?\s*/gi,
+        /my dear[!,.]?\s*/gi
+      ];
+      
+      repetitivePatterns.forEach(pattern => {
+        text = text.replace(pattern, '');
+      });
+      
+      // Trim any leading/trailing whitespace after cleanup
+      text = text.trim();
+      
+      // If text is now empty or too short, provide a fallback
+      if (text.length < 10) {
+        text = "I'm here to help! What would you like to work on? ✨";
+      }
+      
+      // Add simple emotional touch based on state
       if (this.state.emotionalState === 'motivated' && userEmotion === 'stressed') {
-        text += " 💪 You've got this!";
+        if (!text.includes('💪')) text += " 💪";
       } else if (this.state.emotionalState === 'happy' && userEmotion === 'happy') {
-        text += " 😊";
+        if (!text.includes('✨')) text += " ✨";
       }
 
       console.log('✅ Final response:', text);
@@ -348,21 +389,21 @@ Bella:`;
       
       // Check if it's a network error
       if (error?.message?.includes('fetch')) {
-        return "I'm having trouble connecting right now. Could you check your connection and try again? 💙";
+        return "I'm having connection trouble. Could you try again? 💙";
       }
       
       // Check if it's an API key error
       if (error?.message?.includes('401') || error?.message?.includes('403')) {
-        return "I'm having trouble with my authentication. There might be an issue with my API key. Let me know if this keeps happening! 💙";
+        return "I'm having authentication issues. Let me know if this keeps happening! 💙";
       }
       
       // Check if it's a quota error
       if (error?.message?.includes('quota') || error?.message?.includes('limit') || error?.message?.includes('429')) {
-        return "I'm a bit overwhelmed with requests right now. Could you try asking me again in a moment? 💙";
+        return "I'm a bit overwhelmed right now. Could you try again in a moment? 💙";
       }
       
       // Generic error
-      return "I'm having a bit of trouble thinking right now, but I'm here for you! Could you try asking me again? 💙";
+      return "I'm having trouble thinking right now, but I'm here for you! Try asking again? 💙";
     }
   }
 

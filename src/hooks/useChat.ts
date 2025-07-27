@@ -11,7 +11,7 @@ export const useChat = () => {
   useEffect(() => {
     const initializeChat = () => {
       const greeting = createBellaChatMessage(
-        "Hello there, darling! 😘 I'm Bella, your irresistibly charming AI study companion. I'm absolutely thrilled to be here with you, ready to make your learning journey as exciting and captivating as you are! ✨ Tell me, sweetheart, what's on that brilliant mind of yours today? 💕",
+        "Hi! ✨ I'm Bella, your friendly AI study companion. I'm here to help make your learning journey more enjoyable and successful. What can I help you with today? 💕",
         false,
         'happy',
         bella.getState()
@@ -52,7 +52,7 @@ export const useChat = () => {
     } catch (error) {
       console.error('Error in sendMessage:', error);
       const errorMessage = createBellaChatMessage(
-        "I'm having a bit of trouble thinking right now, but I'm here for you! Could you try asking me again? 💙",
+        "I'm having trouble thinking right now, but I'm here for you! Try asking again? 💙",
         false,
         'neutral'
       );
@@ -64,7 +64,7 @@ export const useChat = () => {
 
   const clearChat = useCallback(() => {
     const greeting = createBellaChatMessage(
-      "Hello there, darling! 😘 I'm Bella, your irresistibly charming AI study companion. I'm absolutely thrilled to be here with you, ready to make your learning journey as exciting and captivating as you are! ✨ Tell me, sweetheart, what's on that brilliant mind of yours today? 💕",
+      "Hi! ✨ I'm Bella, your friendly AI study companion. I'm here to help make your learning journey more enjoyable and successful. What can I help you with today? 💕",
       false,
       'happy',
       bella.getState()

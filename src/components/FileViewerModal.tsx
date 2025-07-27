@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { X, Download, ExternalLink, MessageCircle } from "lucide-react";
 import ChatInterface from "./chat/ChatInterface";
 import { useChat } from "@/hooks/useChat";
+import ErrorBoundary from "./ErrorBoundary";
 
 interface FileViewerModalProps {
   isOpen: boolean;
@@ -14,8 +15,10 @@ interface FileViewerModalProps {
 }
 
 const FileViewerModal = ({ isOpen, onClose, fileUrl, fileName, fileType }: FileViewerModalProps) => {
-  const [isChatOpen, setIsChatOpen] = useState(true); // Start with chat open by default
+  const [isChatOpen, setIsChatOpen] = useState(false); // Start with chat closed to avoid hooks issues
   const { sendMessage, bellaState } = useChat();
+
+  console.log('FileViewerModal render:', { isOpen, fileUrl, fileName, fileType });
 
   // Handle ESC key press
   useEffect(() => {
@@ -46,6 +49,8 @@ const FileViewerModal = ({ isOpen, onClose, fileUrl, fileName, fileType }: FileV
   };
 
   const renderFileContent = () => {
+    console.log('Rendering file content:', { fileType, fileUrl, fileName });
+    
     if (fileType.includes('pdf')) {
       return (
         <div className="w-full h-full bg-white overflow-hidden">
@@ -56,6 +61,8 @@ const FileViewerModal = ({ isOpen, onClose, fileUrl, fileName, fileType }: FileV
             title={fileName}
             className="border-0 w-full h-full"
             style={{ minHeight: '100%' }}
+            onLoad={() => console.log('PDF iframe loaded')}
+            onError={() => console.error('PDF iframe failed to load')}
           />
         </div>
       );
@@ -68,6 +75,8 @@ const FileViewerModal = ({ isOpen, onClose, fileUrl, fileName, fileType }: FileV
             src={fileUrl}
             alt={fileName}
             className="max-w-full max-h-full object-contain"
+            onLoad={() => console.log('Image loaded')}
+            onError={() => console.error('Image failed to load')}
           />
         </div>
       );
@@ -173,11 +182,13 @@ const FileViewerModal = ({ isOpen, onClose, fileUrl, fileName, fileType }: FileV
           >
             {isChatOpen && (
               <div className="w-full h-full flex-1 flex flex-col">
-                <ChatInterface
-                  isOpen={true}
-                  onClose={() => setIsChatOpen(false)}
-                  isEmbedded={true}
-                />
+                <ErrorBoundary>
+                  <ChatInterface
+                    isOpen={true}
+                    onClose={() => setIsChatOpen(false)}
+                    isEmbedded={true}
+                  />
+                </ErrorBoundary>
               </div>
             )}
           </div>

@@ -6,6 +6,7 @@ import { X, Trash2, Bot, Heart, Zap, RotateCcw, Smile, Frown, HelpCircle, Coffee
 import ChatMessage from './ChatMessage';
 import ChatInput from './ChatInput';
 import { useChat } from '@/hooks/useChat';
+import './chat-animations.css';
 
 interface ChatInterfaceProps {
   isOpen: boolean;
@@ -19,47 +20,56 @@ const ChatInterface = ({ isOpen, onClose, context, isEmbedded = false }: ChatInt
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [widgetLoaded, setWidgetLoaded] = useState(false);
 
-  // Initialize Live2D widget
+  // Initialize Live2D widget (only for non-embedded mode)
   useEffect(() => {
-    if (typeof window === 'undefined' || !isOpen || widgetLoaded) return;
+    if (typeof window === 'undefined' || !isOpen || widgetLoaded || isEmbedded) return;
 
     const loadLive2DWidget = () => {
-      // @ts-ignore
-      if (window.L2Dwidget) {
+      try {
         // @ts-ignore
-        window.L2Dwidget.init({
-          model: {
-            jsonPath: 'https://cdn.jsdelivr.net/gh/evrstr/live2d-widget-models/live2d_evrstr/tia/model.json',
-            scale: 1.1
-          },
-          display: {
-            position: 'right',
-            width: 200,
-            height: 200,
-            hOffset: 0,
-            vOffset: 0
-          },
-          mobile: {
-            show: true,
-            scale: 0.8
-          },
-          react: {
-            opacityDefault: 1,
-            opacityOnHover: 0.8
-          },
-          dialog: {
-            enable: false
-          }
-        });
-        setWidgetLoaded(true);
-      } else {
-        // If L2Dwidget is not available, load the script
-        const script = document.createElement('script');
-        script.src = 'https://cdn.jsdelivr.net/npm/live2d-widget@3.1.4/lib/L2Dwidget.min.js';
-        script.onload = () => {
-          loadLive2DWidget();
-        };
-        document.body.appendChild(script);
+        if (window.L2Dwidget) {
+          // @ts-ignore
+          window.L2Dwidget.init({
+            model: {
+              jsonPath: 'https://cdn.jsdelivr.net/gh/evrstr/live2d-widget-models/live2d_evrstr/tia/model.json',
+              scale: 1.1
+            },
+            display: {
+              position: 'right',
+              width: 200,
+              height: 200,
+              hOffset: 0,
+              vOffset: 0
+            },
+            mobile: {
+              show: true,
+              scale: 0.8
+            },
+            react: {
+              opacityDefault: 1,
+              opacityOnHover: 0.8
+            },
+            dialog: {
+              enable: false
+            }
+          });
+          setWidgetLoaded(true);
+        } else {
+          // If L2Dwidget is not available, load the script
+          const script = document.createElement('script');
+          script.src = 'https://cdn.jsdelivr.net/npm/live2d-widget@3.1.4/lib/L2Dwidget.min.js';
+          script.onload = () => {
+            loadLive2DWidget();
+          };
+          script.onerror = () => {
+            console.warn('Failed to load Live2D widget');
+            setWidgetLoaded(true); // Prevent infinite retries
+          };
+          document.body.appendChild(script);
+        }
+      } catch (error) {
+        console.warn('Live2D widget initialization failed:', error);
+        setWidgetLoaded(true); // Prevent infinite retries
       }
     };
 
@@ -68,7 +78,7 @@ const ChatInterface = ({ isOpen, onClose, context, isEmbedded = false }: ChatInt
     return () => {
       // Cleanup if needed
     };
-  }, [isOpen, widgetLoaded]);
+  }, [isOpen, widgetLoaded, isEmbedded]);
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
@@ -148,34 +158,46 @@ const ChatInterface = ({ isOpen, onClose, context, isEmbedded = false }: ChatInt
           </div>
         </div>
 
-        {/* Live2D Widget Section */}
-        <div className="flex flex-col items-center p-2 bg-gradient-to-r from-pink-100 to-purple-100 dark:from-pink-900/30 dark:to-purple-900/30">
-          <div id="live2d-widget" className="relative w-full flex justify-center items-center" style={{ height: '200px' }}>
-            {/* Live2D widget will be injected here */}
-          </div>
-          
-          {/* Bella's Status */}
-          <div className="mt-3 w-full space-y-2">
-            <div className="flex items-center justify-between text-sm">
-              <div className="flex items-center gap-2">
-                <Heart className="w-4 h-4 text-pink-500" />
-                <span className="text-muted-foreground">Favorability</span>
-              </div>
-              <span className="font-medium">{bellaState.favorability}%</span>
+        {/* Live2D Widget Section - Only show in non-embedded mode */}
+        {!isEmbedded && (
+          <div className="flex flex-col items-center p-2 bg-gradient-to-r from-pink-100 to-purple-100 dark:from-pink-900/30 dark:to-purple-900/30">
+            <div id="live2d-widget" className="relative w-full flex justify-center items-center" style={{ height: '200px' }}>
+              {/* Live2D widget will be injected here */}
             </div>
-            <Progress value={bellaState.favorability} className="h-2" />
             
-            <div className="flex items-center justify-between text-xs text-muted-foreground">
-              <div className="flex items-center gap-1">
-                <Zap className="w-3 h-3" />
-                <span>Energy: {bellaState.energy}%</span>
+            {/* Bella's Status */}
+            <div className="mt-3 w-full space-y-2">
+              <div className="flex items-center justify-between text-sm">
+                <div className="flex items-center gap-2">
+                  <Heart className="w-4 h-4 text-pink-500" />
+                  <span className="text-muted-foreground">Favorability</span>
+                </div>
+                <span className="font-medium">{bellaState.favorability}%</span>
               </div>
-              <div className="capitalize">
-                Mood: {bellaState.emotionalState}
+              <Progress value={bellaState.favorability} className="h-2" />
+              
+              <div className="flex items-center justify-between text-xs text-muted-foreground">
+                <div className="flex items-center gap-1">
+                  <Zap className="w-3 h-3" />
+                  <span>Energy: {bellaState.energy}%</span>
+                </div>
+                <div className="capitalize">
+                  Mood: {bellaState.emotionalState}
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        )}
+
+        {/* Embedded mode header */}
+        {isEmbedded && (
+          <div className="p-3 bg-gradient-to-r from-pink-100 to-purple-100 dark:from-pink-900/30 dark:to-purple-900/30">
+            <div className="flex items-center gap-2">
+              <Heart className="w-5 h-5 text-pink-600" />
+              <span className="font-medium">Chat with Bella</span>
+            </div>
+          </div>
+        )}
         
         {/* Messages Area - Scrollable */}
         <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-white dark:bg-gray-900">
@@ -208,13 +230,7 @@ const ChatInterface = ({ isOpen, onClose, context, isEmbedded = false }: ChatInt
         </div>
       </Card>
       
-      {/* Custom CSS for animations */}
-      <style jsx>{`
-        @keyframes gentle-bounce {
-          0%, 100% { transform: translateY(0px); }
-          50% { transform: translateY(-5px); }
-        }
-      `}</style>
+
     </div>
   );
 };
