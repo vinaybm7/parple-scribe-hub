@@ -117,8 +117,7 @@ export const useVoice = () => {
 
     // Cancel any ongoing speech
     speechSynthesis.cancel();
-    setIsSpeaking(true);
-    onStart?.();
+    // Don't set speaking state here - wait for actual audio to start
 
     // Dynamically check ElevenLabs support each time
     const elevenLabsAvailable = checkElevenLabsSupport();
@@ -147,7 +146,8 @@ export const useVoice = () => {
           audioBuffer,
           () => {
             console.log('🎤 ElevenLabs audio started playing');
-            // Audio started playing (already called onStart above)
+            setIsSpeaking(true);
+            onStart?.();
           },
           () => {
             console.log('🎤 ElevenLabs audio finished playing');
@@ -172,6 +172,8 @@ export const useVoice = () => {
 
         utterance.onstart = () => {
           console.log('🎤 Browser TTS started');
+          setIsSpeaking(true);
+          onStart?.();
         };
 
         utterance.onend = () => {

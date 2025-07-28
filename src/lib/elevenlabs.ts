@@ -319,8 +319,12 @@ class ElevenLabsService {
       
       // Start playback
       console.log('🔊 Starting audio playback...');
-      onStart?.();
       source.start(0);
+      
+      // Call onStart after a small delay to sync with actual audio output
+      setTimeout(() => {
+        onStart?.();
+      }, 100); // 100ms delay to account for audio processing
       
     } catch (error) {
       console.error('🔊 Error during audio playback:', error);

@@ -21,60 +21,72 @@ const OrbSpeakingAnimation = ({
   const [wavePhase, setWavePhase] = useState(0);
   const [intensity, setIntensity] = useState(0.5);
 
-  // Size configurations
+  // Size configurations - Reduced sizes for better positioning
   const sizeConfig = {
-    sm: { width: 80, height: 80, blur: 'blur-sm' },
-    md: { width: 120, height: 120, blur: 'blur-md' },
-    lg: { width:160, height: 160, blur: 'blur-lg' }
+    sm: { width: 60, height: 60, blur: 'blur-sm' },
+    md: { width: 90, height: 90, blur: 'blur-md' },
+    lg: { width: 120, height: 120, blur: 'blur-lg' }
   };
 
   const config = sizeConfig[size];
 
-  // Color configurations for different avatars
+  // Enhanced color configurations with vibrant, visible colors
   const colorConfig = {
     purple: {
-      primary: 'from-purple-400/80 via-indigo-500/70 to-pink-400/80',
-      secondary: 'from-purple-300/60 via-blue-400/50 to-pink-300/60',
-      accent: 'from-purple-500/40 via-indigo-400/30 to-pink-500/40',
-      glow: 'shadow-purple-500/50',
-      border: 'border-purple-300/30'
+      primary: 'from-fuchsia-400 via-purple-500 via-indigo-500 to-cyan-400',
+      secondary: 'from-pink-400/90 via-purple-400/80 via-blue-400/80 to-teal-400/90',
+      accent: 'from-fuchsia-300/70 via-violet-400/60 via-sky-400/60 to-emerald-300/70',
+      tertiary: 'from-pink-300/50 via-purple-300/40 via-blue-300/40 to-cyan-300/50',
+      glow: 'shadow-purple-500/60',
+      border: 'border-purple-400/70',
+      innerGlow: 'from-white/60 via-purple-200/50 to-transparent',
+      pastelOverlay: 'from-rose-300/40 via-violet-300/30 via-sky-300/30 to-teal-300/40'
     },
     indigo: {
-      primary: 'from-indigo-400/80 via-blue-500/70 to-cyan-400/80',
-      secondary: 'from-indigo-300/60 via-blue-400/50 to-cyan-300/60',
-      accent: 'from-indigo-500/40 via-blue-400/30 to-cyan-500/40',
-      glow: 'shadow-indigo-500/50',
-      border: 'border-indigo-300/30'
+      primary: 'from-purple-400 via-indigo-500 via-blue-500 to-cyan-400',
+      secondary: 'from-purple-400/90 via-indigo-400/80 via-blue-400/80 to-cyan-400/90',
+      accent: 'from-violet-300/70 via-indigo-400/60 via-sky-400/60 to-teal-300/70',
+      tertiary: 'from-purple-300/50 via-indigo-300/40 via-blue-300/40 to-cyan-300/50',
+      glow: 'shadow-indigo-500/60',
+      border: 'border-indigo-400/70',
+      innerGlow: 'from-white/60 via-indigo-200/50 to-transparent',
+      pastelOverlay: 'from-violet-300/40 via-indigo-300/30 via-sky-300/30 to-cyan-300/40'
     },
     pink: {
-      primary: 'from-pink-400/80 via-rose-500/70 to-purple-400/80',
-      secondary: 'from-pink-300/60 via-rose-400/50 to-purple-300/60',
-      accent: 'from-pink-500/40 via-rose-400/30 to-purple-500/40',
-      glow: 'shadow-pink-500/50',
-      border: 'border-pink-300/30'
+      primary: 'from-pink-400 via-rose-500 via-purple-500 to-indigo-400',
+      secondary: 'from-pink-400/90 via-rose-400/80 via-purple-400/80 to-violet-400/90',
+      accent: 'from-rose-300/70 via-pink-400/60 via-purple-400/60 to-indigo-300/70',
+      tertiary: 'from-pink-300/50 via-rose-300/40 via-purple-300/40 to-violet-300/50',
+      glow: 'shadow-pink-500/60',
+      border: 'border-pink-400/70',
+      innerGlow: 'from-white/60 via-pink-200/50 to-transparent',
+      pastelOverlay: 'from-rose-300/40 via-pink-300/30 via-purple-300/30 to-violet-300/40'
     }
   };
 
   const colors = colorConfig[avatarColor];
 
-  // Animate wave phases and intensity when speaking
+  // Animate wave phases and intensity - Enhanced for smoother movement
   useEffect(() => {
-    if (!isActive) {
-      setIntensity(0.2);
-      return;
+    const interval = setInterval(() => {
+      setWavePhase(prev => (prev + 2) % 360); // Faster phase progression
+      
+      if (isActive) {
+        // More dynamic intensity variation when speaking
+        setIntensity(0.5 + Math.sin(Date.now() * 0.01) * 0.3 + Math.random() * 0.2);
+      } else {
+        // Gentle breathing intensity when silent
+        setIntensity(0.2 + Math.sin(Date.now() * 0.003) * 0.1);
+      }
+    }, 50); // Smoother 20fps updates
+
+    if (isActive) {
+      onSpeechStart?.();
+    } else {
+      onSpeechEnd?.();
     }
 
-    onSpeechStart?.();
-
-    const interval = setInterval(() => {
-      setWavePhase(prev => (prev + 1) % 360);
-      setIntensity(0.4 + Math.random() * 0.6); // Random intensity between 0.4-1.0
-    }, 100);
-
-    return () => {
-      clearInterval(interval);
-      onSpeechEnd?.();
-    };
+    return () => clearInterval(interval);
   }, [isActive, onSpeechStart, onSpeechEnd]);
 
   // Generate random wave positions
@@ -93,149 +105,140 @@ const OrbSpeakingAnimation = ({
 
   return (
     <div 
-      className={`relative flex items-center justify-center transition-all duration-500 ${className}`}
+      className={`relative flex items-center justify-center transition-all duration-500 mx-auto ${className}`}
       style={{
         width: config.width,
         height: config.height,
-        opacity: isActive ? 1 : 0.7,
-        transform: isActive ? 'scale(1.05)' : 'scale(1)',
+        opacity: isActive ? 1 : 0.8,
+        transform: isActive ? 'scale(1.03)' : 'scale(1)',
       }}
     >
-      {/* Outer glow effect */}
-      {isActive && (
-        <div 
-          className={`absolute inset-0 rounded-full bg-gradient-to-r ${colors.primary} ${config.blur} animate-pulse`}
-          style={{
-            transform: `scale(${1.2 + intensity * 0.3})`,
-            opacity: intensity * 0.6
-          }}
-        />
-      )}
+      {/* Enhanced outer glow with vibrant colors */}
+      <div 
+        className={`absolute inset-0 rounded-full bg-gradient-to-r ${colors.primary} ${config.blur} ${isActive ? 'animate-pulse' : ''}`}
+        style={{
+          transform: `scale(${1.3 + (isActive ? intensity * 0.4 : 0.1)})`,
+          opacity: isActive ? intensity * 0.8 : 0.4,
+          filter: 'blur(8px)'
+        }}
+      />
+      
+      {/* Rotating color layer for dynamic effects */}
+      <div 
+        className={`absolute inset-0 rounded-full bg-gradient-conic ${colors.secondary} ${config.blur}`}
+        style={{
+          transform: `scale(${1.15 + (isActive ? intensity * 0.2 : 0.05)}) rotate(${wavePhase}deg)`,
+          opacity: isActive ? intensity * 0.6 : 0.3,
+          filter: 'blur(4px)'
+        }}
+      />
+      
+      {/* Additional ambient glow */}
+      <div 
+        className={`absolute inset-0 rounded-full bg-gradient-radial ${colors.accent}`}
+        style={{
+          transform: `scale(${1.4 + (isActive ? intensity * 0.3 : 0.1)})`,
+          opacity: isActive ? intensity * 0.4 : 0.2,
+          filter: 'blur(12px)'
+        }}
+      />
 
       {/* Main orb container */}
       <div 
-        className={`relative rounded-full ${isActive ? 'glass-orb-active orb-speaking' : 'glass-orb orb-breathing'} bg-gradient-to-br ${colors.primary} border ${colors.border} overflow-hidden`}
+        className={`relative rounded-full ${isActive ? 'glass-orb-active orb-speaking color-shift' : 'glass-orb orb-breathing'} bg-gradient-to-br ${colors.primary} border ${colors.border} overflow-hidden`}
         style={{
           width: config.width,
           height: config.height,
           transform: `scale(${1 + (isActive ? intensity * 0.1 : 0)})`,
+          filter: isActive ? `hue-rotate(${wavePhase}deg) saturate(1.2) brightness(1.1)` : 'saturate(1.1)'
         }}
       >
-        {/* Inner gradient layers */}
-        <div className={`absolute inset-0 rounded-full bg-gradient-to-br ${colors.secondary} opacity-60`} />
-        <div className={`absolute inset-0 rounded-full bg-gradient-to-tl ${colors.accent} opacity-40`} />
+        {/* Enhanced gradient layers for vibrant colors */}
+        <div className={`absolute inset-0 rounded-full bg-gradient-to-br ${colors.secondary}`} 
+             style={{ opacity: isActive ? 0.9 : 0.7 }} />
+        <div className={`absolute inset-0 rounded-full bg-gradient-to-tl ${colors.accent}`} 
+             style={{ opacity: isActive ? 0.7 : 0.5 }} />
+        <div className={`absolute inset-0 rounded-full bg-gradient-radial ${colors.tertiary}`} 
+             style={{ opacity: isActive ? 0.8 : 0.6 }} />
+        <div className={`absolute inset-0 rounded-full bg-gradient-to-r ${colors.pastelOverlay}`} 
+             style={{ 
+               transform: `rotate(${wavePhase * 0.5}deg)`,
+               opacity: isActive ? 0.6 : 0.4
+             }} />
         
-        {/* Animated waves inside the orb */}
-        {isActive && waves.map((wave) => (
-          <div
-            key={wave.id}
-            className={`absolute rounded-full bg-gradient-to-r ${colors.secondary} ${config.blur} wave-animation`}
-            style={{
-              width: `${30 + wave.scale * 20}%`,
-              height: `${30 + wave.scale * 20}%`,
-              left: `${50 + wave.x}%`,
-              top: `${50 + wave.y}%`,
-              transform: `translate(-50%, -50%) rotate(${wave.rotation}deg) scale(${wave.scale})`,
-              opacity: wave.opacity * intensity,
-              animationDelay: `${wave.id * 0.2}s`,
-              animationDuration: `${1.5 + Math.random() * 1}s`
-            }}
-          />
-        ))}
-
-        {/* Ripple effects */}
-        {isActive && (
-          <>
-            <div 
-              className={`absolute inset-0 rounded-full border-2 ${colors.border} ripple-animation`}
-              style={{
-                animationDuration: `${1.5 + intensity}s`,
-                opacity: intensity * 0.5
-              }}
-            />
-            <div 
-              className={`absolute inset-2 rounded-full border ${colors.border} ripple-animation`}
-              style={{
-                animationDuration: `${2 + intensity}s`,
-                animationDelay: '0.5s',
-                opacity: intensity * 0.3
-              }}
-            />
-          </>
-        )}
-
-        {/* Glass reflection effect with shimmer */}
+        {/* Dynamic color shifting layer */}
         <div 
-          className="absolute top-2 left-2 w-1/3 h-1/3 rounded-full bg-gradient-to-br from-white/40 to-transparent glass-shimmer"
+          className={`absolute inset-0 rounded-full bg-gradient-conic ${colors.primary}`}
           style={{
-            transform: 'rotate(-45deg)',
-            filter: 'blur(1px)'
+            transform: `rotate(${wavePhase}deg)`,
+            opacity: isActive ? 0.3 : 0.2,
+            mixBlendMode: 'overlay'
           }}
         />
         
-        {/* Additional shimmer effect when speaking */}
-        {isActive && (
-          <div 
-            className="absolute inset-0 rounded-full bg-gradient-to-r from-transparent via-white/20 to-transparent glass-shimmer"
-            style={{
-              animationDelay: '1s',
-              animationDuration: '2s'
-            }}
-          />
-        )}
-
-        {/* Bottom highlight */}
+        {/* Inner glow with better visibility */}
+        <div className={`absolute inset-3 rounded-full bg-gradient-radial ${colors.innerGlow}`} 
+             style={{ opacity: isActive ? 0.9 : 0.7 }} />
+        
+        {/* Enhanced shimmer effect */}
         <div 
-          className="absolute bottom-1 left-1/2 transform -translate-x-1/2 w-2/3 h-1/4 rounded-full bg-gradient-to-t from-white/20 to-transparent"
-          style={{ filter: 'blur(2px)' }}
+          className="absolute inset-0 rounded-full bg-gradient-to-r from-transparent via-white/30 to-transparent"
+          style={{
+            transform: `rotate(${wavePhase * 0.3}deg)`,
+            opacity: isActive ? 0.8 : 0.4,
+            filter: 'blur(1px)'
+          }}
         />
+
+
       </div>
 
-      {/* Outer ripple rings when speaking */}
+      {/* Pastel ripple waves around the orb when speaking */}
       {isActive && (
         <div className="absolute inset-0 flex items-center justify-center">
-          {[...Array(3)].map((_, i) => (
+          {/* Multi-colored ripple waves */}
+          {[...Array(4)].map((_, i) => (
             <div
-              key={i}
-              className={`absolute border-2 ${colors.border} rounded-full animate-ping`}
+              key={`ripple-${i}`}
+              className={`absolute border-2 rounded-full animate-ping`}
               style={{
-                width: `${120 + i * 40}%`,
-                height: `${120 + i * 40}%`,
+                width: `${110 + i * 25}%`,
+                height: `${110 + i * 25}%`,
+                borderColor: i === 0 ? 'rgba(244, 114, 182, 0.4)' : // pink-400
+                           i === 1 ? 'rgba(168, 85, 247, 0.3)' :   // purple-500  
+                           i === 2 ? 'rgba(99, 102, 241, 0.25)' :  // indigo-500
+                           'rgba(34, 197, 94, 0.2)',              // emerald-500
                 animationDelay: `${i * 0.3}s`,
-                animationDuration: `${2 + intensity}s`,
-                opacity: (0.4 - i * 0.1) * intensity
+                animationDuration: `${2.5 + intensity * 0.5}s`,
+                opacity: intensity * (0.7 - i * 0.12),
+                filter: 'blur(0.5px)'
+              }}
+            />
+          ))}
+          
+          {/* Additional soft glow rings */}
+          {[...Array(2)].map((_, i) => (
+            <div
+              key={`glow-${i}`}
+              className={`absolute rounded-full`}
+              style={{
+                width: `${140 + i * 40}%`,
+                height: `${140 + i * 40}%`,
+                background: i === 0 ? 
+                  'radial-gradient(circle, rgba(244, 114, 182, 0.1) 0%, transparent 70%)' :
+                  'radial-gradient(circle, rgba(168, 85, 247, 0.08) 0%, transparent 70%)',
+                opacity: intensity * (0.5 - i * 0.2),
+                transform: `scale(${1 + Math.sin((wavePhase + i * 180) * Math.PI / 180) * 0.1})`,
+                filter: 'blur(2px)'
               }}
             />
           ))}
         </div>
       )}
 
-      {/* Speaking indicator particles */}
-      {isActive && (
-        <div className="absolute inset-0 pointer-events-none">
-          {[...Array(6)].map((_, i) => (
-            <div
-              key={i}
-              className={`absolute w-1 h-1 rounded-full bg-gradient-to-r ${colors.primary} particle-animation`}
-              style={{
-                left: `${50 + Math.sin((wavePhase + i * 60) * Math.PI / 180) * 60}%`,
-                top: `${50 + Math.cos((wavePhase + i * 60) * Math.PI / 180) * 60}%`,
-                opacity: intensity * 0.8,
-                transform: `scale(${0.5 + intensity * 0.5})`,
-                animationDelay: `${i * 0.3}s`,
-                animationDuration: `${1.5 + Math.random() * 1}s`
-              }}
-            />
-          ))}
-        </div>
-      )}
 
-      {/* Debug info (development only) */}
-      {process.env.NODE_ENV === 'development' && (
-        <div className="absolute -bottom-8 left-0 text-xs text-gray-500 bg-black/80 px-2 py-1 rounded text-white">
-          Orb: {isActive ? 'Speaking' : 'Silent'} | Intensity: {(intensity * 100).toFixed(0)}% | Phase: {wavePhase}°
-        </div>
-      )}
+
+
     </div>
   );
 };

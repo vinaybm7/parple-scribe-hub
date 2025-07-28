@@ -408,19 +408,10 @@ const AvatarDisplay = ({ avatarId, mood, isTyping = false, isSpeaking = false }:
 
 
 
-          {/* Typing indicator for Live2D */}
-          {isTyping && (
-            <div className="absolute bottom-4 left-4 bg-white dark:bg-gray-800 rounded-full px-3 py-2 shadow-lg">
-              <div className="flex space-x-1">
-                <div className="w-2 h-2 bg-gray-600 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                <div className="w-2 h-2 bg-gray-600 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                <div className="w-2 h-2 bg-gray-600 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
-              </div>
-            </div>
-          )}
+
 
           {/* Orb Speaking Animation positioned at bottom center above name */}
-          <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-10">
+          <div className="absolute bottom-8 w-full flex justify-center z-10">
             <OrbSpeakingAnimation 
               isActive={isSpeaking}
               size="md"
@@ -435,7 +426,7 @@ const AvatarDisplay = ({ avatarId, mood, isTyping = false, isSpeaking = false }:
         </div>
 
         {/* Avatar name */}
-        <div className="text-center mt-4 w-full flex justify-center">
+        <div className="text-center mt-1 w-full">
           <h3 className="text-2xl font-bold text-gray-800 dark:text-gray-200">{config.name}</h3>
         </div>
       </div>
@@ -483,19 +474,10 @@ const AvatarDisplay = ({ avatarId, mood, isTyping = false, isSpeaking = false }:
             </div>
           </div>
 
-          {/* Typing indicator */}
-          {isTyping && (
-            <div className="absolute bottom-2 right-2">
-              <div className="flex space-x-1">
-                <div className="w-2 h-2 bg-gray-600 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                <div className="w-2 h-2 bg-gray-600 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                <div className="w-2 h-2 bg-gray-600 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
-              </div>
-            </div>
-          )}
+
 
         {/* Orb Speaking Animation for 2D avatars - positioned above name */}
-        <div className="absolute -bottom-12 left-1/2 transform -translate-x-1/2 z-10">
+        <div className="absolute -bottom-12 w-full flex justify-center z-10">
           <OrbSpeakingAnimation 
             isActive={isSpeaking}
             size="lg"
@@ -516,7 +498,7 @@ const AvatarDisplay = ({ avatarId, mood, isTyping = false, isSpeaking = false }:
       </div>
 
       {/* Avatar name and status */}
-      <div className="text-center">
+      <div className="text-center -mt-2">
         <h3 className="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-1">{config.name}</h3>
         <p className="text-sm text-gray-600 dark:text-gray-400 capitalize">
           {isTyping ? 'Typing...' : isSpeaking ? 'Speaking...' : `Feeling ${mood}`}

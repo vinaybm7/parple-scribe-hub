@@ -58,6 +58,11 @@ const CompanionChat = ({ avatarId, onMoodChange, onTypingChange, onSpeakingChang
     }
   }, [avatarId]);
   
+  // Sync isSpeaking state with parent component
+  useEffect(() => {
+    onSpeakingChange(isSpeaking);
+  }, [isSpeaking, onSpeakingChange]);
+
   // Log voice settings and support status
   useEffect(() => {
     console.log('🔊 Voice settings updated:', {
@@ -90,17 +95,17 @@ const CompanionChat = ({ avatarId, onMoodChange, onTypingChange, onSpeakingChang
           const actualStartTime = Date.now();
           const delay = actualStartTime - speechStartTime;
           console.log(`💬 Speech started (delay: ${delay}ms)`);
-          onSpeakingChange(true);
+          // isSpeaking state is now automatically synced via useEffect
         },
         () => {
           // On speech end
           console.log('💬 Speech ended');
-          onSpeakingChange(false);
+          // isSpeaking state is now automatically synced via useEffect
         }
       );
     } catch (error) {
       console.error('💬 Error speaking message:', error);
-      onSpeakingChange(false);
+      // isSpeaking state will be automatically synced when speak() fails
     }
   };
 
