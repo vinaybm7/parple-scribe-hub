@@ -4,14 +4,16 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Key, RefreshCw, AlertCircle, CheckCircle } from 'lucide-react';
-import { getAvailableElevenLabsApiKey, markApiKeyAsFailed } from '@/lib/production-env';
+import { getAvailableElevenLabsApiKey, markApiKeyAsFailed, ELEVENLABS_API_KEY_POOL, getApiKeyPoolStatus } from '@/lib/production-env';
 
 const ElevenLabsKeyManager: React.FC = () => {
   const [newApiKey, setNewApiKey] = useState('');
   const [isTestingKey, setIsTestingKey] = useState(false);
   const [testResult, setTestResult] = useState<{ success: boolean; message: string } | null>(null);
+  const [refreshKey, setRefreshKey] = useState(0); // Force re-render
 
   const currentApiKey = getAvailableElevenLabsApiKey();
+  const poolStatus = getApiKeyPoolStatus();
 
   const testApiKey = async (apiKey: string) => {
     setIsTestingKey(true);
@@ -56,6 +58,12 @@ const ElevenLabsKeyManager: React.FC = () => {
   const handleMarkCurrentKeyAsFailed = () => {
     markApiKeyAsFailed(currentApiKey, 'Manually marked as failed');
     setTestResult({ success: false, message: 'Current key marked as failed. System will use next available key.' });
+    setRefreshKey(prev => prev + 1); // Force refresh
+  };
+
+  const handleRefreshPool = () => {
+    setRefreshKey(prev => prev + 1);
+    window.location.reload();
   };
 
   const copyToClipboard = (text: string) => {
@@ -148,7 +156,7 @@ const ElevenLabsKeyManager: React.FC = () => {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => window.location.reload()}
+              onClick={handleRefreshPool}
             >
               Refresh Key Pool
             </Button>
@@ -164,19 +172,103 @@ const ElevenLabsKeyManager: React.FC = () => {
         </CardContent>
       </Card>
 
-      {/* Key Pool Status */}
+      {/* Enhanced Key Pool Status */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-sm">API Key Pool Status</CardTitle>
+          <CardTitle className="text-sm">API Key Pool Status ({ELEVENLABS_API_KEY_POOL.length} keys)</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-xs text-muted-foreground">
-            <p>The system automatically rotates between available API keys.</p>
-            <p>Failed keys are marked and skipped until manually reset.</p>
-            <div className="flex items-center gap-2 mt-2">
-              <Badge variant="outline" className="text-xs">
-                Current: {currentApiKey ? `${currentApiKey.substring(0, 10)}...` : 'None'}
-              </Badge>
+          <div className="space-y-3">
+            <div className="text-xs text-muted-foreground mb-3">
+              <p>The system automatically rotates between available API keys.</p>
+              <p>Failed keys are marked and skipped until manually reset.</p>
+            </div>
+            
+            {/* Display all keys in the pool with enhanced status */}
+            <div className="space-y-2">
+              {poolStatus.allKeys.map((keyInfo) => {
+                return (
+                  <div key={keyInfo.index} className={`flex items-center justify-between p-3 rounded border ${
+                    keyInfo.isCurrent ? 'bg-green-50 border-green-200' : 
+                    keyInfo.isFailed ? 'bg-red-50 border-red-200' : 'bg-gray-50 border-gray-200'
+                  }`}>
+                    <div className="flex items-center gap-2">
+                      <Badge variant={keyInfo.isCurrent ? "default" : "outline"} className="text-xs">
+                        Key {keyInfo.index}
+                      </Badge>
+                      <code className="text-xs font-mono">{keyInfo.preview}</code>
+                      <div className="flex gap-1">
+                        {keyInfo.isCurrent && (
+                          <Badge variant="secondary" className="text-xs bg-green-100 text-green-700">
+                            ACTIVE
+                          </Badge>
+                        )}
+                        {keyInfo.isFailed && (
+                          <Badge variant="destructive" className="text-xs">
+                            FAILED
+                          </Badge>
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => testApiKey(keyInfo.key)}
+                        disabled={isTestingKey}
+                        className="h-6 px-2 text-xs"
+                      >
+                        Test
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => copyToClipboard(keyInfo.key)}
+                        className="h-6 px-2 text-xs"
+                      >
+                        Copy
+                      </Button>
+                      {keyInfo.isFailed && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => {
+                            // Reset this specific key (you'd need to implement this)
+                            handleRefreshPool();
+                          }}
+                          className="h-6 px-2 text-xs text-blue-600"
+                        >
+                          Reset
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            
+            {/* Enhanced Pool Statistics */}
+            <div className="pt-3 border-t">
+              <div className="grid grid-cols-3 gap-4 text-xs">
+                <div>
+                  <span className="font-medium">Total Keys:</span> {poolStatus.totalKeys}
+                </div>
+                <div>
+                  <span className="font-medium">Active Key:</span> Key {poolStatus.allKeys.find(k => k.isCurrent)?.index || 'None'}
+                </div>
+                <div>
+                  <span className="font-medium">Failed Keys:</span> {poolStatus.failedKeys.length}
+                </div>
+              </div>
+              
+              {/* Show failed keys if any */}
+              {poolStatus.failedKeys.length > 0 && (
+                <div className="mt-2 p-2 bg-red-50 border border-red-200 rounded">
+                  <div className="text-xs text-red-700">
+                    <strong>Failed Keys:</strong> {poolStatus.failedKeys.length} key(s) are currently marked as failed
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </CardContent>

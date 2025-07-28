@@ -2,7 +2,10 @@
 // The system will automatically try keys in order until one works
 export const ELEVENLABS_API_KEY_POOL = [
   'sk_98ab9d165671e69015cfa701a96547907ad3394f406cd6ee', // Current key
-  // Add new API keys here when you get them:
+  'sk_dabc8260f66a6c21d7b604737a77140154f76faeb432f53b', // Backup key 1
+  'sk_7453981580c758ea5f89e7474a69a5fb2d0f84e80bfb4bfd', // Backup key 2
+  'sk_5aa00e6ade7d0de9f7cb8be380e41f1ce1c1f78e9846446b', // Backup key 3
+  // Add more API keys here when you get them:
   // 'sk_new_key_here_when_credits_run_out',
   // 'sk_another_backup_key_here',
 ];
@@ -21,6 +24,27 @@ export const PRODUCTION_ENV_VARS = {
 
 // Track failed API keys to avoid retrying them
 const failedApiKeys = new Set<string>();
+
+// Get the list of failed API keys (for admin interface)
+export const getFailedApiKeys = (): string[] => {
+  return Array.from(failedApiKeys);
+};
+
+// Get API key pool status (for admin interface)
+export const getApiKeyPoolStatus = () => {
+  return {
+    totalKeys: ELEVENLABS_API_KEY_POOL.length,
+    failedKeys: Array.from(failedApiKeys),
+    currentKey: getAvailableElevenLabsApiKey(),
+    allKeys: ELEVENLABS_API_KEY_POOL.map((key, index) => ({
+      index: index + 1,
+      key: key,
+      preview: `${key.substring(0, 10)}...${key.substring(key.length - 4)}`,
+      isFailed: failedApiKeys.has(key),
+      isCurrent: key === getAvailableElevenLabsApiKey()
+    }))
+  };
+};
 
 // Get the next available API key from the pool
 export const getAvailableElevenLabsApiKey = (): string => {
