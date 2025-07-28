@@ -49,13 +49,40 @@ const RiveSpeakingAnimation = ({
 
   const config = sizeConfig[size];
 
-  // Initialize Rive animation with multiple fallback state machine names
+  // Initialize Rive animation with inspection capabilities
   const { rive, RiveComponent } = useRive({
     src: '/voice_assistant_animation.riv',
-    stateMachines: ['State Machine 1', 'StateMachine', 'Main', 'Voice'], // Try multiple common names
     autoplay: true, // Let it autoplay the idle state
     onLoad: () => {
       console.log('🎨 Rive voice animation loaded successfully');
+      
+      // Inspect the loaded Rive file structure
+      if (rive) {
+        console.log('🔍 Inspecting Rive file structure...');
+        
+        // Get all available state machines
+        const stateMachineNames = rive.stateMachineNames;
+        console.log('📋 Available state machines:', stateMachineNames);
+        
+        // Try to get the first available state machine
+        if (stateMachineNames.length > 0) {
+          const firstStateMachine = stateMachineNames[0];
+          console.log(`🎯 Using state machine: ${firstStateMachine}`);
+          
+          // Get inputs for the first state machine
+          try {
+            const stateMachine = rive.stateMachineInputs(firstStateMachine);
+            console.log(`🎛️ Available inputs for "${firstStateMachine}":`, Object.keys(stateMachine || {}));
+          } catch (error) {
+            console.warn('⚠️ Could not get state machine inputs:', error);
+          }
+        }
+        
+        // Get all available animations
+        const animationNames = rive.animationNames;
+        console.log('🎬 Available animations:', animationNames);
+      }
+      
       setIsLoaded(true);
       setHasError(false);
     },
@@ -75,44 +102,132 @@ const RiveSpeakingAnimation = ({
     }
   });
 
-  // Try to get state machine inputs with multiple possible names
-  const speakingInput = useStateMachineInput(rive, 'State Machine 1', 'speaking') ||
-                       useStateMachineInput(rive, 'State Machine 1', 'isSpeaking') ||
-                       useStateMachineInput(rive, 'State Machine 1', 'talk') ||
-                       useStateMachineInput(rive, 'State Machine 1', 'voice') ||
-                       useStateMachineInput(rive, 'StateMachine', 'speaking') ||
-                       useStateMachineInput(rive, 'Main', 'speaking');
+  // Dynamic state machine and input detection
+  const [availableStateMachine, setAvailableStateMachine] = useState<string | null>(null);
+  const [availableInputs, setAvailableInputs] = useState<string[]>([]);
 
-  const volumeInput = useStateMachineInput(rive, 'State Machine 1', 'volume') ||
-                     useStateMachineInput(rive, 'State Machine 1', 'level') ||
-                     useStateMachineInput(rive, 'State Machine 1', 'amplitude') ||
-                     useStateMachineInput(rive, 'StateMachine', 'volume') ||
-                     useStateMachineInput(rive, 'Main', 'volume');
+  // Detect available state machines and inputs
+  useEffect(() => {
+    if (!rive || !isLoaded) return;
 
-  // Control animation based on speaking state
+    try {
+      const stateMachineNames = rive.stateMachineNames;
+      if (stateMachineNames.length > 0) {
+        const firstStateMachine = stateMachineNames[0];
+        setAvailableStateMachine(firstStateMachine);
+        
+        // Get available inputs
+        const stateMachine = rive.stateMachineInputs(firstStateMachine);
+        const inputNames = Object.keys(stateMachine || {});
+        setAvailableInputs(inputNames);
+        
+        console.log(`🎯 Using state machine: "${firstStateMachine}" with inputs:`, inputNames);
+      }
+    } catch (error) {
+      console.warn('⚠️ Error detecting state machine structure:', error);
+    }
+  }, [rive, isLoaded]);
+
+  // Get state machine inputs dynamically
+  const speakingInput = availableStateMachine ? (
+    useStateMachineInput(rive, availableStateMachine, 'speaking') ||
+    useStateMachineInput(rive, availableStateMachine, 'isSpeaking') ||
+    useStateMachineInput(rive, availableStateMachine, 'talk') ||
+    useStateMachineInput(rive, availableStateMachine, 'voice') ||
+    useStateMachineInput(rive, availableStateMachine, 'isActive') ||
+    useStateMachineInput(rive, availableStateMachine, 'active') ||
+    useStateMachineInput(rive, availableStateMachine, 'play') ||
+    useStateMachineInput(rive, availableStateMachine, 'trigger')
+  ) : null;
+
+  const volumeInput = availableStateMachine ? (
+    useStateMachineInput(rive, availableStateMachine, 'volume') ||
+    useStateMachineInput(rive, availableStateMachine, 'level') ||
+    useStateMachineInput(rive, availableStateMachine, 'amplitude') ||
+    useStateMachineInput(rive, availableStateMachine, 'intensity') ||
+    useStateMachineInput(rive, availableStateMachine, 'power')
+  ) : null;
+
+  // Control animation based on speaking state with multiple fallback strategies
   useEffect(() => {
     if (!rive || !isLoaded) return;
 
     console.log('🎤 Rive speaking state changed:', isActive);
-    console.log('🎤 Available inputs:', { 
+    console.log('🎤 Available state machine:', availableStateMachine);
+    console.log('🎤 Available inputs:', availableInputs);
+    console.log('🎤 Found inputs:', { 
       speakingInput: !!speakingInput, 
       volumeInput: !!volumeInput 
     });
 
     if (isActive) {
-      // Start speaking animation
+      let animationStarted = false;
+
+      // Strategy 1: Use state machine inputs if available
       if (speakingInput) {
-        speakingInput.value = true;
-        console.log('✅ Set speaking input to true');
-      } else {
-        console.warn('⚠️ No speaking input found, trying to play animation directly');
-        rive.play();
+        try {
+          speakingInput.value = true;
+          console.log('✅ Set speaking input to true');
+          animationStarted = true;
+        } catch (error) {
+          console.warn('⚠️ Error setting speaking input:', error);
+        }
       }
       
       // Set volume level for dynamic visualization
       if (volumeInput) {
-        volumeInput.value = currentVolumeLevel;
-        console.log(`🔊 Set volume input to ${currentVolumeLevel.toFixed(2)} ${enableAudioAnalysis ? '(analyzed)' : '(static)'}`);
+        try {
+          volumeInput.value = currentVolumeLevel;
+          console.log(`🔊 Set volume input to ${currentVolumeLevel.toFixed(2)} ${enableAudioAnalysis ? '(analyzed)' : '(static)'}`);
+        } catch (error) {
+          console.warn('⚠️ Error setting volume input:', error);
+        }
+      }
+
+      // Strategy 2: Try to play specific animations if no state machine inputs
+      if (!animationStarted) {
+        const animationNames = rive.animationNames;
+        console.log('🎬 Trying animation names:', animationNames);
+        
+        // Try common animation names
+        const speakingAnimations = ['speaking', 'talk', 'voice', 'active', 'play', 'animate'];
+        let foundAnimation = false;
+        
+        for (const animName of speakingAnimations) {
+          if (animationNames.includes(animName)) {
+            try {
+              rive.play(animName);
+              console.log(`✅ Playing animation: ${animName}`);
+              foundAnimation = true;
+              animationStarted = true;
+              break;
+            } catch (error) {
+              console.warn(`⚠️ Error playing animation ${animName}:`, error);
+            }
+          }
+        }
+        
+        // Strategy 3: Play the first available animation
+        if (!foundAnimation && animationNames.length > 0) {
+          try {
+            rive.play(animationNames[0]);
+            console.log(`✅ Playing first available animation: ${animationNames[0]}`);
+            animationStarted = true;
+          } catch (error) {
+            console.warn(`⚠️ Error playing first animation:`, error);
+          }
+        }
+        
+        // Strategy 4: Just play the default animation
+        if (!animationStarted) {
+          try {
+            rive.play();
+            console.log('✅ Playing default animation');
+            animationStarted = true;
+          } catch (error) {
+            console.warn('⚠️ Error playing default animation:', error);
+          }
+        }
       }
 
       // Trigger callback if state changed from inactive to active
@@ -122,13 +237,31 @@ const RiveSpeakingAnimation = ({
     } else {
       // Stop speaking animation
       if (speakingInput) {
-        speakingInput.value = false;
-        console.log('✅ Set speaking input to false');
+        try {
+          speakingInput.value = false;
+          console.log('✅ Set speaking input to false');
+        } catch (error) {
+          console.warn('⚠️ Error setting speaking input to false:', error);
+        }
       }
       
       if (volumeInput) {
-        volumeInput.value = 0;
-        console.log('🔇 Set volume input to 0');
+        try {
+          volumeInput.value = 0;
+          console.log('🔇 Set volume input to 0');
+        } catch (error) {
+          console.warn('⚠️ Error setting volume input to 0:', error);
+        }
+      }
+
+      // If no state machine inputs, try to pause/stop animations
+      if (!speakingInput) {
+        try {
+          rive.pause();
+          console.log('⏸️ Paused animation');
+        } catch (error) {
+          console.warn('⚠️ Error pausing animation:', error);
+        }
       }
 
       // Trigger callback if state changed from active to inactive
@@ -138,7 +271,7 @@ const RiveSpeakingAnimation = ({
     }
 
     previousActiveState.current = isActive;
-  }, [isActive, rive, isLoaded, speakingInput, volumeInput, currentVolumeLevel, onSpeechStart, onSpeechEnd]);
+  }, [isActive, rive, isLoaded, availableStateMachine, availableInputs, speakingInput, volumeInput, currentVolumeLevel, onSpeechStart, onSpeechEnd]);
 
   // Update volume level dynamically
   useEffect(() => {
@@ -222,12 +355,15 @@ const RiveSpeakingAnimation = ({
         </div>
       )}
 
-      {/* Debug info (development only) */}
+      {/* Enhanced Debug info (development only) */}
       {process.env.NODE_ENV === 'development' && (
-        <div className="absolute -bottom-10 left-0 text-xs text-gray-500 bg-black/20 px-2 py-1 rounded max-w-full">
+        <div className="absolute -bottom-16 left-0 text-xs text-gray-500 bg-black/80 px-2 py-1 rounded max-w-full text-white">
           <div>Rive: {isActive ? 'Speaking' : 'Silent'} | {isLoaded ? 'Loaded' : 'Loading'}</div>
-          <div>Inputs: {speakingInput ? '✅' : '❌'} Speaking | {volumeInput ? '✅' : '❌'} Volume</div>
+          <div>State Machine: {availableStateMachine || 'None'}</div>
+          <div>Available Inputs: {availableInputs.join(', ') || 'None'}</div>
+          <div>Found: {speakingInput ? '✅' : '❌'} Speaking | {volumeInput ? '✅' : '❌'} Volume</div>
           <div>Volume: {(currentVolumeLevel * 100).toFixed(0)}% {enableAudioAnalysis ? '(Live)' : '(Static)'}</div>
+          <div>Animations: {rive?.animationNames?.join(', ') || 'None'}</div>
         </div>
       )}
     </div>

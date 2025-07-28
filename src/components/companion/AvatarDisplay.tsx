@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Heart, Sparkles, Coffee, Book, Smile } from 'lucide-react';
 import RiveSpeakingAnimation from './RiveSpeakingAnimation';
+import SimpleRiveAnimation from './SimpleRiveAnimation';
 
 interface AvatarDisplayProps {
   avatarId: string;
@@ -421,12 +422,12 @@ const AvatarDisplay = ({ avatarId, mood, isTyping = false, isSpeaking = false }:
 
           {/* Rive Speaking Animation positioned at bottom center above name */}
           <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-10">
-            <RiveSpeakingAnimation 
+            {/* Try advanced Rive animation first, fallback to simple if needed */}
+            <SimpleRiveAnimation 
               isActive={isSpeaking}
               size="md"
-              volumeLevel={0.8} // Dynamic volume level (can be made responsive to actual audio)
-              onSpeechStart={() => console.log(`${config.name} Rive speech animation started`)}
-              onSpeechEnd={() => console.log(`${config.name} Rive speech animation ended`)}
+              onSpeechStart={() => console.log(`${config.name} Simple Rive speech animation started`)}
+              onSpeechEnd={() => console.log(`${config.name} Simple Rive speech animation ended`)}
               className="drop-shadow-lg"
             />
           </div>
@@ -500,14 +501,13 @@ const AvatarDisplay = ({ avatarId, mood, isTyping = false, isSpeaking = false }:
           {getMoodIcon()}
         </div>
 
-        {/* Rive Speaking Animation for 2D avatars - positioned above name */}
+        {/* Simple Rive Speaking Animation for 2D avatars - positioned above name */}
         <div className="absolute -bottom-16 left-1/2 transform -translate-x-1/2 z-10">
-          <RiveSpeakingAnimation 
+          <SimpleRiveAnimation 
             isActive={isSpeaking}
             size="lg"
-            volumeLevel={0.9} // Higher volume level for 2D avatars
-            onSpeechStart={() => console.log(`${config.name} 2D Rive speech animation started`)}
-            onSpeechEnd={() => console.log(`${config.name} 2D Rive speech animation ended`)}
+            onSpeechStart={() => console.log(`${config.name} 2D Simple Rive speech animation started`)}
+            onSpeechEnd={() => console.log(`${config.name} 2D Simple Rive speech animation ended`)}
             className="drop-shadow-xl"
           />
         </div>
