@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Heart, Sparkles, Coffee, Book, Smile } from 'lucide-react';
+import OrbSpeakingAnimation from './OrbSpeakingAnimation';
 
 interface AvatarDisplayProps {
   avatarId: string;
@@ -418,6 +419,18 @@ const AvatarDisplay = ({ avatarId, mood, isTyping = false, isSpeaking = false }:
             </div>
           )}
 
+          {/* Orb Speaking Animation positioned at bottom center above name */}
+          <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-10">
+            <OrbSpeakingAnimation 
+              isActive={isSpeaking}
+              size="md"
+              avatarColor={config.color as 'purple' | 'indigo' | 'pink'}
+              onSpeechStart={() => console.log(`${config.name} orb animation started`)}
+              onSpeechEnd={() => console.log(`${config.name} orb animation ended`)}
+              className="drop-shadow-lg"
+            />
+          </div>
+
 
         </div>
 
@@ -480,6 +493,18 @@ const AvatarDisplay = ({ avatarId, mood, isTyping = false, isSpeaking = false }:
               </div>
             </div>
           )}
+
+        {/* Orb Speaking Animation for 2D avatars - positioned above name */}
+        <div className="absolute -bottom-12 left-1/2 transform -translate-x-1/2 z-10">
+          <OrbSpeakingAnimation 
+            isActive={isSpeaking}
+            size="lg"
+            avatarColor={config.color as 'purple' | 'indigo' | 'pink'}
+            onSpeechStart={() => console.log(`${config.name} 2D orb animation started`)}
+            onSpeechEnd={() => console.log(`${config.name} 2D orb animation ended`)}
+            className="drop-shadow-xl"
+          />
+        </div>
         </div>
 
         {/* Mood indicator */}
