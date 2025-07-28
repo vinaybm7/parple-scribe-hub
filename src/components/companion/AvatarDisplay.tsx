@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Heart, Sparkles, Coffee, Book, Smile } from 'lucide-react';
+import VideoSpeakingAnimation from './VideoSpeakingAnimation';
 
 interface AvatarDisplayProps {
   avatarId: string;
@@ -418,21 +419,24 @@ const AvatarDisplay = ({ avatarId, mood, isTyping = false, isSpeaking = false }:
             </div>
           )}
 
-          {/* Speaking animation for Live2D */}
-          {isSpeaking && (
-            <div className="absolute bottom-4 right-4 bg-white dark:bg-gray-800 rounded-full p-2 shadow-lg">
-              <div className="flex space-x-1">
-                <div className={`w-2 h-6 bg-gradient-to-t ${config.gradient} rounded-full animate-pulse`} style={{ animationDelay: '0ms' }} />
-                <div className={`w-2 h-4 bg-gradient-to-t ${config.gradient} rounded-full animate-pulse`} style={{ animationDelay: '100ms' }} />
-                <div className={`w-2 h-8 bg-gradient-to-t ${config.gradient} rounded-full animate-pulse`} style={{ animationDelay: '200ms' }} />
-              </div>
-            </div>
-          )}
+          {/* Video Speaking Animation positioned at bottom center above name */}
+          <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-10">
+            <VideoSpeakingAnimation 
+              isActive={isSpeaking}
+              size="md"
+              syncDelay={100} // Small delay to sync with ElevenLabs audio
+              onSpeechStart={() => console.log(`${config.name} speech animation started`)}
+              onSpeechEnd={() => console.log(`${config.name} speech animation ended`)}
+              className="drop-shadow-lg"
+            />
+          </div>
         </div>
 
-        {/* Avatar name only for Live2D - perfectly aligned with model */}
-        <div className="text-center mt-4 w-full flex justify-center">
-          <h3 className="text-2xl font-bold text-gray-800 dark:text-gray-200">{config.name}</h3>
+        {/* Avatar name positioned below speaking animation */}
+        <div className="text-center mt-6 w-full flex justify-center relative z-0">
+          <h3 className="text-2xl font-bold text-gray-800 dark:text-gray-200 bg-white/80 dark:bg-gray-800/80 px-4 py-2 rounded-lg backdrop-blur-sm shadow-lg">
+            {config.name}
+          </h3>
         </div>
       </div>
     );
@@ -496,23 +500,25 @@ const AvatarDisplay = ({ avatarId, mood, isTyping = false, isSpeaking = false }:
           {getMoodIcon()}
         </div>
 
-        {/* Speaking animation */}
-        {isSpeaking && (
-          <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2">
-            <div className="flex space-x-1">
-              <div className={`w-2 h-8 bg-gradient-to-t ${config.gradient} rounded-full animate-pulse`} style={{ animationDelay: '0ms' }} />
-              <div className={`w-2 h-6 bg-gradient-to-t ${config.gradient} rounded-full animate-pulse`} style={{ animationDelay: '100ms' }} />
-              <div className={`w-2 h-10 bg-gradient-to-t ${config.gradient} rounded-full animate-pulse`} style={{ animationDelay: '200ms' }} />
-              <div className={`w-2 h-4 bg-gradient-to-t ${config.gradient} rounded-full animate-pulse`} style={{ animationDelay: '300ms' }} />
-            </div>
-          </div>
-        )}
+        {/* Video Speaking Animation for 2D avatars - positioned above name */}
+        <div className="absolute -bottom-12 left-1/2 transform -translate-x-1/2 z-10">
+          <VideoSpeakingAnimation 
+            isActive={isSpeaking}
+            size="lg"
+            syncDelay={50} // Smaller delay for 2D avatars
+            onSpeechStart={() => console.log(`${config.name} 2D speech animation started`)}
+            onSpeechEnd={() => console.log(`${config.name} 2D speech animation ended`)}
+            className="drop-shadow-xl"
+          />
+        </div>
       </div>
 
-      {/* Avatar name and status */}
-      <div className="text-center">
-        <h3 className="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-1">{config.name}</h3>
-        <p className="text-sm text-gray-600 dark:text-gray-400 capitalize">
+      {/* Avatar name and status - positioned below speaking animation */}
+      <div className="text-center mt-4 relative z-0">
+        <h3 className="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-1 bg-white/80 dark:bg-gray-800/80 px-4 py-2 rounded-lg backdrop-blur-sm shadow-lg inline-block">
+          {config.name}
+        </h3>
+        <p className="text-sm text-gray-600 dark:text-gray-400 capitalize mt-2">
           {isTyping ? 'Typing...' : isSpeaking ? 'Speaking...' : `Feeling ${mood}`}
         </p>
       </div>

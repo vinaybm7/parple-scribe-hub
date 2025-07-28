@@ -68,7 +68,7 @@ const CompanionChat = ({ avatarId, onMoodChange, onTypingChange, onSpeakingChang
     console.log('🔊 ElevenLabs supported:', isElevenLabsSupported);
   }, [voiceSettings, isElevenLabsSupported]);
 
-  // Define speakMessage function
+  // Enhanced speakMessage function with better timing
   const speakMessage = async (text: string) => {
     console.log('💬 speakMessage called with:', text.substring(0, 50) + '...');
     console.log('💬 isSoundEnabled:', isSoundEnabled);
@@ -80,10 +80,16 @@ const CompanionChat = ({ avatarId, onMoodChange, onTypingChange, onSpeakingChang
     
     try {
       console.log('💬 Calling speak function...');
+      
+      // Pre-signal that speech is about to start (for video sync)
+      const speechStartTime = Date.now();
+      
       await speak(text, 
         () => {
-          // On speech start
-          console.log('💬 Speech started');
+          // On speech start - precise timing
+          const actualStartTime = Date.now();
+          const delay = actualStartTime - speechStartTime;
+          console.log(`💬 Speech started (delay: ${delay}ms)`);
           onSpeakingChange(true);
         },
         () => {
