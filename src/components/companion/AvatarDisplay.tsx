@@ -1,7 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
 import { Heart, Sparkles, Coffee, Book, Smile } from 'lucide-react';
-import RiveSpeakingAnimation from './RiveSpeakingAnimation';
-import SimpleRiveAnimation from './SimpleRiveAnimation';
 
 interface AvatarDisplayProps {
   avatarId: string;
@@ -420,24 +418,12 @@ const AvatarDisplay = ({ avatarId, mood, isTyping = false, isSpeaking = false }:
             </div>
           )}
 
-          {/* Rive Speaking Animation positioned at bottom center above name */}
-          <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-10">
-            {/* Try advanced Rive animation first, fallback to simple if needed */}
-            <SimpleRiveAnimation 
-              isActive={isSpeaking}
-              size="md"
-              onSpeechStart={() => console.log(`${config.name} Simple Rive speech animation started`)}
-              onSpeechEnd={() => console.log(`${config.name} Simple Rive speech animation ended`)}
-              className="drop-shadow-lg"
-            />
-          </div>
+
         </div>
 
-        {/* Avatar name positioned below speaking animation */}
-        <div className="text-center mt-6 w-full flex justify-center relative z-0">
-          <h3 className="text-2xl font-bold text-gray-800 dark:text-gray-200 bg-white/80 dark:bg-gray-800/80 px-4 py-2 rounded-lg backdrop-blur-sm shadow-lg">
-            {config.name}
-          </h3>
+        {/* Avatar name */}
+        <div className="text-center mt-4 w-full flex justify-center">
+          <h3 className="text-2xl font-bold text-gray-800 dark:text-gray-200">{config.name}</h3>
         </div>
       </div>
     );
@@ -501,24 +487,13 @@ const AvatarDisplay = ({ avatarId, mood, isTyping = false, isSpeaking = false }:
           {getMoodIcon()}
         </div>
 
-        {/* Simple Rive Speaking Animation for 2D avatars - positioned above name */}
-        <div className="absolute -bottom-16 left-1/2 transform -translate-x-1/2 z-10">
-          <SimpleRiveAnimation 
-            isActive={isSpeaking}
-            size="lg"
-            onSpeechStart={() => console.log(`${config.name} 2D Simple Rive speech animation started`)}
-            onSpeechEnd={() => console.log(`${config.name} 2D Simple Rive speech animation ended`)}
-            className="drop-shadow-xl"
-          />
-        </div>
+
       </div>
 
-      {/* Avatar name and status - positioned below speaking animation */}
-      <div className="text-center mt-4 relative z-0">
-        <h3 className="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-1 bg-white/80 dark:bg-gray-800/80 px-4 py-2 rounded-lg backdrop-blur-sm shadow-lg inline-block">
-          {config.name}
-        </h3>
-        <p className="text-sm text-gray-600 dark:text-gray-400 capitalize mt-2">
+      {/* Avatar name and status */}
+      <div className="text-center">
+        <h3 className="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-1">{config.name}</h3>
+        <p className="text-sm text-gray-600 dark:text-gray-400 capitalize">
           {isTyping ? 'Typing...' : isSpeaking ? 'Speaking...' : `Feeling ${mood}`}
         </p>
       </div>
