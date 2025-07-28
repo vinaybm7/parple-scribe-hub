@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Heart, Sparkles, Coffee, Book, Smile } from 'lucide-react';
-import VideoSpeakingAnimation from './VideoSpeakingAnimation';
+import RiveSpeakingAnimation from './RiveSpeakingAnimation';
 
 interface AvatarDisplayProps {
   avatarId: string;
@@ -419,14 +419,14 @@ const AvatarDisplay = ({ avatarId, mood, isTyping = false, isSpeaking = false }:
             </div>
           )}
 
-          {/* Video Speaking Animation positioned at bottom center above name */}
+          {/* Rive Speaking Animation positioned at bottom center above name */}
           <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-10">
-            <VideoSpeakingAnimation 
+            <RiveSpeakingAnimation 
               isActive={isSpeaking}
               size="md"
-              syncDelay={100} // Small delay to sync with ElevenLabs audio
-              onSpeechStart={() => console.log(`${config.name} speech animation started`)}
-              onSpeechEnd={() => console.log(`${config.name} speech animation ended`)}
+              volumeLevel={0.8} // Dynamic volume level (can be made responsive to actual audio)
+              onSpeechStart={() => console.log(`${config.name} Rive speech animation started`)}
+              onSpeechEnd={() => console.log(`${config.name} Rive speech animation ended`)}
               className="drop-shadow-lg"
             />
           </div>
@@ -500,14 +500,14 @@ const AvatarDisplay = ({ avatarId, mood, isTyping = false, isSpeaking = false }:
           {getMoodIcon()}
         </div>
 
-        {/* Video Speaking Animation for 2D avatars - positioned above name */}
-        <div className="absolute -bottom-12 left-1/2 transform -translate-x-1/2 z-10">
-          <VideoSpeakingAnimation 
+        {/* Rive Speaking Animation for 2D avatars - positioned above name */}
+        <div className="absolute -bottom-16 left-1/2 transform -translate-x-1/2 z-10">
+          <RiveSpeakingAnimation 
             isActive={isSpeaking}
             size="lg"
-            syncDelay={50} // Smaller delay for 2D avatars
-            onSpeechStart={() => console.log(`${config.name} 2D speech animation started`)}
-            onSpeechEnd={() => console.log(`${config.name} 2D speech animation ended`)}
+            volumeLevel={0.9} // Higher volume level for 2D avatars
+            onSpeechStart={() => console.log(`${config.name} 2D Rive speech animation started`)}
+            onSpeechEnd={() => console.log(`${config.name} 2D Rive speech animation ended`)}
             className="drop-shadow-xl"
           />
         </div>
