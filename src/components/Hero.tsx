@@ -1,16 +1,16 @@
 import { CTAGlow } from "@/components/ui/cta-glow";
-import { AuroraBackground } from "@/components/ui/aurora-background";
+import { DreamWaveBackground } from "@/components/ui/dream-wave-background";
 import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import FloatingHeader from "./FloatingHeader";
 
 const Hero = () => {
   return (
-    <AuroraBackground className="relative min-h-screen flex items-center justify-center overflow-hidden">
+    <DreamWaveBackground className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Rising sun gradient background with hover effect */}
-      <div className="absolute inset-0 gradient-hover-area opacity-40"></div>
+      <div className="absolute inset-0 gradient-hover-area opacity-20 z-30"></div>
       <FloatingHeader />
-      <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 text-center pt-16 pb-20">
+      <div className="relative z-40 container mx-auto px-4 sm:px-6 lg:px-8 text-center pt-16 pb-20">
         {/* Main Headline */}
         <div className="max-w-6xl mx-auto space-y-8 sm:space-y-12">
           <h1 className="font-bricolage text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-extrabold leading-tight text-foreground mt-4 mb-8 sm:mb-12">
@@ -49,7 +49,7 @@ const Hero = () => {
           </div>
         </div>
       </div>
-    </AuroraBackground>
+    </DreamWaveBackground>
   );
 };
 
