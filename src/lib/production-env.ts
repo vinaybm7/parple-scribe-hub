@@ -1,10 +1,11 @@
 // ElevenLabs API Key Pool - Add new keys here when credits run out
 // The system will automatically try keys in order until one works
 export const ELEVENLABS_API_KEY_POOL = [
-  'sk_98ab9d165671e69015cfa701a96547907ad3394f406cd6ee', // Current key
-  'sk_dabc8260f66a6c21d7b604737a77140154f76faeb432f53b', // Backup key 1
-  'sk_7453981580c758ea5f89e7474a69a5fb2d0f84e80bfb4bfd', // Backup key 2
-  'sk_5aa00e6ade7d0de9f7cb8be380e41f1ce1c1f78e9846446b', // Backup key 3
+  'sk_0599b7cf4afac7839118e034d8352dacb6217ba04d6915c5', // Working key with full credits
+  'sk_98ab9d165671e69015cfa701a96547907ad3394f406cd6ee', // Backup key 1
+  'sk_dabc8260f66a6c21d7b604737a77140154f76faeb432f53b', // Backup key 2
+  'sk_7453981580c758ea5f89e7474a69a5fb2d0f84e80bfb4bfd', // Backup key 3
+  'sk_5aa00e6ade7d0de9f7cb8be380e41f1ce1c1f78e9846446b', // Backup key 4
   // Add more API keys here when you get them:
   // 'sk_new_key_here_when_credits_run_out',
   // 'sk_another_backup_key_here',
