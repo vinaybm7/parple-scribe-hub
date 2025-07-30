@@ -129,13 +129,14 @@ const OrbSpeakingAnimation = ({
         }}
       />
       
-      {/* Rotating color layer for dynamic effects */}
+      {/* Gentle pulsing color layer */}
       <div 
-        className={`absolute inset-0 rounded-full bg-gradient-conic ${colors.secondary} ${config.blur}`}
+        className={`absolute inset-0 rounded-full bg-gradient-radial ${colors.secondary} ${config.blur}`}
         style={{
-          transform: `scale(${1.15 + (isActive ? intensity * 0.3 : 0.05)}) rotate(${wavePhase * (isActive ? 2 : 1)}deg)`,
-          opacity: isActive ? intensity * 0.7 : 0.3,
-          filter: 'blur(4px)'
+          transform: `scale(${1.15 + (isActive ? intensity * 0.3 : 0.05)})`,
+          opacity: isActive ? intensity * 0.5 : 0.2,
+          filter: 'blur(6px)',
+          animation: isActive ? `pulse ${1.2 + intensity * 0.3}s ease-in-out infinite` : undefined
         }}
       />
       
@@ -167,60 +168,84 @@ const OrbSpeakingAnimation = ({
              style={{ opacity: isActive ? 0.7 : 0.5 }} />
         <div className={`absolute inset-0 rounded-full bg-gradient-radial ${colors.tertiary}`} 
              style={{ opacity: isActive ? 0.8 : 0.6 }} />
-        <div className={`absolute inset-0 rounded-full bg-gradient-to-r ${colors.pastelOverlay}`} 
+        <div className={`absolute inset-0 rounded-full bg-gradient-to-br ${colors.pastelOverlay}`} 
              style={{ 
-               transform: `rotate(${wavePhase * 0.5}deg)`,
-               opacity: isActive ? 0.6 : 0.4
+               opacity: isActive ? 0.4 + intensity * 0.2 : 0.3,
+               transform: `scale(${1 + (isActive ? Math.sin(wavePhase * Math.PI / 180) * 0.05 : 0)})`
              }} />
-        
-        {/* Dynamic color shifting layer */}
-        <div 
-          className={`absolute inset-0 rounded-full bg-gradient-conic ${colors.primary}`}
-          style={{
-            transform: `rotate(${wavePhase}deg)`,
-            opacity: isActive ? 0.3 : 0.2,
-            mixBlendMode: 'overlay'
-          }}
-        />
         
         {/* Inner glow with better visibility */}
         <div className={`absolute inset-3 rounded-full bg-gradient-radial ${colors.innerGlow}`} 
              style={{ opacity: isActive ? 0.9 : 0.7 }} />
         
-        {/* Enhanced shimmer effect */}
+        {/* Subtle floating particles effect */}
+        {isActive && (
+          <>
+            {[...Array(6)].map((_, i) => (
+              <div
+                key={`particle-${i}`}
+                className="absolute w-1 h-1 rounded-full bg-white/60"
+                style={{
+                  left: `${30 + Math.sin((wavePhase + i * 60) * Math.PI / 180) * 25}%`,
+                  top: `${30 + Math.cos((wavePhase + i * 60) * Math.PI / 180) * 25}%`,
+                  opacity: 0.3 + Math.sin((wavePhase + i * 90) * Math.PI / 180) * 0.4,
+                  transform: `scale(${0.5 + intensity * 0.8})`,
+                  filter: 'blur(0.5px)'
+                }}
+              />
+            ))}
+          </>
+        )}
+        
+        {/* Gentle center highlight */}
         <div 
-          className="absolute inset-0 rounded-full bg-gradient-to-r from-transparent via-white/30 to-transparent"
+          className="absolute inset-1/4 rounded-full bg-gradient-radial from-white/40 via-white/20 to-transparent"
           style={{
-            transform: `rotate(${wavePhase * 0.3}deg)`,
-            opacity: isActive ? 0.8 : 0.4,
-            filter: 'blur(1px)'
+            opacity: isActive ? intensity * 0.6 : 0.3,
+            transform: `scale(${1 + (isActive ? Math.sin(wavePhase * Math.PI / 180) * 0.1 : 0)})`
           }}
         />
 
 
       </div>
 
-      {/* Pastel ripple waves around the orb when speaking */}
+      {/* Beautiful ripple waves and floating lights when speaking */}
       {isActive && (
         <div className="absolute inset-0 flex items-center justify-center">
           {/* Multi-colored ripple waves with voice-responsive intensity */}
-          {[...Array(5)].map((_, i) => (
+          {[...Array(4)].map((_, i) => (
             <div
               key={`ripple-${i}`}
               className={`absolute border-2 rounded-full animate-ping`}
               style={{
-                width: `${110 + i * 20}%`,
-                height: `${110 + i * 20}%`,
-                borderColor: i === 0 ? `rgba(244, 114, 182, ${0.4 * intensity})` : // pink-400
-                           i === 1 ? `rgba(168, 85, 247, ${0.35 * intensity})` :   // purple-500  
-                           i === 2 ? `rgba(99, 102, 241, ${0.3 * intensity})` :    // indigo-500
-                           i === 3 ? `rgba(236, 72, 153, ${0.25 * intensity})` :   // pink-500
-                           `rgba(59, 130, 246, ${0.2 * intensity})`,               // blue-500
-                animationDelay: `${i * 0.2}s`,
-                animationDuration: `${1.5 - intensity * 0.3}s`, // Faster with higher intensity
-                opacity: intensity * (0.8 - i * 0.1),
+                width: `${110 + i * 25}%`,
+                height: `${110 + i * 25}%`,
+                borderColor: i === 0 ? `rgba(244, 114, 182, ${0.5 * intensity})` : // pink-400
+                           i === 1 ? `rgba(168, 85, 247, ${0.4 * intensity})` :   // purple-500  
+                           i === 2 ? `rgba(99, 102, 241, ${0.35 * intensity})` :  // indigo-500
+                           `rgba(236, 72, 153, ${0.3 * intensity})`,              // pink-500
+                animationDelay: `${i * 0.25}s`,
+                animationDuration: `${1.8 - intensity * 0.4}s`, // Faster with higher intensity
+                opacity: intensity * (0.9 - i * 0.15),
                 filter: 'blur(0.5px)',
-                borderWidth: `${2 + intensity * 2}px` // Thicker borders with higher intensity
+                borderWidth: `${2 + intensity * 1.5}px`
+              }}
+            />
+          ))}
+          
+          {/* Floating light orbs around the main orb */}
+          {[...Array(8)].map((_, i) => (
+            <div
+              key={`light-${i}`}
+              className="absolute w-2 h-2 rounded-full"
+              style={{
+                background: `radial-gradient(circle, rgba(255, 255, 255, ${0.8 * intensity}) 0%, rgba(244, 114, 182, ${0.4 * intensity}) 100%)`,
+                left: `${50 + Math.sin((wavePhase + i * 45) * Math.PI / 180) * 40}%`,
+                top: `${50 + Math.cos((wavePhase + i * 45) * Math.PI / 180) * 40}%`,
+                transform: `translate(-50%, -50%) scale(${0.5 + intensity * 0.8})`,
+                opacity: 0.4 + Math.sin((wavePhase + i * 60) * Math.PI / 180) * 0.4,
+                filter: 'blur(1px)',
+                animation: `pulse ${1 + i * 0.1}s ease-in-out infinite`
               }}
             />
           ))}
@@ -231,17 +256,17 @@ const OrbSpeakingAnimation = ({
               key={`glow-${i}`}
               className={`absolute rounded-full`}
               style={{
-                width: `${140 + i * 30}%`,
-                height: `${140 + i * 30}%`,
+                width: `${150 + i * 35}%`,
+                height: `${150 + i * 35}%`,
                 background: i === 0 ? 
-                  `radial-gradient(circle, rgba(244, 114, 182, ${0.15 * intensity}) 0%, transparent 70%)` :
+                  `radial-gradient(circle, rgba(244, 114, 182, ${0.12 * intensity}) 0%, transparent 70%)` :
                   i === 1 ?
-                  `radial-gradient(circle, rgba(168, 85, 247, ${0.12 * intensity}) 0%, transparent 70%)` :
-                  `radial-gradient(circle, rgba(59, 130, 246, ${0.1 * intensity}) 0%, transparent 70%)`,
-                opacity: intensity * (0.6 - i * 0.15),
-                transform: `scale(${1 + Math.sin((wavePhase + i * 120) * Math.PI / 180) * 0.15 * intensity})`,
-                filter: 'blur(3px)',
-                animation: `pulse ${0.8 + i * 0.2}s ease-in-out infinite`
+                  `radial-gradient(circle, rgba(168, 85, 247, ${0.1 * intensity}) 0%, transparent 70%)` :
+                  `radial-gradient(circle, rgba(99, 102, 241, ${0.08 * intensity}) 0%, transparent 70%)`,
+                opacity: intensity * (0.7 - i * 0.2),
+                transform: `scale(${1 + Math.sin((wavePhase + i * 120) * Math.PI / 180) * 0.1 * intensity})`,
+                filter: 'blur(4px)',
+                animation: `pulse ${1.2 + i * 0.3}s ease-in-out infinite`
               }}
             />
           ))}
