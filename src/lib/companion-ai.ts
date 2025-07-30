@@ -1,4 +1,4 @@
-import { generateGeminiResponse } from './gemini';
+import { generateGeminiResponse, optimizePrompt } from './gemini';
 
 interface Message {
   id: string;
@@ -237,8 +237,9 @@ export const generateCompanionResponse = async (
   avatarId: string
 ): Promise<CompanionResponse> => {
   try {
-    const prompt = generatePrompt(userMessage, conversationHistory, avatarId);
-    const response = await generateGeminiResponse(prompt);
+    const rawPrompt = generatePrompt(userMessage, conversationHistory, avatarId);
+    const optimizedPrompt = optimizePrompt(rawPrompt);
+    const response = await generateGeminiResponse(optimizedPrompt);
     const mood = detectMood(userMessage, avatarId, conversationHistory);
     
     return {
@@ -248,18 +249,19 @@ export const generateCompanionResponse = async (
   } catch (error) {
     console.error('Error generating companion response:', error);
     
-    // Fallback responses based on detected mood
+    // Enhanced fallback responses based on detected mood
     const detectedMood = detectMood(userMessage, avatarId, conversationHistory);
-    const profile = personalityProfiles[avatarId as keyof typeof personalityProfiles] || personalityProfiles.bella;
+    const profile = personalityProfiles[avatarId as keyof typeof personalityProfiles] || personalityProfiles.luna;
     
-    // Choose appropriate fallback based on mood
+    // Choose appropriate fallback based on mood and avatar
     let fallbackPattern = 'casual';
     if (detectedMood === 'caring') fallbackPattern = 'comfort';
     else if (detectedMood === 'excited') fallbackPattern = 'encouragement';
     else if (detectedMood === 'focused') fallbackPattern = 'study';
     
     const patterns = profile.responsePatterns[fallbackPattern as keyof typeof profile.responsePatterns] || profile.responsePatterns.casual;
-    const fallbackMessage = patterns[0] + " I'm having a little trouble thinking right now, but I'm here for you! 💕";
+    const fallbackIndex = Math.floor(Math.random() * patterns.length);
+    const fallbackMessage = patterns[fallbackIndex];
     
     return {
       message: fallbackMessage,

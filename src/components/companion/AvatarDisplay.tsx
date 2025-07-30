@@ -7,9 +7,10 @@ interface AvatarDisplayProps {
   mood: 'happy' | 'excited' | 'calm' | 'focused' | 'caring';
   isTyping?: boolean;
   isSpeaking?: boolean;
+  voiceLevel?: number; // Voice activity level for dynamic animation
 }
 
-const AvatarDisplay = ({ avatarId, mood, isTyping = false, isSpeaking = false }: AvatarDisplayProps) => {
+const AvatarDisplay = ({ avatarId, mood, isTyping = false, isSpeaking = false, voiceLevel = 0.5 }: AvatarDisplayProps) => {
   const [currentExpression, setCurrentExpression] = useState('neutral');
   const [eyeBlink, setEyeBlink] = useState(false);
   const [live2dLoaded, setLive2dLoaded] = useState(false);
@@ -414,6 +415,7 @@ const AvatarDisplay = ({ avatarId, mood, isTyping = false, isSpeaking = false }:
           <div className="absolute bottom-8 w-full flex justify-center z-10">
             <OrbSpeakingAnimation 
               isActive={isSpeaking}
+              voiceLevel={voiceLevel}
               size="md"
               avatarColor={config.color as 'purple' | 'indigo' | 'pink'}
               onSpeechStart={() => console.log(`${config.name} orb animation started`)}
@@ -480,6 +482,7 @@ const AvatarDisplay = ({ avatarId, mood, isTyping = false, isSpeaking = false }:
         <div className="absolute -bottom-12 w-full flex justify-center z-10">
           <OrbSpeakingAnimation 
             isActive={isSpeaking}
+            voiceLevel={voiceLevel}
             size="lg"
             avatarColor={config.color as 'purple' | 'indigo' | 'pink'}
             onSpeechStart={() => console.log(`${config.name} 2D orb animation started`)}

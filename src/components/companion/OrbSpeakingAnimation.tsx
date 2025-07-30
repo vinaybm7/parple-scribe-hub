@@ -3,6 +3,7 @@ import './orb-animations.css';
 
 interface OrbSpeakingAnimationProps {
   isActive: boolean;
+  voiceLevel?: number; // Voice activity level (0-1) for dynamic animation
   onSpeechStart?: () => void;
   onSpeechEnd?: () => void;
   size?: 'sm' | 'md' | 'lg';
@@ -12,6 +13,7 @@ interface OrbSpeakingAnimationProps {
 
 const OrbSpeakingAnimation = ({
   isActive,
+  voiceLevel = 0.5,
   onSpeechStart,
   onSpeechEnd,
   size = 'md',
@@ -66,19 +68,22 @@ const OrbSpeakingAnimation = ({
 
   const colors = colorConfig[avatarColor];
 
-  // Animate wave phases and intensity - Enhanced for smoother movement
+  // Animate wave phases and intensity - Enhanced for real-time voice sync
   useEffect(() => {
     const interval = setInterval(() => {
-      setWavePhase(prev => (prev + 2) % 360); // Faster phase progression
+      setWavePhase(prev => (prev + (isActive ? 4 : 2)) % 360); // Faster phase progression when speaking
       
       if (isActive) {
-        // More dynamic intensity variation when speaking
-        setIntensity(0.5 + Math.sin(Date.now() * 0.01) * 0.3 + Math.random() * 0.2);
+        // Use real voice level for dynamic intensity with more dramatic scaling
+        const baseIntensity = Math.max(0.4, voiceLevel * 3); // More amplified voice level
+        const variation = Math.sin(Date.now() * 0.02) * 0.3; // More variation
+        const randomness = Math.random() * 0.2; // More randomness for liveliness
+        setIntensity(Math.min(1.2, baseIntensity + variation + randomness)); // Cap at 1.2 for safety
       } else {
         // Gentle breathing intensity when silent
         setIntensity(0.2 + Math.sin(Date.now() * 0.003) * 0.1);
       }
-    }, 50); // Smoother 20fps updates
+    }, 30); // Even smoother 33fps updates for more fluid animation
 
     if (isActive) {
       onSpeechStart?.();
@@ -87,7 +92,7 @@ const OrbSpeakingAnimation = ({
     }
 
     return () => clearInterval(interval);
-  }, [isActive, onSpeechStart, onSpeechEnd]);
+  }, [isActive, voiceLevel, onSpeechStart, onSpeechEnd]);
 
   // Generate random wave positions
   const generateWaves = (count: number) => {
@@ -117,9 +122,10 @@ const OrbSpeakingAnimation = ({
       <div 
         className={`absolute inset-0 rounded-full bg-gradient-to-r ${colors.primary} ${config.blur} ${isActive ? 'animate-pulse' : ''}`}
         style={{
-          transform: `scale(${1.3 + (isActive ? intensity * 0.4 : 0.1)})`,
-          opacity: isActive ? intensity * 0.8 : 0.4,
-          filter: 'blur(8px)'
+          transform: `scale(${1.3 + (isActive ? intensity * 0.6 : 0.1)})`,
+          opacity: isActive ? intensity * 0.9 : 0.4,
+          filter: 'blur(8px)',
+          animation: isActive ? `pulse 0.6s ease-in-out infinite` : undefined
         }}
       />
       
@@ -127,8 +133,8 @@ const OrbSpeakingAnimation = ({
       <div 
         className={`absolute inset-0 rounded-full bg-gradient-conic ${colors.secondary} ${config.blur}`}
         style={{
-          transform: `scale(${1.15 + (isActive ? intensity * 0.2 : 0.05)}) rotate(${wavePhase}deg)`,
-          opacity: isActive ? intensity * 0.6 : 0.3,
+          transform: `scale(${1.15 + (isActive ? intensity * 0.3 : 0.05)}) rotate(${wavePhase * (isActive ? 2 : 1)}deg)`,
+          opacity: isActive ? intensity * 0.7 : 0.3,
           filter: 'blur(4px)'
         }}
       />
@@ -137,9 +143,10 @@ const OrbSpeakingAnimation = ({
       <div 
         className={`absolute inset-0 rounded-full bg-gradient-radial ${colors.accent}`}
         style={{
-          transform: `scale(${1.4 + (isActive ? intensity * 0.3 : 0.1)})`,
-          opacity: isActive ? intensity * 0.4 : 0.2,
-          filter: 'blur(12px)'
+          transform: `scale(${1.4 + (isActive ? intensity * 0.5 : 0.1)})`,
+          opacity: isActive ? intensity * 0.5 : 0.2,
+          filter: 'blur(12px)',
+          animation: isActive ? `pulse 0.8s ease-in-out infinite` : undefined
         }}
       />
 
@@ -149,8 +156,8 @@ const OrbSpeakingAnimation = ({
         style={{
           width: config.width,
           height: config.height,
-          transform: `scale(${1 + (isActive ? intensity * 0.1 : 0)})`,
-          filter: isActive ? `hue-rotate(${wavePhase}deg) saturate(1.2) brightness(1.1)` : 'saturate(1.1)'
+          transform: `scale(${1 + (isActive ? intensity * 0.15 : 0)})`,
+          filter: isActive ? `hue-rotate(${wavePhase}deg) saturate(1.4) brightness(${1.1 + intensity * 0.2})` : 'saturate(1.1)'
         }}
       >
         {/* Enhanced gradient layers for vibrant colors */}
@@ -196,40 +203,45 @@ const OrbSpeakingAnimation = ({
       {/* Pastel ripple waves around the orb when speaking */}
       {isActive && (
         <div className="absolute inset-0 flex items-center justify-center">
-          {/* Multi-colored ripple waves */}
-          {[...Array(4)].map((_, i) => (
+          {/* Multi-colored ripple waves with voice-responsive intensity */}
+          {[...Array(5)].map((_, i) => (
             <div
               key={`ripple-${i}`}
               className={`absolute border-2 rounded-full animate-ping`}
               style={{
-                width: `${110 + i * 25}%`,
-                height: `${110 + i * 25}%`,
-                borderColor: i === 0 ? 'rgba(244, 114, 182, 0.4)' : // pink-400
-                           i === 1 ? 'rgba(168, 85, 247, 0.3)' :   // purple-500  
-                           i === 2 ? 'rgba(99, 102, 241, 0.25)' :  // indigo-500
-                           'rgba(34, 197, 94, 0.2)',              // emerald-500
-                animationDelay: `${i * 0.3}s`,
-                animationDuration: `${2.5 + intensity * 0.5}s`,
-                opacity: intensity * (0.7 - i * 0.12),
-                filter: 'blur(0.5px)'
+                width: `${110 + i * 20}%`,
+                height: `${110 + i * 20}%`,
+                borderColor: i === 0 ? `rgba(244, 114, 182, ${0.4 * intensity})` : // pink-400
+                           i === 1 ? `rgba(168, 85, 247, ${0.35 * intensity})` :   // purple-500  
+                           i === 2 ? `rgba(99, 102, 241, ${0.3 * intensity})` :    // indigo-500
+                           i === 3 ? `rgba(236, 72, 153, ${0.25 * intensity})` :   // pink-500
+                           `rgba(59, 130, 246, ${0.2 * intensity})`,               // blue-500
+                animationDelay: `${i * 0.2}s`,
+                animationDuration: `${1.5 - intensity * 0.3}s`, // Faster with higher intensity
+                opacity: intensity * (0.8 - i * 0.1),
+                filter: 'blur(0.5px)',
+                borderWidth: `${2 + intensity * 2}px` // Thicker borders with higher intensity
               }}
             />
           ))}
           
-          {/* Additional soft glow rings */}
-          {[...Array(2)].map((_, i) => (
+          {/* Additional soft glow rings with pulsating effect */}
+          {[...Array(3)].map((_, i) => (
             <div
               key={`glow-${i}`}
               className={`absolute rounded-full`}
               style={{
-                width: `${140 + i * 40}%`,
-                height: `${140 + i * 40}%`,
+                width: `${140 + i * 30}%`,
+                height: `${140 + i * 30}%`,
                 background: i === 0 ? 
-                  'radial-gradient(circle, rgba(244, 114, 182, 0.1) 0%, transparent 70%)' :
-                  'radial-gradient(circle, rgba(168, 85, 247, 0.08) 0%, transparent 70%)',
-                opacity: intensity * (0.5 - i * 0.2),
-                transform: `scale(${1 + Math.sin((wavePhase + i * 180) * Math.PI / 180) * 0.1})`,
-                filter: 'blur(2px)'
+                  `radial-gradient(circle, rgba(244, 114, 182, ${0.15 * intensity}) 0%, transparent 70%)` :
+                  i === 1 ?
+                  `radial-gradient(circle, rgba(168, 85, 247, ${0.12 * intensity}) 0%, transparent 70%)` :
+                  `radial-gradient(circle, rgba(59, 130, 246, ${0.1 * intensity}) 0%, transparent 70%)`,
+                opacity: intensity * (0.6 - i * 0.15),
+                transform: `scale(${1 + Math.sin((wavePhase + i * 120) * Math.PI / 180) * 0.15 * intensity})`,
+                filter: 'blur(3px)',
+                animation: `pulse ${0.8 + i * 0.2}s ease-in-out infinite`
               }}
             />
           ))}

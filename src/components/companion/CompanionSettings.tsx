@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Slider } from '@/components/ui/slider';
 import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   Volume2, 
   VolumeX, 
@@ -14,8 +15,10 @@ import {
   Moon,
   Settings,
   RotateCcw,
-  Trash2
+  Trash2,
+  Zap
 } from 'lucide-react';
+import ModelStatusMonitor from './ModelStatusMonitor';
 
 interface CompanionSettingsProps {
   avatarId: string;
@@ -50,7 +53,7 @@ const CompanionSettings = ({
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <Card className="w-full max-w-md bg-white dark:bg-gray-900 shadow-2xl">
+      <Card className="w-full max-w-4xl bg-white dark:bg-gray-900 shadow-2xl max-h-[90vh] overflow-hidden">
         <CardHeader className="border-b">
           <div className="flex items-center justify-between">
             <CardTitle className="flex items-center gap-2">
@@ -63,7 +66,20 @@ const CompanionSettings = ({
           </div>
         </CardHeader>
 
-        <CardContent className="space-y-6 p-6">
+        <CardContent className="p-0 overflow-y-auto max-h-[calc(90vh-80px)]">
+          <Tabs defaultValue="general" className="w-full">
+            <TabsList className="grid w-full grid-cols-2 m-4 mb-0">
+              <TabsTrigger value="general" className="flex items-center gap-2">
+                <Settings className="w-4 h-4" />
+                General
+              </TabsTrigger>
+              <TabsTrigger value="ai-status" className="flex items-center gap-2">
+                <Zap className="w-4 h-4" />
+                AI Status
+              </TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="general" className="space-y-6 p-6 pt-4">
           {/* Current Avatar */}
           <div className="text-center">
             <div className={`w-16 h-16 mx-auto rounded-full bg-gradient-to-br from-${currentAvatar.color}-400 to-${currentAvatar.color}-600 flex items-center justify-center mb-3`}>
@@ -194,6 +210,20 @@ const CompanionSettings = ({
               Clear All History
             </Button>
           </div>
+            </TabsContent>
+
+            <TabsContent value="ai-status" className="p-6 pt-4">
+              <div className="space-y-4">
+                <div className="text-center mb-6">
+                  <h3 className="text-lg font-semibold mb-2">AI Model Performance Monitor</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Monitor and manage AI model status, including automatic fallback to Gemini 2.0 Flash when needed.
+                  </p>
+                </div>
+                <ModelStatusMonitor />
+              </div>
+            </TabsContent>
+          </Tabs>
         </CardContent>
       </Card>
     </div>

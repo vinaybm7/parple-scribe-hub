@@ -27,6 +27,8 @@ export const useVoice = () => {
   const [isSupported, setIsSupported] = useState(false);
   const [isElevenLabsSupported, setIsElevenLabsSupported] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const [isVoiceActive, setIsVoiceActive] = useState(false); // Real-time voice activity
+  const [voiceLevel, setVoiceLevel] = useState(0); // Voice activity level (0-1)
   const [isListening, setIsListening] = useState(false);
   const [voiceSettings, setVoiceSettings] = useState<VoiceSettings>({
     enabled: true,
@@ -141,7 +143,7 @@ export const useVoice = () => {
 
         console.log('🎤 Audio buffer received, size:', audioBuffer.byteLength, 'bytes');
 
-        // Play the audio
+        // Play the audio with voice activity detection
         await elevenLabsService.playAudio(
           audioBuffer,
           () => {
@@ -152,7 +154,14 @@ export const useVoice = () => {
           () => {
             console.log('🎤 ElevenLabs audio finished playing');
             setIsSpeaking(false);
+            setIsVoiceActive(false);
+            setVoiceLevel(0);
             onEnd?.();
+          },
+          (isActive: boolean, level: number) => {
+            // Real-time voice activity detection
+            setIsVoiceActive(isActive);
+            setVoiceLevel(level);
           }
         );
       } else {
@@ -179,12 +188,16 @@ export const useVoice = () => {
         utterance.onend = () => {
           console.log('🎤 Browser TTS ended');
           setIsSpeaking(false);
+          setIsVoiceActive(false);
+          setVoiceLevel(0);
           onEnd?.();
         };
 
         utterance.onerror = (event) => {
           console.error('🎤 Speech synthesis error:', event.error);
           setIsSpeaking(false);
+          setIsVoiceActive(false);
+          setVoiceLevel(0);
           onEnd?.();
         };
 
@@ -208,18 +221,25 @@ export const useVoice = () => {
           utterance.onstart = () => {
             console.log('🎤 Fallback browser TTS started');
             setIsSpeaking(true);
+            // For browser TTS, simulate voice activity since we can't analyze it
+            setIsVoiceActive(true);
+            setVoiceLevel(0.5);
             onStart?.();
           };
 
           utterance.onend = () => {
             console.log('🎤 Fallback browser TTS ended');
             setIsSpeaking(false);
+            setIsVoiceActive(false);
+            setVoiceLevel(0);
             onEnd?.();
           };
 
           utterance.onerror = (event) => {
             console.error('🎤 Fallback speech synthesis error:', event.error);
             setIsSpeaking(false);
+            setIsVoiceActive(false);
+            setVoiceLevel(0);
             onEnd?.();
           };
 
@@ -228,6 +248,8 @@ export const useVoice = () => {
         } catch (fallbackError) {
           console.error('🎤 Fallback TTS also failed:', fallbackError);
           setIsSpeaking(false);
+          setIsVoiceActive(false);
+          setVoiceLevel(0);
           onEnd?.();
         }
       }
@@ -282,6 +304,8 @@ export const useVoice = () => {
   const stopSpeaking = useCallback(() => {
     speechSynthesis.cancel();
     setIsSpeaking(false);
+    setIsVoiceActive(false);
+    setVoiceLevel(0);
   }, []);
 
   const updateVoiceSettings = useCallback((newSettings: Partial<VoiceSettings>) => {
@@ -300,6 +324,8 @@ export const useVoice = () => {
     isSupported,
     isElevenLabsSupported,
     isSpeaking,
+    isVoiceActive, // Real-time voice activity
+    voiceLevel, // Voice activity level
     isListening,
     voiceSettings,
     speechSettings,

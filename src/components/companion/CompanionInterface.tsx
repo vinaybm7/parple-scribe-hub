@@ -18,6 +18,7 @@ const CompanionInterface = ({ avatarId, onBack }: CompanionInterfaceProps) => {
   const [currentMood, setCurrentMood] = useState<'happy' | 'excited' | 'calm' | 'focused' | 'caring'>('caring');
   const [isTyping, setIsTyping] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const [voiceLevel, setVoiceLevel] = useState(0);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   const avatarNames = {
@@ -116,6 +117,7 @@ const CompanionInterface = ({ avatarId, onBack }: CompanionInterfaceProps) => {
                   mood={currentMood}
                   isTyping={isTyping}
                   isSpeaking={isSpeaking}
+                  voiceLevel={voiceLevel}
                 />
               </div>
             ) : (
@@ -127,6 +129,7 @@ const CompanionInterface = ({ avatarId, onBack }: CompanionInterfaceProps) => {
                     mood={currentMood}
                     isTyping={isTyping}
                     isSpeaking={isSpeaking}
+                    voiceLevel={voiceLevel}
                   />
                 </CardContent>
               </Card>
@@ -142,6 +145,7 @@ const CompanionInterface = ({ avatarId, onBack }: CompanionInterfaceProps) => {
                   onMoodChange={setCurrentMood}
                   onTypingChange={setIsTyping}
                   onSpeakingChange={setIsSpeaking}
+                  onVoiceLevelChange={setVoiceLevel}
                 />
               </CardContent>
             </Card>

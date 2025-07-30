@@ -51,7 +51,7 @@ export const initializeElevenLabsForAvatar = (avatarId: string, retryCount: numb
     console.log(`🔊 API Key status: ${apiKey ? `Present (${apiKey.substring(0, 10)}...)` : 'MISSING'}`);
     console.log(`🔊 Voice ID to be used: ${voiceId}`);
     console.log(`🔊 Environment mode: ${import.meta.env.MODE}`);
-    
+
     if (!apiKey || apiKey.length === 0) {
       const errorMsg = 'ElevenLabs API key is not configured';
       console.error(`❌ ${errorMsg}`);
@@ -73,7 +73,7 @@ export const initializeElevenLabsForAvatar = (avatarId: string, retryCount: numb
 
     console.log('🔊 Creating ElevenLabs service instance...');
     const service = initializeElevenLabs(apiKey, voiceId);
-    
+
     // Verify the service was created successfully
     if (!service) {
       const errorMsg = 'Failed to create ElevenLabs service instance';
@@ -83,23 +83,23 @@ export const initializeElevenLabsForAvatar = (avatarId: string, retryCount: numb
 
     console.log('✅ ElevenLabs service initialized successfully');
     return service;
-    
+
   } catch (error) {
     console.error('❌ Failed to initialize ElevenLabs:', error);
-    
+
     // If this was an API key related error and we haven't retried too many times
     if (retryCount < 3 && error instanceof Error) {
       const apiKey = getAvailableElevenLabsApiKey();
-      
+
       // Mark the current API key as failed if it looks like a quota/auth error
-      if (error.message.includes('quota') || error.message.includes('credits') || 
-          error.message.includes('unauthorized') || error.message.includes('401')) {
+      if (error.message.includes('quota') || error.message.includes('credits') ||
+        error.message.includes('unauthorized') || error.message.includes('401')) {
         markApiKeyAsFailed(apiKey, error.message);
         console.log(`🔄 Retrying with next available API key...`);
         return initializeElevenLabsForAvatar(avatarId, retryCount + 1);
       }
     }
-    
+
     // Don't throw here, let the caller handle the null return
     return null;
   }

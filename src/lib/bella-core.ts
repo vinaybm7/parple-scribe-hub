@@ -1,18 +1,23 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import { optimizePrompt } from './gemini';
 
 const API_KEY = import.meta.env.VITE_GEMINI_API_KEY || 'AIzaSyCP8LBstvGY97T6aGKwedOmJTIgK1zp9qg';
 
 // Initialize the Gemini AI
 const genAI = new GoogleGenerativeAI(API_KEY);
-const model = genAI.getGenerativeModel({ 
-  model: 'gemini-1.5-flash',
-  generationConfig: {
-    temperature: 0.8,
-    topK: 1,
-    topP: 1,
-    maxOutputTokens: 150, // Reduced to encourage shorter responses
-  },
-});
+
+// Use the same model configuration as the main gemini.ts for consistency
+const getModel = () => {
+  return genAI.getGenerativeModel({ 
+    model: 'gemini-1.5-flash',
+    generationConfig: {
+      temperature: 0.8,
+      topK: 1,
+      topP: 1,
+      maxOutputTokens: 150, // Reduced to encourage shorter responses
+    },
+  });
+};
 
 // Bella's core personality and system prompt
 const BELLA_SYSTEM_PROMPT = `You are Bella, a charming and supportive AI study companion. You're intelligent, caring, and have a warm personality that makes studying feel engaging and enjoyable.
@@ -334,8 +339,12 @@ Bella:`;
 
       console.log('📤 Sending prompt to Gemini...');
       
-      // Generate response using Gemini
-      const result = await model.generateContent(fullPrompt);
+      // Optimize prompt for better performance
+      const optimizedPrompt = optimizePrompt(fullPrompt);
+      
+      // Generate response using Gemini with dynamic model selection
+      const model = getModel();
+      const result = await model.generateContent(optimizedPrompt);
       const response = await result.response;
       let text = response.text();
 

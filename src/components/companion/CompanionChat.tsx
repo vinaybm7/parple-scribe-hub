@@ -12,6 +12,7 @@ interface CompanionChatProps {
   onMoodChange: (mood: 'happy' | 'excited' | 'calm' | 'focused' | 'caring') => void;
   onTypingChange: (isTyping: boolean) => void;
   onSpeakingChange: (isSpeaking: boolean) => void;
+  onVoiceLevelChange?: (level: number) => void;
 }
 
 interface Message {
@@ -22,7 +23,7 @@ interface Message {
   mood?: string;
 }
 
-const CompanionChat = ({ avatarId, onMoodChange, onTypingChange, onSpeakingChange }: CompanionChatProps) => {
+const CompanionChat = ({ avatarId, onMoodChange, onTypingChange, onSpeakingChange, onVoiceLevelChange }: CompanionChatProps) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputMessage, setInputMessage] = useState('');
   const [isListening, setIsListening] = useState(false);
@@ -30,7 +31,7 @@ const CompanionChat = ({ avatarId, onMoodChange, onTypingChange, onSpeakingChang
   const messagesEndRef = useRef<HTMLDivElement>(null);
   
   const { sendMessage, isLoading, generateResponse } = useCompanion(avatarId);
-  const { speak, isSpeaking, isElevenLabsSupported, voiceSettings, updateVoiceSettings } = useVoice();
+  const { speak, isSpeaking, isVoiceActive, voiceLevel, isElevenLabsSupported, voiceSettings, updateVoiceSettings } = useVoice();
   
   // Initialize ElevenLabs service for the avatar
   useEffect(() => {
@@ -58,10 +59,16 @@ const CompanionChat = ({ avatarId, onMoodChange, onTypingChange, onSpeakingChang
     }
   }, [avatarId]);
   
-  // Sync isSpeaking state with parent component
+  // Sync voice activity state with parent component
   useEffect(() => {
-    onSpeakingChange(isSpeaking);
-  }, [isSpeaking, onSpeakingChange]);
+    // Use real-time voice activity for more accurate animation sync
+    onSpeakingChange(isVoiceActive || isSpeaking);
+  }, [isVoiceActive, isSpeaking, onSpeakingChange]);
+
+  // Sync voice level with parent component
+  useEffect(() => {
+    onVoiceLevelChange?.(voiceLevel);
+  }, [voiceLevel, onVoiceLevelChange]);
 
   // Log voice settings and support status
   useEffect(() => {

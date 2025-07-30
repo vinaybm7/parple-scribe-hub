@@ -40,6 +40,7 @@ class ElevenLabsService {
   private baseUrl = 'https://api.elevenlabs.io/v1';
   private audioContext: AudioContext | null = null;
   private currentSource: AudioBufferSourceNode | null = null;
+  private currentAnimationFrame: number | null = null;
 
   constructor(config: ElevenLabsConfig) {
     this.config = config;
@@ -248,19 +249,26 @@ class ElevenLabsService {
       }
       this.currentSource = null;
     }
+    
+    if (this.currentAnimationFrame) {
+      cancelAnimationFrame(this.currentAnimationFrame);
+      this.currentAnimationFrame = null;
+    }
   }
 
   /**
-   * Play audio from ArrayBuffer
+   * Play audio from ArrayBuffer with real-time audio analysis
    * @param audioBuffer - Audio data as ArrayBuffer
    * @param onStart - Callback when audio starts playing
    * @param onEnd - Callback when audio ends
+   * @param onVoiceActivity - Callback with voice activity level (0-1)
    * @returns Promise<void>
    */
   async playAudio(
     audioBuffer: ArrayBuffer,
     onStart?: () => void,
-    onEnd?: () => void
+    onEnd?: () => void,
+    onVoiceActivity?: (isActive: boolean, level: number) => void
   ): Promise<void> {
     try {
       console.log('🔊 ElevenLabs: Starting audio playback...');
@@ -280,24 +288,69 @@ class ElevenLabsService {
       // Create audio source
       const source = audioContext.createBufferSource();
       source.buffer = audioBufferDecoded;
-      source.connect(audioContext.destination);
+      
+      // Create analyzer node for real-time audio analysis
+      const analyser = audioContext.createAnalyser();
+      analyser.fftSize = 256;
+      analyser.smoothingTimeConstant = 0.8;
+      
+      // Connect audio graph: source -> analyser -> destination
+      source.connect(analyser);
+      analyser.connect(audioContext.destination);
       
       // Store reference to current source
       this.currentSource = source;
       
+      // Audio analysis for voice activity detection
+      const dataArray = new Uint8Array(analyser.frequencyBinCount);
+      
+      const analyzeAudio = () => {
+        if (!this.currentSource) return;
+        
+        analyser.getByteFrequencyData(dataArray);
+        
+        // Calculate average amplitude
+        let sum = 0;
+        for (let i = 0; i < dataArray.length; i++) {
+          sum += dataArray[i];
+        }
+        const average = sum / dataArray.length;
+        
+        // Normalize to 0-1 range
+        const level = average / 255;
+        
+        // Voice activity threshold (adjust as needed)
+        const threshold = 0.02; // Lower threshold for more sensitive detection
+        const isActive = level > threshold;
+        
+        // Call voice activity callback
+        onVoiceActivity?.(isActive, level);
+        
+        // Continue analysis
+        this.currentAnimationFrame = requestAnimationFrame(analyzeAudio);
+      };
+      
       // Set up event listeners
       source.onended = () => {
         console.log('🔊 Audio playback completed');
+        if (this.currentAnimationFrame) {
+          cancelAnimationFrame(this.currentAnimationFrame);
+          this.currentAnimationFrame = null;
+        }
         this.currentSource = null;
+        onVoiceActivity?.(false, 0); // Ensure animation stops
         onEnd?.();
       };
       
-      // Handle any errors during playback using the onended callback
-      // Note: We use onended for error handling since onerror is not available in TypeScript types
-      // but is supported in some browsers. This is a workaround for better compatibility.
+      // Handle any errors during playback
       const handleError = () => {
         console.error('🔊 Audio playback error occurred');
+        if (this.currentAnimationFrame) {
+          cancelAnimationFrame(this.currentAnimationFrame);
+          this.currentAnimationFrame = null;
+        }
         this.currentSource = null;
+        onVoiceActivity?.(false, 0);
         onEnd?.();
       };
       
@@ -309,17 +362,12 @@ class ElevenLabsService {
         }
       }, 5000); // 5 second timeout
       
-      // Clear timeout if playback starts successfully
-      source.onended = () => {
-        clearTimeout(errorTimeout);
-        console.log('🔊 Audio playback completed');
-        this.currentSource = null;
-        onEnd?.();
-      };
-      
       // Start playback
       console.log('🔊 Starting audio playback...');
       source.start(0);
+      
+      // Start audio analysis
+      analyzeAudio();
       
       // Call onStart after a small delay to sync with actual audio output
       setTimeout(() => {
@@ -329,6 +377,7 @@ class ElevenLabsService {
     } catch (error) {
       console.error('🔊 Error during audio playback:', error);
       this.currentSource = null;
+      onVoiceActivity?.(false, 0);
       onEnd?.();
       throw error;
     }
