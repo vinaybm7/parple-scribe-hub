@@ -9,7 +9,7 @@ const genAI = new GoogleGenerativeAI(API_KEY);
 // Use the same model configuration as the main gemini.ts for consistency
 const getModel = () => {
   return genAI.getGenerativeModel({ 
-    model: 'gemini-1.5-flash',
+    model: 'gemini-2.0-flash-exp', // Use Gemini 2.0 Flash for better performance
     generationConfig: {
       temperature: 0.8,
       topK: 1,

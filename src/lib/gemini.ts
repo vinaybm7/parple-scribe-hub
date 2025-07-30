@@ -8,8 +8,8 @@ const genAI = new GoogleGenerativeAI(API_KEY);
 
 // Model configuration with fallback strategy
 const MODEL_CONFIG = {
-  primary: 'gemini-1.5-flash',
-  fallback: 'gemini-2.0-flash-exp', // Gemini 2.0 Flash as fallback
+  primary: 'gemini-2.0-flash-exp', // Gemini 2.0 Flash as primary (faster and more capable)
+  fallback: 'gemini-1.5-flash', // Gemini 1.5 Flash as fallback
   generationConfig: {
     temperature: 0.8,
     topK: 40,
