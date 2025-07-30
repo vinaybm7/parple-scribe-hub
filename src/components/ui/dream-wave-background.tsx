@@ -47,8 +47,8 @@ export const DreamWaveBackground: React.FC<DreamWaveBackgroundProps> = ({
             top: '50%',
             left: '50%',
             transform: 'translate(-50%, -50%) scale(1.1)',
-            opacity: 0.7,
-            filter: 'hue-rotate(280deg) saturate(1.3) brightness(0.9) contrast(1.1)',
+            opacity: 0.8,
+            filter: 'hue-rotate(260deg) saturate(1.5) brightness(1.1) contrast(1.2)',
             zIndex: 0
           }}
         />
@@ -60,14 +60,14 @@ export const DreamWaveBackground: React.FC<DreamWaveBackgroundProps> = ({
         style={{
           background: `
             linear-gradient(135deg, 
-              rgba(147, 51, 234, 0.08) 0%, 
-              rgba(79, 70, 229, 0.08) 25%, 
-              rgba(236, 72, 153, 0.08) 50%, 
-              rgba(59, 130, 246, 0.08) 75%, 
-              rgba(16, 185, 129, 0.08) 100%
+              rgba(147, 51, 234, 0.12) 0%, 
+              rgba(168, 85, 247, 0.10) 25%, 
+              rgba(196, 125, 255, 0.08) 50%, 
+              rgba(221, 170, 255, 0.06) 75%, 
+              rgba(237, 201, 255, 0.04) 100%
             ),
             radial-gradient(ellipse at center, 
-              rgba(255, 255, 255, 0.03) 0%, 
+              rgba(147, 51, 234, 0.05) 0%, 
               transparent 70%
             )
           `
