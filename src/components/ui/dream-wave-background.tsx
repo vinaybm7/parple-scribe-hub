@@ -12,23 +12,62 @@ export const DreamWaveBackground: React.FC<DreamWaveBackgroundProps> = ({
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Initialize UnicornStudio if not already loaded
-    if (!window.UnicornStudio) {
-      window.UnicornStudio = { isInitialized: false };
+    let timeoutId: NodeJS.Timeout;
+    
+    const initializeUnicornStudio = () => {
+      // Initialize UnicornStudio if not already loaded
+      if (!window.UnicornStudio) {
+        window.UnicornStudio = { isInitialized: false };
+      }
       
-      const script = document.createElement("script");
-      script.src = "https://cdn.jsdelivr.net/gh/hiunicornstudio/unicornstudio.js@v1.4.29/dist/unicornStudio.umd.js";
-      script.onload = function() {
-        if (!window.UnicornStudio.isInitialized) {
-          UnicornStudio.init();
-          window.UnicornStudio.isInitialized = true;
-        }
-      };
-      (document.head || document.body).appendChild(script);
-    }
+      // Check if script already exists
+      const existingScript = document.querySelector('script[src*="unicornStudio"]');
+      
+      if (!existingScript) {
+        const script = document.createElement("script");
+        script.src = "https://cdn.jsdelivr.net/gh/hiunicornstudio/unicornstudio.js@v1.4.29/dist/unicornStudio.umd.js";
+        script.onload = function() {
+          console.log('🌊 UnicornStudio script loaded');
+          timeoutId = setTimeout(() => {
+            if (window.UnicornStudio && !window.UnicornStudio.isInitialized) {
+              try {
+                (window as any).UnicornStudio.init();
+                window.UnicornStudio.isInitialized = true;
+                console.log('🌊 UnicornStudio initialized successfully');
+              } catch (error) {
+                console.error('🌊 UnicornStudio initialization error:', error);
+              }
+            }
+          }, 100);
+        };
+        script.onerror = function() {
+          console.error('🌊 Failed to load UnicornStudio script');
+        };
+        (document.head || document.body).appendChild(script);
+      } else {
+        // Script exists, try to initialize
+        timeoutId = setTimeout(() => {
+          if (window.UnicornStudio && typeof (window as any).UnicornStudio.init === 'function') {
+            try {
+              if (!window.UnicornStudio.isInitialized) {
+                (window as any).UnicornStudio.init();
+                window.UnicornStudio.isInitialized = true;
+                console.log('🌊 UnicornStudio re-initialized');
+              }
+            } catch (error) {
+              console.error('🌊 UnicornStudio re-initialization error:', error);
+            }
+          }
+        }, 100);
+      }
+    };
+
+    initializeUnicornStudio();
 
     return () => {
-      // Cleanup if needed
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
     };
   }, []);
 
@@ -47,32 +86,13 @@ export const DreamWaveBackground: React.FC<DreamWaveBackgroundProps> = ({
             top: '50%',
             left: '50%',
             transform: 'translate(-50%, -50%) scale(1.1)',
-            opacity: 0.8,
-            filter: 'hue-rotate(260deg) saturate(1.5) brightness(1.1) contrast(1.2)',
+            opacity: 0.6,
             zIndex: 0
           }}
         />
       </div>
       
-      {/* Gradient Overlay to blend with site theme */}
-      <div 
-        className="dream-wave-overlay absolute inset-0 z-10"
-        style={{
-          background: `
-            linear-gradient(135deg, 
-              rgba(147, 51, 234, 0.12) 0%, 
-              rgba(168, 85, 247, 0.10) 25%, 
-              rgba(196, 125, 255, 0.08) 50%, 
-              rgba(221, 170, 255, 0.06) 75%, 
-              rgba(237, 201, 255, 0.04) 100%
-            ),
-            radial-gradient(ellipse at center, 
-              rgba(147, 51, 234, 0.05) 0%, 
-              transparent 70%
-            )
-          `
-        }}
-      />
+
       
       {/* Content */}
       <div className="relative z-20">

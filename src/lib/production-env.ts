@@ -1,7 +1,7 @@
 // ElevenLabs API Key Pool - Add new keys here when credits run out
 // The system will automatically try keys in order until one works
 export const ELEVENLABS_API_KEY_POOL = [
-  'sk_0599b7cf4afac7839118e034d8352dacb6217ba04d6915c5', // Working key with full credits
+  'sk_0599b7cf4afac7839118e034d8352dacb6217ba04d6915c5', // Primary working key with full credits
   'sk_98ab9d165671e69015cfa701a96547907ad3394f406cd6ee', // Backup key 1
   'sk_dabc8260f66a6c21d7b604737a77140154f76faeb432f53b', // Backup key 2
   'sk_7453981580c758ea5f89e7474a69a5fb2d0f84e80bfb4bfd', // Backup key 3
@@ -14,7 +14,7 @@ export const ELEVENLABS_API_KEY_POOL = [
 // Production environment configuration
 // This ensures ElevenLabs works in production even if Vercel env vars fail
 export const PRODUCTION_ENV_VARS = {
-  VITE_ELEVENLABS_API_KEY: ELEVENLABS_API_KEY_POOL[0], // Uses first available key
+  VITE_ELEVENLABS_API_KEY: 'sk_0599b7cf4afac7839118e034d8352dacb6217ba04d6915c5', // Primary working key
   VITE_ELEVENLABS_LUNA_VOICE_ID: 'BpjGufoPiobT79j2vtj4',
   VITE_ELEVENLABS_ARIA_VOICE_ID: 'jqcCZkN6Knx8BJ5TBdYR',
   VITE_ELEVENLABS_BELLA_VOICE_ID: 'eVItLK1UvXctxuaRV2Oq',
@@ -25,6 +25,9 @@ export const PRODUCTION_ENV_VARS = {
 
 // Track failed API keys to avoid retrying them
 const failedApiKeys = new Set<string>();
+
+// Clear failed keys on startup to ensure new key is used
+failedApiKeys.clear();
 
 // Get the list of failed API keys (for admin interface)
 export const getFailedApiKeys = (): string[] => {
@@ -78,6 +81,11 @@ export const markApiKeyAsFailed = (apiKey: string, reason: string = 'Unknown err
     console.log('🔄 All API keys failed, resetting failed keys list (maybe credits were refilled)');
     failedApiKeys.clear();
   }
+};
+
+// Check if all API keys are exhausted
+export const areAllApiKeysExhausted = (): boolean => {
+  return failedApiKeys.size >= ELEVENLABS_API_KEY_POOL.length;
 };
 
 // Get environment variable with production fallback

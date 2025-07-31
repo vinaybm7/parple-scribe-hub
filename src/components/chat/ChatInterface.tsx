@@ -29,6 +29,22 @@ const ChatInterface = ({ isOpen, onClose, context, isEmbedded = false }: ChatInt
         // @ts-expect-error - L2Dwidget is loaded dynamically
         if (window.L2Dwidget) {
           // @ts-expect-error - L2Dwidget is loaded dynamically
+          // Add CSS to hide gradient elements
+          const style = document.createElement('style');
+          style.textContent = `
+            #live2d-widget [style*="gradient"]:not(canvas),
+            #live2d-widget [style*="linear-gradient"]:not(canvas) {
+              display: none !important;
+              visibility: hidden !important;
+              opacity: 0 !important;
+              pointer-events: none !important;
+            }
+            #live2d-widget {
+              overflow: visible !important;
+            }
+          `;
+          document.head.appendChild(style);
+
           window.L2Dwidget.init({
             model: {
               jsonPath: 'https://cdn.jsdelivr.net/gh/evrstr/live2d-widget-models/live2d_evrstr/tia/model.json',
@@ -110,10 +126,10 @@ const ChatInterface = ({ isOpen, onClose, context, isEmbedded = false }: ChatInt
   if (!isOpen) return null;
 
   // Different styling for embedded vs floating mode
-  const containerClass = isEmbedded 
-    ? "h-full flex flex-col" 
+  const containerClass = isEmbedded
+    ? "h-full flex flex-col"
     : "fixed top-24 right-4 w-96 sm:w-[420px] h-[700px] z-[70] animate-in slide-in-from-top-2 duration-300";
-  
+
   const cardClass = isEmbedded
     ? "h-full flex flex-col border-0 shadow-none bg-transparent"
     : "h-full flex flex-col shadow-2xl border-2 bg-gradient-to-b from-pink-50 to-purple-50 dark:from-pink-950/20 dark:to-purple-950/20";
@@ -164,7 +180,7 @@ const ChatInterface = ({ isOpen, onClose, context, isEmbedded = false }: ChatInt
             <div id="live2d-widget" className="relative w-full flex justify-center items-center" style={{ height: '200px' }}>
               {/* Live2D widget will be injected here */}
             </div>
-            
+
             {/* Bella's Status */}
             <div className="mt-3 w-full space-y-2">
               <div className="flex items-center justify-between text-sm">
@@ -175,7 +191,7 @@ const ChatInterface = ({ isOpen, onClose, context, isEmbedded = false }: ChatInt
                 <span className="font-medium">{bellaState.favorability}%</span>
               </div>
               <Progress value={bellaState.favorability} className="h-2" />
-              
+
               <div className="flex items-center justify-between text-xs text-muted-foreground">
                 <div className="flex items-center gap-1">
                   <Zap className="w-3 h-3" />
@@ -198,13 +214,13 @@ const ChatInterface = ({ isOpen, onClose, context, isEmbedded = false }: ChatInt
             </div>
           </div>
         )}
-        
+
         {/* Messages Area - Scrollable */}
         <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-white dark:bg-gray-900">
           {messages.map((message) => (
             <ChatMessage key={message.id} message={message} />
           ))}
-          
+
           {/* Typing Indicator */}
           {isLoading && (
             <div className="flex gap-3 mb-4">
@@ -220,16 +236,16 @@ const ChatInterface = ({ isOpen, onClose, context, isEmbedded = false }: ChatInt
               </div>
             </div>
           )}
-          
+
           <div ref={messagesEndRef} />
         </div>
-        
+
         {/* Input Area - Fixed at bottom */}
         <div className="border-t bg-background">
           <ChatInput onSendMessage={sendMessage} isLoading={isLoading} context={context} />
         </div>
       </Card>
-      
+
 
     </div>
   );

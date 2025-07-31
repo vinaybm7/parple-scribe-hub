@@ -24,7 +24,7 @@ const loadLive2DWidget = () => {
           // @ts-expect-error - L2Dwidget is loaded dynamically
           window.L2Dwidget.init({
             model: {
-              jsonPath: 'https://cdn.jsdelivr.net/gh/evrstr/live2d-widget-models/live2d_evrstr/rfb_1601/model.json',
+              jsonPath: 'https://cdn.jsdelivr.net/gh/evrstr/live2d-widget-models/live2d_evrstr/shizuku/model.json',
               scale: 1.1
             },
             display: {
@@ -71,9 +71,14 @@ const ChatWidget = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const widgetInitialized = useRef(false);
   
-  // Calculate conditions after all hooks
-  const shouldHideWidget = location.pathname === '/admin-dashboard-secure-vny-access' || 
-                          location.pathname.startsWith('/companion');
+  // Calculate conditions after all hooks - hide widget on landing page, admin dashboard, and companion pages
+  console.log('Current pathname:', location.pathname);
+  const shouldHideWidget = location.pathname === '/' || 
+                          location.pathname === '/admin-dashboard-secure-vny-access' || 
+                          location.pathname.startsWith('/companion') ||
+                          location.pathname.startsWith('/admin-dashboard');
+  
+  console.log('Should hide widget?', shouldHideWidget, 'for path:', location.pathname);
 
   // Initialize Live2D widget
   useEffect(() => {

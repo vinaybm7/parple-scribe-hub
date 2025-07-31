@@ -45,19 +45,7 @@
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Custom cursor trail effect */
-.cursor-trail {
-  pointer-events: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 20px;
-  height: 20px;
-  background: radial-gradient(circle, rgba(147, 51, 234, 0.6) 0%, transparent 70%);
-  border-radius: 50%;
-  z-index: 9999;
-  mix-blend-mode: screen;
-}
+/* Removed cursor trail effect to prevent gradient artifacts */
 
 /* Floating animation for particles */
 @keyframes float {

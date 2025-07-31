@@ -35,7 +35,7 @@ export const useVoice = () => {
     speed: 1.0,
     pitch: 1.1,
     volume: 0.8,
-    useElevenLabs: true // Default to ElevenLabs for better quality
+    useElevenLabs: true // Re-enabled with new API key
   });
 
   const [elevenLabsSettings, setElevenLabsSettings] = useState<ElevenLabsSettings>({
@@ -143,25 +143,31 @@ export const useVoice = () => {
 
         console.log('🎤 Audio buffer received, size:', audioBuffer.byteLength, 'bytes');
 
-        // Play the audio with voice activity detection
+        // Play the audio with enhanced voice activity detection for perfect orb sync
         await elevenLabsService.playAudio(
           audioBuffer,
           () => {
-            console.log('🎤 ElevenLabs audio started playing');
+            console.log('🎤 🎙️ ElevenLabs audio playback started - orb should animate');
             setIsSpeaking(true);
+            // Don't set isVoiceActive here - let the real-time analysis handle it
             onStart?.();
           },
           () => {
-            console.log('🎤 ElevenLabs audio finished playing');
+            console.log('🎤 🎙️ ElevenLabs audio playback completely finished - orb should stop');
             setIsSpeaking(false);
             setIsVoiceActive(false);
             setVoiceLevel(0);
             onEnd?.();
           },
           (isActive: boolean, level: number) => {
-            // Real-time voice activity detection
+            // Real-time voice activity detection - this drives the orb animation
             setIsVoiceActive(isActive);
             setVoiceLevel(level);
+            
+            // Enhanced logging for debugging sync issues
+            if (isActive && level > 0.1) {
+              console.log('🎤 🎙️ Voice activity detected:', { isActive, level: level.toFixed(3) });
+            }
           }
         );
       } else {
@@ -180,17 +186,23 @@ export const useVoice = () => {
         utterance.volume = voiceSettings.volume;
 
         utterance.onstart = () => {
-          console.log('🎤 Browser TTS started');
+          console.log('🎤 🎙️ Browser TTS started - orb should animate');
           setIsSpeaking(true);
+          // For browser TTS, simulate voice activity since we can't analyze it
+          setIsVoiceActive(true);
+          setVoiceLevel(0.5); // Moderate level for browser TTS
           onStart?.();
         };
 
         utterance.onend = () => {
-          console.log('🎤 Browser TTS ended');
-          setIsSpeaking(false);
-          setIsVoiceActive(false);
-          setVoiceLevel(0);
-          onEnd?.();
+          console.log('🎤 🎙️ Browser TTS ended - orb should stop');
+          // Add a delay before stopping the animation to ensure it matches speech duration
+          setTimeout(() => {
+            setIsSpeaking(false);
+            setIsVoiceActive(false);
+            setVoiceLevel(0);
+            onEnd?.();
+          }, 500); // 500ms delay to ensure animation continues slightly after speech ends
         };
 
         utterance.onerror = (event) => {
@@ -209,6 +221,17 @@ export const useVoice = () => {
       setIsSpeaking(false);
       onEnd?.();
       
+      // Check if it's a quota exceeded error
+      if ((error as any)?.isQuotaExceeded) {
+        console.warn('🎤 ElevenLabs quota exceeded, automatically falling back to browser TTS');
+        // Show a user-friendly message
+        if (typeof window !== 'undefined' && window.alert) {
+          setTimeout(() => {
+            alert('ElevenLabs voice credits have been exceeded. Falling back to browser voice for now. Please add more credits to continue using premium voices.');
+          }, 100);
+        }
+      }
+      
       // Fallback to browser TTS on ElevenLabs error
       if (voiceSettings.useElevenLabs && isSupported) {
         console.log('🎤 Falling back to browser TTS due to ElevenLabs error');
@@ -219,20 +242,23 @@ export const useVoice = () => {
           utterance.volume = voiceSettings.volume;
 
           utterance.onstart = () => {
-            console.log('🎤 Fallback browser TTS started');
+            console.log('🎤 🎙️ Fallback browser TTS started - orb should animate');
             setIsSpeaking(true);
             // For browser TTS, simulate voice activity since we can't analyze it
             setIsVoiceActive(true);
-            setVoiceLevel(0.5);
+            setVoiceLevel(0.5); // Moderate level for fallback TTS
             onStart?.();
           };
 
           utterance.onend = () => {
-            console.log('🎤 Fallback browser TTS ended');
-            setIsSpeaking(false);
-            setIsVoiceActive(false);
-            setVoiceLevel(0);
-            onEnd?.();
+            console.log('🎤 🎙️ Fallback browser TTS ended - orb should stop');
+            // Add a delay before stopping the animation to ensure it matches speech duration
+            setTimeout(() => {
+              setIsSpeaking(false);
+              setIsVoiceActive(false);
+              setVoiceLevel(0);
+              onEnd?.();
+            }, 500); // 500ms delay to ensure animation continues slightly after speech ends
           };
 
           utterance.onerror = (event) => {

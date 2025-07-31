@@ -5,23 +5,23 @@ import { Brain, Users, Target, Heart, Award, Zap, Bot, Mic, MessageCircle } from
 
 const AboutPage = () => {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50/80 via-pink-50/60 to-blue-50/80">
       <Header />
       
       {/* Mission Section */}
       <section className="pt-24 pb-16">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center mb-16">
-            <h1 className="text-4xl md:text-5xl font-bold mb-6 text-foreground">
-              About <span className="text-gradient">Parple Notes</span>
+            <h1 className="text-4xl md:text-5xl font-bold mb-6 text-gray-800 drop-shadow-sm">
+              About <span className="bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 bg-clip-text text-transparent">Parple Notes</span>
             </h1>
-            <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
+            <p className="text-lg text-gray-700 mb-8 max-w-2xl mx-auto drop-shadow-sm">
               Revolutionizing engineering education with AI-powered companions and personalized learning experiences
             </p>
-            <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-6">
-              Our <span className="text-gradient">Mission</span>
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-6 drop-shadow-sm">
+              Our <span className="bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 bg-clip-text text-transparent">Mission</span>
             </h2>
-            <p className="text-lg text-muted-foreground leading-relaxed">
+            <p className="text-lg text-gray-700 leading-relaxed drop-shadow-sm">
               We're pioneering the future of engineering education through AI-powered learning companions. 
               Our mission is to make complex engineering concepts accessible and engaging by providing 
               personalized, interactive study experiences that adapt to each student's unique learning style.
@@ -29,37 +29,37 @@ const AboutPage = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <Card className="text-center hover:shadow-card transition-all duration-300">
+            <Card className="text-center hover:shadow-2xl transition-all duration-300 bg-white/25 backdrop-blur-xl border border-white/30 hover:border-white/50 rounded-2xl glass-morphism">
               <CardContent className="p-8">
-                <div className="mb-4 inline-flex items-center justify-center w-16 h-16 rounded-2xl card-gradient">
-                  <Bot className="h-8 w-8 text-primary" />
+                <div className="mb-4 inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500/20 via-pink-500/20 to-blue-500/20 backdrop-blur-sm border border-white/20 shadow-lg">
+                  <Bot className="h-8 w-8 text-purple-600 drop-shadow-sm" />
                 </div>
-                <h3 className="text-xl font-semibold text-foreground mb-4">AI-Powered Learning</h3>
-                <p className="text-muted-foreground">
+                <h3 className="text-xl font-semibold text-gray-800 mb-4 drop-shadow-sm">AI-Powered Learning</h3>
+                <p className="text-gray-700">
                   Advanced AI companions that understand your learning style and provide personalized guidance for better outcomes.
                 </p>
               </CardContent>
             </Card>
 
-            <Card className="text-center hover:shadow-card transition-all duration-300">
+            <Card className="text-center hover:shadow-2xl transition-all duration-300 bg-white/25 backdrop-blur-xl border border-white/30 hover:border-white/50 rounded-2xl glass-morphism">
               <CardContent className="p-8">
-                <div className="mb-4 inline-flex items-center justify-center w-16 h-16 rounded-2xl card-gradient">
-                  <Users className="h-8 w-8 text-primary" />
+                <div className="mb-4 inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500/20 via-pink-500/20 to-blue-500/20 backdrop-blur-sm border border-white/20 shadow-lg">
+                  <Users className="h-8 w-8 text-purple-600 drop-shadow-sm" />
                 </div>
-                <h3 className="text-xl font-semibold text-foreground mb-4">Student-Centric Design</h3>
-                <p className="text-muted-foreground">
+                <h3 className="text-xl font-semibold text-gray-800 mb-4 drop-shadow-sm">Student-Centric Design</h3>
+                <p className="text-gray-700">
                   Built by students, for students. Our AI companions are designed to understand and address real learning challenges.
                 </p>
               </CardContent>
             </Card>
 
-            <Card className="text-center hover:shadow-card transition-all duration-300">
+            <Card className="text-center hover:shadow-2xl transition-all duration-300 bg-white/25 backdrop-blur-xl border border-white/30 hover:border-white/50 rounded-2xl glass-morphism">
               <CardContent className="p-8">
-                <div className="mb-4 inline-flex items-center justify-center w-16 h-16 rounded-2xl card-gradient">
-                  <Heart className="h-8 w-8 text-primary" />
+                <div className="mb-4 inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500/20 via-pink-500/20 to-blue-500/20 backdrop-blur-sm border border-white/20 shadow-lg">
+                  <Heart className="h-8 w-8 text-purple-600 drop-shadow-sm" />
                 </div>
-                <h3 className="text-xl font-semibold text-foreground mb-4">Accessible Innovation</h3>
-                <p className="text-muted-foreground">
+                <h3 className="text-xl font-semibold text-gray-800 mb-4 drop-shadow-sm">Accessible Innovation</h3>
+                <p className="text-gray-700">
                   Cutting-edge AI technology made accessible to every student, democratizing personalized education.
                 </p>
               </CardContent>
@@ -69,49 +69,79 @@ const AboutPage = () => {
       </section>
 
       {/* AI Companions Section */}
-      <section className="py-16 bg-muted/30">
+      <section className="py-16 bg-gradient-to-b from-blue-50/30 via-purple-50/40 to-pink-50/30 backdrop-blur-sm">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              Meet Your <span className="text-gradient">AI Companions</span>
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4 drop-shadow-sm">
+              Meet Your <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">AI Companions</span>
             </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-lg text-gray-700 max-w-2xl mx-auto drop-shadow-sm">
               Luna and Aria are your personal AI study companions, each with unique personalities 
               designed to make learning engaging and effective.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            <Card className="text-center hover:shadow-card transition-all duration-300">
+            <Card className="text-center hover:shadow-2xl transition-all duration-300 bg-white/25 backdrop-blur-xl border border-white/30 hover:border-white/50 rounded-2xl glass-morphism">
               <CardContent className="p-8">
-                <div className="mb-6 inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-r from-purple-400 to-purple-600 shadow-lg">
-                  <Bot className="h-10 w-10 text-white" />
+                <div className="w-32 h-32 mx-auto rounded-full bg-gradient-to-br from-purple-400 to-purple-600 p-1 mb-6 shadow-2xl relative overflow-hidden">
+                  <div className="w-full h-full rounded-full bg-white/95 flex items-center justify-center overflow-hidden relative">
+                    <img 
+                      src="/images/avatars/luna-avatar.png"
+                      alt="Luna avatar"
+                      className="w-full h-full object-cover rounded-full"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.style.display = 'none';
+                        const fallback = target.nextElementSibling as HTMLElement;
+                        if (fallback) fallback.style.display = 'flex';
+                      }}
+                    />
+                    <div className="w-full h-full rounded-full bg-white/90 items-center justify-center hidden">
+                      <Bot className="w-12 h-12 text-purple-600" />
+                    </div>
+                  </div>
                 </div>
-                <h3 className="text-2xl font-semibold text-foreground mb-4">Luna</h3>
-                <p className="text-muted-foreground mb-4">
+                <h3 className="text-2xl font-semibold text-gray-800 mb-4 drop-shadow-sm">Luna</h3>
+                <p className="text-gray-700 mb-4">
                   Your energetic and playful study buddy who makes learning fun and exciting. 
                   Luna specializes in breaking down complex concepts into digestible, engaging lessons.
                 </p>
                 <div className="flex items-center justify-center gap-2">
                   <Mic className="h-4 w-4 text-purple-500" />
-                  <span className="text-sm text-muted-foreground">Voice-powered interactions</span>
+                  <span className="text-sm text-gray-600">Voice-powered interactions</span>
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="text-center hover:shadow-card transition-all duration-300">
+            <Card className="text-center hover:shadow-2xl transition-all duration-300 bg-white/25 backdrop-blur-xl border border-white/30 hover:border-white/50 rounded-2xl glass-morphism">
               <CardContent className="p-8">
-                <div className="mb-6 inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-r from-indigo-400 to-indigo-600 shadow-lg">
-                  <Bot className="h-10 w-10 text-white" />
+                <div className="w-32 h-32 mx-auto rounded-full bg-gradient-to-br from-indigo-400 to-indigo-600 p-1 mb-6 shadow-2xl relative overflow-hidden">
+                  <div className="w-full h-full rounded-full bg-white/95 flex items-center justify-center overflow-hidden relative">
+                    <img 
+                      src="/images/avatars/aria-avatar.png"
+                      alt="Aria avatar"
+                      className="w-full h-full object-cover rounded-full"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.style.display = 'none';
+                        const fallback = target.nextElementSibling as HTMLElement;
+                        if (fallback) fallback.style.display = 'flex';
+                      }}
+                    />
+                    <div className="w-full h-full rounded-full bg-white/90 items-center justify-center hidden">
+                      <Bot className="w-12 h-12 text-indigo-600" />
+                    </div>
+                  </div>
                 </div>
-                <h3 className="text-2xl font-semibold text-foreground mb-4">Aria</h3>
-                <p className="text-muted-foreground mb-4">
+                <h3 className="text-2xl font-semibold text-gray-800 mb-4 drop-shadow-sm">Aria</h3>
+                <p className="text-gray-700 mb-4">
                   Your calm and wise companion who brings peace and wisdom to your studies. 
                   Aria focuses on deep understanding and thoughtful learning approaches.
                 </p>
                 <div className="flex items-center justify-center gap-2">
                   <MessageCircle className="h-4 w-4 text-indigo-500" />
-                  <span className="text-sm text-muted-foreground">Thoughtful guidance</span>
+                  <span className="text-sm text-gray-600">Thoughtful guidance</span>
                 </div>
               </CardContent>
             </Card>
@@ -123,10 +153,10 @@ const AboutPage = () => {
       <section className="py-16">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              Our <span className="text-gradient">Impact</span>
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4 drop-shadow-sm">
+              Our <span className="bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 bg-clip-text text-transparent">Impact</span>
             </h2>
-            <p className="text-lg text-muted-foreground">
+            <p className="text-lg text-gray-700 drop-shadow-sm">
               Transforming engineering education with AI-powered learning
             </p>
           </div>
@@ -168,14 +198,14 @@ const AboutPage = () => {
       </section>
 
       {/* Story Section */}
-      <section className="py-16 bg-muted/30">
+      <section className="py-16 bg-gradient-to-b from-pink-50/30 via-purple-50/40 to-blue-50/30 backdrop-blur-sm">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-8 text-center">
-              Our <span className="text-gradient">Story</span>
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-8 text-center drop-shadow-sm">
+              Our <span className="bg-gradient-to-r from-pink-600 via-purple-600 to-blue-600 bg-clip-text text-transparent">Story</span>
             </h2>
             
-            <div className="prose prose-lg mx-auto text-muted-foreground">
+            <div className="prose prose-lg mx-auto text-gray-700">
               <p className="mb-6">
                 Parple Notes began with a simple observation: engineering students across India were struggling 
                 to find personalized, engaging study experiences. As engineering students ourselves, we knew that 

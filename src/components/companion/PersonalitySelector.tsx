@@ -44,33 +44,9 @@ const PersonalitySelector = ({ selectedAvatar, onAvatarSelect, onConfirm }: Pers
   ];
 
   return (
-    <div className="space-y-8 relative overflow-hidden">
-      {/* Animated Background */}
+    <div className="space-y-8 relative">
+      {/* Clean animated background without decorative elements */}
       <div className="fixed inset-0 -z-10 animated-gradient-bg" />
-      
-      {/* Floating particles */}
-      <div className="fixed inset-0 -z-5 pointer-events-none">
-        {[...Array(20)].map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute w-2 h-2 bg-white/20 rounded-full"
-            animate={{
-              x: [0, 100, 0],
-              y: [0, -100, 0],
-              opacity: [0, 1, 0],
-            }}
-            transition={{
-              duration: 8 + Math.random() * 4,
-              repeat: Infinity,
-              delay: Math.random() * 8,
-            }}
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-            }}
-          />
-        ))}
-      </div>
 
       <motion.div 
         className="text-center"
@@ -132,59 +108,7 @@ const PersonalitySelector = ({ selectedAvatar, onAvatarSelect, onConfirm }: Pers
                   setShowTypewriter(avatar.id);
                 }}
               >
-              {/* Animated background elements */}
-              <div className="absolute inset-0 opacity-10">
-                {avatar.id === 'luna' && (
-                  <div className="absolute inset-0">
-                    {[...Array(8)].map((_, i) => (
-                      <motion.div
-                        key={i}
-                        className="absolute"
-                        animate={{
-                          rotate: 360,
-                          scale: [1, 1.2, 1],
-                        }}
-                        transition={{
-                          duration: 4 + Math.random() * 2,
-                          repeat: Infinity,
-                          delay: Math.random() * 2,
-                        }}
-                        style={{
-                          left: `${20 + Math.random() * 60}%`,
-                          top: `${20 + Math.random() * 60}%`,
-                        }}
-                      >
-                        <Star className="w-4 h-4 text-purple-400" />
-                      </motion.div>
-                    ))}
-                  </div>
-                )}
-                {avatar.id === 'aria' && (
-                  <div className="absolute inset-0">
-                    {[...Array(6)].map((_, i) => (
-                      <motion.div
-                        key={i}
-                        className="absolute"
-                        animate={{
-                          y: [-10, 10, -10],
-                          opacity: [0.3, 0.7, 0.3],
-                        }}
-                        transition={{
-                          duration: 3 + Math.random() * 2,
-                          repeat: Infinity,
-                          delay: Math.random() * 3,
-                        }}
-                        style={{
-                          left: `${10 + Math.random() * 80}%`,
-                          top: `${10 + Math.random() * 80}%`,
-                        }}
-                      >
-                        <Moon className="w-3 h-3 text-indigo-400" />
-                      </motion.div>
-                    ))}
-                  </div>
-                )}
-              </div>
+
 
               {/* Selection indicator */}
               <AnimatePresence>
@@ -220,7 +144,7 @@ const PersonalitySelector = ({ selectedAvatar, onAvatarSelect, onConfirm }: Pers
                   <IconComponent className={`w-6 h-6 text-${avatar.color}-400`} />
                 </motion.div>
 
-                {/* Avatar representation */}
+                {/* Avatar representation with unified orb animation */}
                 <motion.div 
                   className={`w-36 h-36 mx-auto rounded-full bg-gradient-to-br ${avatar.gradient} p-1 mb-4 shadow-2xl relative overflow-hidden group-hover:shadow-3xl transition-all duration-500`}
                   whileHover={{ 
@@ -229,9 +153,9 @@ const PersonalitySelector = ({ selectedAvatar, onAvatarSelect, onConfirm }: Pers
                   }}
                   transition={{ type: "spring", stiffness: 200 }}
                 >
-                  {/* Animated ring */}
+                  {/* Unified animated orb ring for both Luna and Aria */}
                   <motion.div
-                    className={`absolute inset-0 rounded-full border-2 border-${avatar.color}-300`}
+                    className={`absolute inset-0 rounded-full border-2 border-${avatar.color}-300 opacity-60`}
                     animate={{
                       rotate: 360,
                       scale: [1, 1.05, 1],
@@ -240,6 +164,20 @@ const PersonalitySelector = ({ selectedAvatar, onAvatarSelect, onConfirm }: Pers
                       duration: 8,
                       repeat: Infinity,
                       ease: "linear"
+                    }}
+                  />
+                  
+                  {/* Secondary pulsing ring */}
+                  <motion.div
+                    className={`absolute inset-2 rounded-full border border-${avatar.color}-400 opacity-40`}
+                    animate={{
+                      scale: [1, 1.1, 1],
+                      opacity: [0.4, 0.8, 0.4],
+                    }}
+                    transition={{
+                      duration: 3,
+                      repeat: Infinity,
+                      ease: "easeInOut"
                     }}
                   />
                   
@@ -261,7 +199,7 @@ const PersonalitySelector = ({ selectedAvatar, onAvatarSelect, onConfirm }: Pers
                       <User className="w-12 h-12 text-gray-700" />
                     </div>
                     
-                    {/* Shimmer effect */}
+                    {/* Unified shimmer effect */}
                     <motion.div
                       className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent rounded-full"
                       animate={{

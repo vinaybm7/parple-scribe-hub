@@ -92,6 +92,24 @@ const AvatarDisplay = ({ avatarId, mood, isTyping = false, isSpeaking = false, v
               transform-origin: center center !important;
               overflow: visible !important;
             }
+            /* Hide Live2D widget controls */
+            [id*="waifu"], [class*="waifu"], 
+            [id*="live2d-toggle"], [class*="live2d-toggle"],
+            [id*="live2d-tool"], [class*="live2d-tool"],
+            .live2d-widget-dialog-container,
+            .live2d-widget-dialog,
+            .fui-home,
+            .fui-eye,
+            .fui-user,
+            .fui-photo,
+            .fui-info-circle,
+            .fui-cross-circle,
+            .fui-gear {
+              display: none !important;
+              visibility: hidden !important;
+              opacity: 0 !important;
+              pointer-events: none !important;
+            }
           </style>
         </head>
         <body>
@@ -121,8 +139,38 @@ const AvatarDisplay = ({ avatarId, mood, isTyping = false, isSpeaking = false, v
               },
               "dialog": {
                 "enable": false
-              }
+              },
+              "dev": {
+                "enable": false
+              },
+              "log": false
             });
+            
+            // Hide Live2D widget controls after initialization
+            setTimeout(() => {
+              // Hide all Live2D widget control elements
+              const controlElements = document.querySelectorAll('[id*="waifu"], [class*="waifu"], [id*="live2d-toggle"], [class*="live2d-toggle"], [id*="live2d-tool"], [class*="live2d-tool"]');
+              controlElements.forEach(el => {
+                if (el instanceof HTMLElement) {
+                  el.style.display = 'none';
+                  el.style.visibility = 'hidden';
+                  el.style.opacity = '0';
+                  el.style.pointerEvents = 'none';
+                }
+              });
+              
+              // Also hide any elements with gradient backgrounds that might be controls
+              const gradientElements = document.querySelectorAll('[style*="gradient"], [style*="linear-gradient"]');
+              gradientElements.forEach(el => {
+                if (el instanceof HTMLElement && el.tagName !== 'CANVAS') {
+                  const rect = el.getBoundingClientRect();
+                  // Hide small gradient elements that are likely controls
+                  if (rect.width < 100 || rect.height < 100) {
+                    el.style.display = 'none';
+                  }
+                }
+              });
+            }, 3000);
           </script>
         </body>
         </html>
@@ -193,6 +241,24 @@ const AvatarDisplay = ({ avatarId, mood, isTyping = false, isSpeaking = false, v
               transform-origin: center center !important;
               overflow: visible !important;
             }
+            /* Hide Live2D widget controls */
+            [id*="waifu"], [class*="waifu"], 
+            [id*="live2d-toggle"], [class*="live2d-toggle"],
+            [id*="live2d-tool"], [class*="live2d-tool"],
+            .live2d-widget-dialog-container,
+            .live2d-widget-dialog,
+            .fui-home,
+            .fui-eye,
+            .fui-user,
+            .fui-photo,
+            .fui-info-circle,
+            .fui-cross-circle,
+            .fui-gear {
+              display: none !important;
+              visibility: hidden !important;
+              opacity: 0 !important;
+              pointer-events: none !important;
+            }
           </style>
         </head>
         <body>
@@ -225,8 +291,38 @@ const AvatarDisplay = ({ avatarId, mood, isTyping = false, isSpeaking = false, v
               },
               "dialog": {
                 "enable": false
-              }
+              },
+              "dev": {
+                "enable": false
+              },
+              "log": false
             });
+            
+            // Hide Live2D widget controls after initialization
+            setTimeout(() => {
+              // Hide all Live2D widget control elements
+              const controlElements = document.querySelectorAll('[id*="waifu"], [class*="waifu"], [id*="live2d-toggle"], [class*="live2d-toggle"], [id*="live2d-tool"], [class*="live2d-tool"]');
+              controlElements.forEach(el => {
+                if (el instanceof HTMLElement) {
+                  el.style.display = 'none';
+                  el.style.visibility = 'hidden';
+                  el.style.opacity = '0';
+                  el.style.pointerEvents = 'none';
+                }
+              });
+              
+              // Also hide any elements with gradient backgrounds that might be controls
+              const gradientElements = document.querySelectorAll('[style*="gradient"], [style*="linear-gradient"]');
+              gradientElements.forEach(el => {
+                if (el instanceof HTMLElement && el.tagName !== 'CANVAS') {
+                  const rect = el.getBoundingClientRect();
+                  // Hide small gradient elements that are likely controls
+                  if (rect.width < 100 || rect.height < 100) {
+                    el.style.display = 'none';
+                  }
+                }
+              });
+            }, 3000);
             
             // Monitor for widget creation and log positioning
             setTimeout(() => {
@@ -407,10 +503,6 @@ const AvatarDisplay = ({ avatarId, mood, isTyping = false, isSpeaking = false, v
             style={{ width: '380px', height: '650px', overflow: 'visible', margin: '0 auto' }}
           />
 
-
-
-
-
           {/* Orb Speaking Animation positioned at bottom center above name */}
           <div className="absolute bottom-8 w-full flex justify-center z-10">
             <OrbSpeakingAnimation 
@@ -423,8 +515,6 @@ const AvatarDisplay = ({ avatarId, mood, isTyping = false, isSpeaking = false, v
               className="drop-shadow-lg"
             />
           </div>
-
-
         </div>
 
         {/* Avatar name */}
@@ -496,8 +586,6 @@ const AvatarDisplay = ({ avatarId, mood, isTyping = false, isSpeaking = false, v
         <div className="absolute -top-2 -right-2 bg-white dark:bg-gray-800 rounded-full p-2 shadow-lg">
           {getMoodIcon()}
         </div>
-
-
       </div>
 
       {/* Avatar name and status */}

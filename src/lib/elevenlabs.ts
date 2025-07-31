@@ -136,8 +136,10 @@ class ElevenLabsService {
       
       if (!response.ok) {
         let errorDetails = '';
+        let errorData: any = null;
+        
         try {
-          const errorData = await response.json();
+          errorData = await response.json();
           errorDetails = JSON.stringify(errorData, null, 2);
         } catch (e) {
           errorDetails = await response.text();
@@ -149,6 +151,13 @@ class ElevenLabsService {
           details: errorDetails,
           headers: Object.fromEntries(response.headers.entries())
         });
+        
+        // Handle quota exceeded specifically
+        if (response.status === 401 && errorData?.detail?.status === 'quota_exceeded') {
+          const quotaError = new Error(`ElevenLabs quota exceeded. ${errorData.detail.message || 'Please add more credits or try again later.'}`);
+          (quotaError as any).isQuotaExceeded = true;
+          throw quotaError;
+        }
         
         throw new Error(`ElevenLabs API error (${response.status}): ${response.statusText}`);
       }
@@ -301,32 +310,48 @@ class ElevenLabsService {
       // Store reference to current source
       this.currentSource = source;
       
-      // Audio analysis for voice activity detection
+      // Enhanced audio analysis for precise voice activity detection with longer duration
       const dataArray = new Uint8Array(analyser.frequencyBinCount);
+      let lastActiveTime = 0;
+      let audioStartTime = Date.now();
+      const SILENCE_THRESHOLD = 800; // Increased to 800ms of silence before considering inactive
+      const MIN_ANIMATION_DURATION = 1500; // Minimum 1.5s animation duration
       
       const analyzeAudio = () => {
         if (!this.currentSource) return;
         
         analyser.getByteFrequencyData(dataArray);
         
-        // Calculate average amplitude
+        // Calculate RMS (Root Mean Square) for more accurate voice detection
         let sum = 0;
         for (let i = 0; i < dataArray.length; i++) {
-          sum += dataArray[i];
+          sum += dataArray[i] * dataArray[i];
         }
-        const average = sum / dataArray.length;
+        const rms = Math.sqrt(sum / dataArray.length);
         
-        // Normalize to 0-1 range
-        const level = average / 255;
+        // Normalize to 0-1 range with better scaling
+        const level = Math.min(rms / 128, 1.0); // Scale RMS to 0-1
         
-        // Voice activity threshold (adjust as needed)
-        const threshold = 0.02; // Lower threshold for more sensitive detection
-        const isActive = level > threshold;
+        // Enhanced voice activity detection with longer hysteresis
+        const threshold = 0.012; // Slightly lower threshold for better detection
+        const currentTime = Date.now();
+        const timeSinceStart = currentTime - audioStartTime;
         
-        // Call voice activity callback
-        onVoiceActivity?.(isActive, level);
+        if (level > threshold) {
+          lastActiveTime = currentTime;
+        }
         
-        // Continue analysis
+        // Extended logic: stay active longer and ensure minimum animation duration
+        const timeSinceLastActive = currentTime - lastActiveTime;
+        const isActive = timeSinceLastActive < SILENCE_THRESHOLD || timeSinceStart < MIN_ANIMATION_DURATION;
+        
+        // Provide more consistent level for better animation
+        const adjustedLevel = isActive ? Math.max(level, 0.3) : level;
+        
+        // Call voice activity callback with enhanced data
+        onVoiceActivity?.(isActive, adjustedLevel);
+        
+        // Continue analysis at 60fps for smooth animation
         this.currentAnimationFrame = requestAnimationFrame(analyzeAudio);
       };
       
@@ -369,10 +394,9 @@ class ElevenLabsService {
       // Start audio analysis
       analyzeAudio();
       
-      // Call onStart after a small delay to sync with actual audio output
-      setTimeout(() => {
-        onStart?.();
-      }, 100); // 100ms delay to account for audio processing
+      // Call onStart immediately when audio actually starts playing
+      // The audio analysis will handle the precise timing for orb animation
+      onStart?.();
       
     } catch (error) {
       console.error('🔊 Error during audio playback:', error);

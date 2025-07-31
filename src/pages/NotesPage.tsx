@@ -155,15 +155,32 @@ const NotesPage = () => {
       }
     });
 
-    // Search in subjects
+    // Enhanced search in subjects with compound search support
     allSubjects.forEach(subject => {
+      const searchTerms = searchLower.split(' ').filter(term => term.length > 0);
+      
+      // Create comprehensive searchable text
+      const searchableText = [
+        subject.name.toLowerCase(),
+        subject.code.toLowerCase(),
+        ...subject.keywords.map(k => k.toLowerCase()),
+        // Add common variations
+        subject.code.toLowerCase() === 'caed' ? 'computer aided engineering design autocad drawing' : '',
+        subject.name.toLowerCase().includes('programming') ? 'coding development software' : '',
+        subject.name.toLowerCase().includes('mathematics') ? 'math maths calculus algebra' : '',
+      ].join(' ');
+
+      // Check if all search terms are found
+      const matchesAllTerms = searchTerms.every(term => searchableText.includes(term));
+      
+      // Original matching for backward compatibility
       const matchesName = subject.name.toLowerCase().includes(searchLower);
       const matchesCode = subject.code.toLowerCase().includes(searchLower);
       const matchesKeywords = subject.keywords.some(keyword => 
         keyword.toLowerCase().includes(searchLower)
       );
 
-      if (matchesName || matchesCode || matchesKeywords) {
+      if (matchesAllTerms || matchesName || matchesCode || matchesKeywords) {
         results.push({
           type: 'subject',
           id: subject.id,
@@ -176,13 +193,31 @@ const NotesPage = () => {
       }
     });
 
-    // Search in file metadata
+    // Enhanced search in file metadata with compound search support
     fileMetadata.forEach(file => {
+      const searchTerms = searchLower.split(' ').filter(term => term.length > 0);
+      
+      // Create searchable text combining all relevant fields
+      const searchableText = [
+        file.original_title?.toLowerCase() || '',
+        file.subject?.toLowerCase() || '',
+        file.category?.toLowerCase() || '',
+        file.file_path?.toLowerCase() || '',
+        // Add common abbreviations and variations
+        file.category?.toLowerCase() === 'previous year questions' ? 'pyq pyqs previous year question papers' : '',
+        file.category?.toLowerCase() === 'notes' ? 'note study material' : '',
+        file.category?.toLowerCase() === 'assignments' ? 'assignment homework' : '',
+      ].join(' ');
+
+      // Check if all search terms are found in the searchable text
+      const matchesAllTerms = searchTerms.every(term => searchableText.includes(term));
+      
+      // Also check individual field matches for backward compatibility
       const matchesTitle = file.original_title?.toLowerCase().includes(searchLower);
       const matchesSubject = file.subject?.toLowerCase().includes(searchLower);
       const matchesCategory = file.category?.toLowerCase().includes(searchLower);
 
-      if (matchesTitle || matchesSubject || matchesCategory) {
+      if (matchesAllTerms || matchesTitle || matchesSubject || matchesCategory) {
         results.push({
           type: 'file',
           id: file.id,
@@ -245,10 +280,10 @@ const NotesPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50/80 via-pink-50/60 to-blue-50/80">
       <Header />
       
-      {/* Search Bar Section */}
+      {/* Search Bar Section with Glassmorphism */}
       <section className="pt-24 pb-8">
         <div className="container mx-auto px-4">
           <Breadcrumbs 
@@ -257,20 +292,28 @@ const NotesPage = () => {
             ]} 
           />
           <div className="max-w-2xl mx-auto relative">
-            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-            <Input
-              type="text"
-              placeholder="Search for notes, subjects, or topics..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-12 h-12 bg-background border-border"
-            />
+            <div className="glass-morphism rounded-2xl p-1 group hover:shadow-lg hover:shadow-purple-500/20 transition-all duration-300">
+              <Search className="absolute left-6 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-600 group-hover:text-purple-600 transition-colors duration-300" />
+              <Input
+                type="text"
+                placeholder="Search for notes, subjects, or topics..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-14 h-14 bg-white/50 backdrop-blur-sm border-white/30 rounded-xl text-gray-800 placeholder:text-gray-600 focus:bg-white/70 focus:border-purple-300/50 focus:ring-2 focus:ring-purple-500/20 transition-all duration-300"
+              />
+              {/* Search suggestions indicator */}
+              {searchTerm && (
+                <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
+                  <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse"></div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </section>
 
       {/* Search Results or Year Cards Section */}
-      <section className="py-12">
+      <section className="py-12 pb-20">
         <div className="container mx-auto px-4">
           {searchTerm.trim() ? (
             // Show search results
@@ -283,17 +326,17 @@ const NotesPage = () => {
               ) : searchResults.length > 0 ? (
                 <>
                   <div className="mb-6">
-                    <h2 className="text-2xl font-bold text-foreground mb-2">
+                    <h2 className="text-2xl font-bold text-gray-800 mb-2 drop-shadow-sm">
                       Search Results ({searchResults.length})
                     </h2>
-                    <p className="text-muted-foreground">
+                    <p className="text-gray-700">
                       Found {searchResults.length} results for "{searchTerm}"
                     </p>
                   </div>
                   <div className="space-y-4">
                     {searchResults.map((result, index) => (
                       <Link key={`${result.type}-${result.id}-${index}`} to={result.path}>
-                        <Card className="group hover:shadow-card transition-all duration-300 hover:scale-[1.02] border-border/50 hover:border-primary/20 cursor-pointer">
+                        <Card className="group hover:shadow-2xl transition-all duration-300 hover:scale-[1.02] bg-white/25 backdrop-blur-xl border border-white/30 hover:border-white/50 cursor-pointer rounded-2xl glass-morphism">
                           <CardContent className="p-6">
                             <div className="flex items-start space-x-4">
                               <div className="flex-shrink-0">
@@ -302,35 +345,35 @@ const NotesPage = () => {
                                 </div>
                               </div>
                               <div className="flex-1 min-w-0">
-                                <div className="flex items-center space-x-2 mb-1">
-                                  <Badge variant="secondary" className="text-xs">
+                                <div className="flex items-center flex-wrap gap-2 mb-2">
+                                  <Badge variant="secondary" className="text-xs font-semibold bg-purple-100/80 text-purple-800 border border-purple-200/50 px-2 py-1">
                                     {getResultTypeLabel(result.type)}
                                   </Badge>
                                   {result.year && (
-                                    <Badge variant="outline" className="text-xs">
+                                    <Badge variant="outline" className="text-xs font-semibold bg-blue-50/80 text-blue-700 border-blue-200/50 px-2 py-1">
                                       Year {result.year}
                                     </Badge>
                                   )}
                                   {result.semester && (
-                                    <Badge variant="outline" className="text-xs">
+                                    <Badge variant="outline" className="text-xs font-semibold bg-green-50/80 text-green-700 border-green-200/50 px-2 py-1">
                                       Sem {result.semester}
                                     </Badge>
                                   )}
                                   {result.category && (
-                                    <Badge variant="outline" className="text-xs">
+                                    <Badge variant="outline" className="text-xs font-semibold bg-orange-50/80 text-orange-700 border-orange-200/50 px-2 py-1">
                                       {result.category}
                                     </Badge>
                                   )}
                                 </div>
-                                <h3 className="text-lg font-semibold text-foreground mb-1 group-hover:text-primary transition-colors">
+                                <h3 className="text-lg font-semibold text-gray-800 mb-1 group-hover:text-purple-600 transition-colors drop-shadow-sm">
                                   {result.title}
                                 </h3>
-                                <p className="text-sm text-muted-foreground">
+                                <p className="text-sm text-gray-700">
                                   {result.description}
                                 </p>
                               </div>
                               <div className="flex-shrink-0">
-                                <ArrowRight className="h-5 w-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all duration-200" />
+                                <ArrowRight className="h-5 w-5 text-gray-600 group-hover:text-purple-600 group-hover:translate-x-1 transition-all duration-200" />
                               </div>
                             </div>
                           </CardContent>
@@ -365,17 +408,17 @@ const NotesPage = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
                 {filteredYears.map((year) => (
                 <Link key={year.id} to={`/notes/year/${year.id}`}>
-                  <Card className="group hover:shadow-card transition-all duration-300 hover:scale-105 border-border/50 hover:border-primary/20 cursor-pointer h-full">
+                  <Card className="group hover:shadow-2xl transition-all duration-300 hover:scale-105 bg-white/25 backdrop-blur-xl border border-white/30 hover:border-white/50 cursor-pointer h-full rounded-2xl glass-morphism">
                     <CardContent className="p-8 text-center h-full flex flex-col justify-between">
                       <div className="flex flex-col items-center">
-                        <div className={`w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r ${year.color} flex items-center justify-center text-2xl`}>
+                        <div className={`w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r ${year.color} flex items-center justify-center text-2xl shadow-lg border border-white/20`}>
                           {year.icon}
                         </div>
-                        <h3 className="text-2xl font-bold text-foreground mb-2 group-hover:text-[#6366f1] transition-colors">
+                        <h3 className="text-2xl font-bold text-gray-800 mb-2 group-hover:text-purple-600 transition-colors drop-shadow-sm">
                           {year.title}
                         </h3>
                       </div>
-                      <p className="text-muted-foreground text-sm">
+                      <p className="text-gray-700 text-sm">
                         {year.description}
                       </p>
                     </CardContent>

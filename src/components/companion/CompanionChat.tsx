@@ -59,11 +59,22 @@ const CompanionChat = ({ avatarId, onMoodChange, onTypingChange, onSpeakingChang
     }
   }, [avatarId]);
   
-  // Sync voice activity state with parent component
+  // Enhanced voice activity synchronization with parent component
   useEffect(() => {
-    // Use real-time voice activity for more accurate animation sync
-    onSpeakingChange(isVoiceActive || isSpeaking);
-  }, [isVoiceActive, isSpeaking, onSpeakingChange]);
+    // Prioritize real-time voice activity over general speaking state for better sync
+    // isVoiceActive is updated in real-time based on actual audio analysis
+    // isSpeaking is the general state that audio is playing
+    const isActuallySpeaking = isVoiceActive || isSpeaking;
+    
+    console.log('🎙️ Voice sync update:', {
+      isVoiceActive,
+      isSpeaking,
+      finalState: isActuallySpeaking,
+      voiceLevel
+    });
+    
+    onSpeakingChange(isActuallySpeaking);
+  }, [isVoiceActive, isSpeaking, onSpeakingChange, voiceLevel]);
 
   // Sync voice level with parent component
   useEffect(() => {
@@ -80,7 +91,7 @@ const CompanionChat = ({ avatarId, onMoodChange, onTypingChange, onSpeakingChang
     console.log('🔊 ElevenLabs supported:', isElevenLabsSupported);
   }, [voiceSettings, isElevenLabsSupported]);
 
-  // Enhanced speakMessage function with better timing
+  // Enhanced speakMessage function with perfect audio synchronization
   const speakMessage = async (text: string) => {
     console.log('💬 speakMessage called with:', text.substring(0, 50) + '...');
     console.log('💬 isSoundEnabled:', isSoundEnabled);
@@ -91,28 +102,36 @@ const CompanionChat = ({ avatarId, onMoodChange, onTypingChange, onSpeakingChang
     }
     
     try {
-      console.log('💬 Calling speak function...');
+      console.log('💬 Calling speak function with enhanced sync...');
       
-      // Pre-signal that speech is about to start (for video sync)
+      // Pre-signal that speech is about to start
       const speechStartTime = Date.now();
       
       await speak(text, 
         () => {
-          // On speech start - precise timing
+          // On actual audio playback start - this is when the orb should start animating
           const actualStartTime = Date.now();
           const delay = actualStartTime - speechStartTime;
-          console.log(`💬 Speech started (delay: ${delay}ms)`);
-          // isSpeaking state is now automatically synced via useEffect
+          console.log(`💬 🎙️ Audio playback started (delay: ${delay}ms)`);
+          console.log('💬 🎙️ Orb animation should now be active');
+          
+          // The orb animation will automatically sync via the useEffect that monitors
+          // isVoiceActive and isSpeaking states from the useVoice hook
         },
         () => {
-          // On speech end
-          console.log('💬 Speech ended');
-          // isSpeaking state is now automatically synced via useEffect
+          // On actual audio playback end - this is when the orb should stop animating
+          console.log('💬 🎙️ Audio playback completely finished');
+          console.log('💬 🎙️ Orb animation should now stop');
+          
+          // Ensure the orb animation stops by clearing voice activity
+          // This is handled automatically by the ElevenLabs service's onEnd callback
+          // which sets isVoiceActive to false and voiceLevel to 0
         }
       );
     } catch (error) {
       console.error('💬 Error speaking message:', error);
-      // isSpeaking state will be automatically synced when speak() fails
+      // On error, ensure orb animation stops
+      console.log('💬 🎙️ Speech error - ensuring orb animation stops');
     }
   };
 
