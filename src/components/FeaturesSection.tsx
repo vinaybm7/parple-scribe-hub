@@ -63,10 +63,10 @@ const FeaturesSection = () => {
           {features.map((feature, index) => (
             <Card 
               key={index} 
-              className={`group hover:shadow-2xl hover:shadow-purple-500/10 transition-all duration-500 hover:scale-105 hover:-translate-y-2 bg-white/20 backdrop-blur-xl border border-white/30 hover:border-purple-300/50 rounded-2xl overflow-hidden relative stagger-item ${visibleItems[index] ? 'visible' : ''}`}
+              className={`group hover:shadow-2xl hover:shadow-purple-500/10 transition-all duration-300 hover:scale-105 hover:-translate-y-2 bg-white/20 backdrop-blur-xl border border-white/30 hover:border-purple-300/50 rounded-2xl overflow-hidden relative stagger-item ${visibleItems[index] ? 'visible' : ''}`}
               style={{
                 boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
-                transitionDelay: `${index * 150}ms`
+                transitionDelay: visibleItems[index] ? '0ms' : `${index * 150}ms` // Remove delay after animation
               }}
             >
               {/* Subtle hover glow effect */}
