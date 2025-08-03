@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { X, Trash2, Bot, Heart, Zap, RotateCcw, Smile, Frown, HelpCircle, Coffee, Brain, Sparkles } from 'lucide-react';

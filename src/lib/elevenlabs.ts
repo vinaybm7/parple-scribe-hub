@@ -40,6 +40,7 @@ class ElevenLabsService {
   private baseUrl = 'https://api.elevenlabs.io/v1';
   private audioContext: AudioContext | null = null;
   private currentSource: AudioBufferSourceNode | null = null;
+  private currentAudio: HTMLAudioElement | null = null;
   private currentAnimationFrame: number | null = null;
 
   constructor(config: ElevenLabsConfig) {
@@ -248,6 +249,18 @@ class ElevenLabsService {
    * Stop any currently playing audio
    */
   stopAudio(): void {
+    // Stop HTML5 Audio
+    if (this.currentAudio) {
+      try {
+        this.currentAudio.pause();
+        this.currentAudio.currentTime = 0;
+        this.currentAudio = null;
+      } catch (error) {
+        console.log('Audio already stopped');
+      }
+    }
+    
+    // Stop AudioContext source
     if (this.currentSource) {
       try {
         this.currentSource.stop();
@@ -266,10 +279,10 @@ class ElevenLabsService {
   }
 
   /**
-   * Play audio from ArrayBuffer with real-time audio analysis
+   * Play audio from ArrayBuffer with perfect orb animation sync
    * @param audioBuffer - Audio data as ArrayBuffer
-   * @param onStart - Callback when audio starts playing
-   * @param onEnd - Callback when audio ends
+   * @param onStart - Callback when audio starts playing (for orb animation start)
+   * @param onEnd - Callback when audio ends (for orb animation stop)
    * @param onVoiceActivity - Callback with voice activity level (0-1)
    * @returns Promise<void>
    */
@@ -280,127 +293,131 @@ class ElevenLabsService {
     onVoiceActivity?: (isActive: boolean, level: number) => void
   ): Promise<void> {
     try {
-      console.log('🔊 ElevenLabs: Starting audio playback...');
+      console.log('🔊 ElevenLabs: Starting audio playback with perfect orb sync...');
       
       // Stop any currently playing audio
       this.stopAudio();
       
-      // Get audio context
-      const audioContext = this.getAudioContext();
-      console.log('🔊 AudioContext state:', audioContext.state);
+      // Create HTML5 Audio object for precise event handling
+      const audioBlob = new Blob([audioBuffer], { type: 'audio/mpeg' });
+      const audioUrl = URL.createObjectURL(audioBlob);
+      const audio = new Audio(audioUrl);
       
-      // Decode audio data
-      console.log('🔊 Decoding audio data...');
-      const audioBufferDecoded = await audioContext.decodeAudioData(audioBuffer.slice(0));
-      console.log('🔊 Audio decoded successfully, duration:', audioBufferDecoded.duration, 'seconds');
+      // Store reference for cleanup
+      this.currentAudio = audio;
       
-      // Create audio source
-      const source = audioContext.createBufferSource();
-      source.buffer = audioBufferDecoded;
+      console.log('🔊 Audio object created, setting up event listeners...');
       
-      // Create analyzer node for real-time audio analysis
-      const analyser = audioContext.createAnalyser();
-      analyser.fftSize = 256;
-      analyser.smoothingTimeConstant = 0.8;
+      // Set up perfect orb animation sync using audio events
+      audio.addEventListener('play', () => {
+        console.log('🔊 🎙️ Audio.play() event fired - START ORB ANIMATION');
+        onStart?.();
+        onVoiceActivity?.(true, 0.7); // Start with good activity level
+      });
       
-      // Connect audio graph: source -> analyser -> destination
-      source.connect(analyser);
-      analyser.connect(audioContext.destination);
-      
-      // Store reference to current source
-      this.currentSource = source;
-      
-      // Enhanced audio analysis for precise voice activity detection with longer duration
-      const dataArray = new Uint8Array(analyser.frequencyBinCount);
-      let lastActiveTime = 0;
-      let audioStartTime = Date.now();
-      const SILENCE_THRESHOLD = 800; // Increased to 800ms of silence before considering inactive
-      const MIN_ANIMATION_DURATION = 1500; // Minimum 1.5s animation duration
-      
-      const analyzeAudio = () => {
-        if (!this.currentSource) return;
-        
-        analyser.getByteFrequencyData(dataArray);
-        
-        // Calculate RMS (Root Mean Square) for more accurate voice detection
-        let sum = 0;
-        for (let i = 0; i < dataArray.length; i++) {
-          sum += dataArray[i] * dataArray[i];
-        }
-        const rms = Math.sqrt(sum / dataArray.length);
-        
-        // Normalize to 0-1 range with better scaling
-        const level = Math.min(rms / 128, 1.0); // Scale RMS to 0-1
-        
-        // Enhanced voice activity detection with longer hysteresis
-        const threshold = 0.012; // Slightly lower threshold for better detection
-        const currentTime = Date.now();
-        const timeSinceStart = currentTime - audioStartTime;
-        
-        if (level > threshold) {
-          lastActiveTime = currentTime;
-        }
-        
-        // Extended logic: stay active longer and ensure minimum animation duration
-        const timeSinceLastActive = currentTime - lastActiveTime;
-        const isActive = timeSinceLastActive < SILENCE_THRESHOLD || timeSinceStart < MIN_ANIMATION_DURATION;
-        
-        // Provide more consistent level for better animation
-        const adjustedLevel = isActive ? Math.max(level, 0.3) : level;
-        
-        // Call voice activity callback with enhanced data
-        onVoiceActivity?.(isActive, adjustedLevel);
-        
-        // Continue analysis at 60fps for smooth animation
-        this.currentAnimationFrame = requestAnimationFrame(analyzeAudio);
-      };
-      
-      // Set up event listeners
-      source.onended = () => {
-        console.log('🔊 Audio playback completed');
-        if (this.currentAnimationFrame) {
-          cancelAnimationFrame(this.currentAnimationFrame);
-          this.currentAnimationFrame = null;
-        }
-        this.currentSource = null;
-        onVoiceActivity?.(false, 0); // Ensure animation stops
+      audio.addEventListener('ended', () => {
+        console.log('🔊 🎙️ Audio.ended event fired - STOP ORB ANIMATION');
+        onVoiceActivity?.(false, 0); // Stop animation immediately
         onEnd?.();
-      };
+        
+        // Cleanup
+        URL.revokeObjectURL(audioUrl);
+        this.currentAudio = null;
+      });
       
-      // Handle any errors during playback
-      const handleError = () => {
-        console.error('🔊 Audio playback error occurred');
-        if (this.currentAnimationFrame) {
-          cancelAnimationFrame(this.currentAnimationFrame);
-          this.currentAnimationFrame = null;
-        }
-        this.currentSource = null;
+      audio.addEventListener('error', (e) => {
+        console.error('🔊 Audio playback error:', e);
         onVoiceActivity?.(false, 0);
         onEnd?.();
-      };
+        
+        // Cleanup
+        URL.revokeObjectURL(audioUrl);
+        this.currentAudio = null;
+      });
       
-      // Set a timeout to detect if playback fails to start
-      const errorTimeout = setTimeout(() => {
-        if (this.currentSource) {
-          console.error('🔊 Playback start timed out');
-          handleError();
-        }
-      }, 5000); // 5 second timeout
+      audio.addEventListener('pause', () => {
+        console.log('🔊 🎙️ Audio paused - STOP ORB ANIMATION');
+        onVoiceActivity?.(false, 0);
+      });
       
-      // Start playback
-      console.log('🔊 Starting audio playback...');
-      source.start(0);
+      // Enhanced real-time voice activity analysis for smooth orb animation
+      if (onVoiceActivity) {
+        // Get audio context for analysis
+        const audioContext = this.getAudioContext();
+        const audioBufferDecoded = await audioContext.decodeAudioData(audioBuffer.slice(0));
+        
+        // Create analyzer for visual feedback
+        const source = audioContext.createBufferSource();
+        const analyser = audioContext.createAnalyser();
+        
+        source.buffer = audioBufferDecoded;
+        analyser.fftSize = 256;
+        analyser.smoothingTimeConstant = 0.8;
+        
+        source.connect(analyser);
+        analyser.connect(audioContext.destination);
+        
+        // Store for cleanup
+        this.currentSource = source;
+        
+        const dataArray = new Uint8Array(analyser.frequencyBinCount);
+        let animationStarted = false;
+        
+        const analyzeAudio = () => {
+          if (!this.currentAudio || this.currentAudio.ended || this.currentAudio.paused) {
+            return;
+          }
+          
+          analyser.getByteFrequencyData(dataArray);
+          
+          // Calculate RMS for voice activity level
+          let sum = 0;
+          for (let i = 0; i < dataArray.length; i++) {
+            sum += dataArray[i] * dataArray[i];
+          }
+          const rms = Math.sqrt(sum / dataArray.length);
+          const level = Math.min(rms / 128, 1.0);
+          
+          // Only update voice activity if audio is actually playing
+          if (!this.currentAudio.paused && !this.currentAudio.ended) {
+            const adjustedLevel = Math.max(level, 0.4); // Minimum level for smooth animation
+            onVoiceActivity(true, adjustedLevel);
+            animationStarted = true;
+          }
+          
+          this.currentAnimationFrame = requestAnimationFrame(analyzeAudio);
+        };
+        
+        // Start analysis when audio starts playing
+        audio.addEventListener('play', () => {
+          source.start(0);
+          analyzeAudio();
+        });
+        
+        // Stop analysis when audio ends
+        audio.addEventListener('ended', () => {
+          if (this.currentAnimationFrame) {
+            cancelAnimationFrame(this.currentAnimationFrame);
+            this.currentAnimationFrame = null;
+          }
+          if (this.currentSource) {
+            try {
+              this.currentSource.stop();
+              this.currentSource.disconnect();
+            } catch (e) {
+              // Source might already be stopped
+            }
+            this.currentSource = null;
+          }
+        });
+      }
       
-      // Start audio analysis
-      analyzeAudio();
-      
-      // Call onStart immediately when audio actually starts playing
-      // The audio analysis will handle the precise timing for orb animation
-      onStart?.();
+      // Start playback - this will trigger the 'play' event and start orb animation
+      console.log('🔊 Calling audio.play() - orb should start animating...');
+      await audio.play();
       
     } catch (error) {
       console.error('🔊 Error during audio playback:', error);
-      this.currentSource = null;
       onVoiceActivity?.(false, 0);
       onEnd?.();
       throw error;

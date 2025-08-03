@@ -5,6 +5,7 @@ import { getProductionEnvVar, markApiKeyAsFailed, getAvailableElevenLabsApiKey }
 console.log('🔍 ElevenLabs environment variables status:', {
   VITE_ELEVENLABS_API_KEY: import.meta.env.VITE_ELEVENLABS_API_KEY ? '✅ Set' : '❌ Missing',
   VITE_ELEVENLABS_LUNA_VOICE_ID: import.meta.env.VITE_ELEVENLABS_LUNA_VOICE_ID ? '✅ Set' : '❌ Missing',
+  VITE_ELEVENLABS_ZYAN_VOICE_ID: import.meta.env.VITE_ELEVENLABS_ZYAN_VOICE_ID ? '✅ Set' : '❌ Missing',
   VITE_ELEVENLABS_ARIA_VOICE_ID: import.meta.env.VITE_ELEVENLABS_ARIA_VOICE_ID ? '✅ Set' : '❌ Missing',
   environment: import.meta.env.MODE,
   isDev: import.meta.env.DEV,
@@ -18,6 +19,7 @@ const ELEVENLABS_CONFIG = {
   apiKey: getProductionEnvVar('VITE_ELEVENLABS_API_KEY'),
   voiceIds: {
     luna: getProductionEnvVar('VITE_ELEVENLABS_LUNA_VOICE_ID', 'BpjGufoPiobT79j2vtj4'),
+    zyan: getProductionEnvVar('VITE_ELEVENLABS_ZYAN_VOICE_ID', 'XTdzBt8oIEvodkwhxeA0'),
     aria: getProductionEnvVar('VITE_ELEVENLABS_ARIA_VOICE_ID', 'jqcCZkN6Knx8BJ5TBdYR')
   }
 };
@@ -26,6 +28,7 @@ const ELEVENLABS_CONFIG = {
 console.log('=== ElevenLabs Configuration Status ===');
 console.log('API Key:', ELEVENLABS_CONFIG.apiKey ? '✅ Configured' : '❌ Missing');
 console.log('Luna Voice ID:', ELEVENLABS_CONFIG.voiceIds.luna ? '✅ Set' : '❌ Missing');
+console.log('Zyan Voice ID:', ELEVENLABS_CONFIG.voiceIds.zyan ? '✅ Set' : '❌ Missing');
 console.log('Aria Voice ID:', ELEVENLABS_CONFIG.voiceIds.aria ? '✅ Set' : '❌ Missing');
 console.log('Environment:', import.meta.env.MODE);
 
@@ -33,6 +36,7 @@ console.log('Environment:', import.meta.env.MODE);
 export const getVoiceIdForAvatar = (avatarId: string): string => {
   const voiceIds = {
     luna: ELEVENLABS_CONFIG.voiceIds.luna,
+    zyan: ELEVENLABS_CONFIG.voiceIds.zyan,
     aria: ELEVENLABS_CONFIG.voiceIds.aria
   };
 
@@ -109,6 +113,7 @@ export const initializeElevenLabsForAvatar = (avatarId: string, retryCount: numb
 export const isElevenLabsConfigured = (): boolean => {
   return !!(ELEVENLABS_CONFIG.apiKey &&
     ELEVENLABS_CONFIG.voiceIds.luna &&
+    ELEVENLABS_CONFIG.voiceIds.zyan &&
     ELEVENLABS_CONFIG.voiceIds.aria);
 };
 
@@ -118,6 +123,7 @@ export const getElevenLabsConfigStatus = () => {
     hasApiKey: !!ELEVENLABS_CONFIG.apiKey,
     hasVoiceIds: {
       luna: !!ELEVENLABS_CONFIG.voiceIds.luna,
+      zyan: !!ELEVENLABS_CONFIG.voiceIds.zyan,
       aria: !!ELEVENLABS_CONFIG.voiceIds.aria
     },
     isFullyConfigured: isElevenLabsConfigured()

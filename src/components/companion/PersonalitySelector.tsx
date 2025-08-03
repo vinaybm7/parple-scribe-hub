@@ -30,6 +30,18 @@ const PersonalitySelector = ({ selectedAvatar, onAvatarSelect, onConfirm }: Pers
       quote: "Let's turn your study session into an amazing adventure! ✨"
     },
     {
+      id: 'zyan',
+      name: 'Zyan',
+      personality: 'Playful & Motivating',
+      description: 'Your energetic companion who makes learning exciting and fun',
+      traits: ['Playful', 'Energetic', 'Motivating', 'Fun-loving'],
+      color: 'blue',
+      icon: User,
+      gradient: 'from-blue-400 to-blue-600',
+      bgGradient: 'from-blue-100 to-blue-200',
+      quote: "Hey there! Ready to turn studying into an awesome adventure? Let's do this! 🚀💙"
+    },
+    {
       id: 'aria',
       name: 'Aria',
       personality: 'Calm & Wise',
@@ -44,7 +56,7 @@ const PersonalitySelector = ({ selectedAvatar, onAvatarSelect, onConfirm }: Pers
   ];
 
   return (
-    <div className="space-y-8 relative">
+    <div className="space-y-6 relative">
       {/* Clean animated background without decorative elements */}
       <div className="fixed inset-0 -z-10 animated-gradient-bg" />
 
@@ -55,7 +67,7 @@ const PersonalitySelector = ({ selectedAvatar, onAvatarSelect, onConfirm }: Pers
         transition={{ duration: 0.8 }}
       >
         <motion.h2 
-          className="text-4xl font-bold mb-4 bg-gradient-to-r from-purple-600 via-pink-600 to-indigo-600 bg-clip-text text-transparent"
+          className="text-2xl font-bold mb-3 bg-gradient-to-r from-purple-600 via-pink-600 to-indigo-600 bg-clip-text text-transparent"
           animate={{ 
             backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'],
           }}
@@ -64,7 +76,7 @@ const PersonalitySelector = ({ selectedAvatar, onAvatarSelect, onConfirm }: Pers
           Choose Your Perfect Companion
         </motion.h2>
         <motion.p 
-          className="text-muted-foreground max-w-2xl mx-auto text-lg"
+          className="text-muted-foreground max-w-2xl mx-auto text-base"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.3, duration: 0.8 }}
@@ -74,7 +86,7 @@ const PersonalitySelector = ({ selectedAvatar, onAvatarSelect, onConfirm }: Pers
         </motion.p>
       </motion.div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto items-stretch">
+      <div className="flex flex-wrap gap-6 justify-center items-stretch max-w-[1500px] mx-auto px-4">
         {avatars.map((avatar, index) => {
           const IconComponent = avatar.icon;
           const isSelected = selectedAvatar === avatar.id;
@@ -82,6 +94,7 @@ const PersonalitySelector = ({ selectedAvatar, onAvatarSelect, onConfirm }: Pers
           return (
             <motion.div
               key={avatar.id}
+              className="flex-shrink-0"
               initial={{ opacity: 0, y: 50, scale: 0.9 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               transition={{ 
@@ -91,14 +104,13 @@ const PersonalitySelector = ({ selectedAvatar, onAvatarSelect, onConfirm }: Pers
                 stiffness: 100
               }}
               whileHover={{ 
-                scale: 1.05,
-                rotateY: 5,
+                scale: 1.02,
                 transition: { duration: 0.2 }
               }}
               whileTap={{ scale: 0.98 }}
             >
               <Card 
-                className={`cursor-pointer relative overflow-hidden backdrop-blur-sm border-2 transition-all duration-500 group h-full min-h-[600px] flex flex-col ${
+                className={`cursor-pointer relative overflow-hidden backdrop-blur-sm border-2 transition-all duration-500 group w-full sm:w-[320px] md:w-[360px] lg:w-[420px] min-h-[420px] max-w-[480px] flex flex-col rounded-2xl ${
                   isSelected 
                     ? `ring-4 ring-${avatar.color}-400/50 shadow-2xl shadow-${avatar.color}-500/25 bg-gradient-to-br ${avatar.bgGradient} border-${avatar.color}-300` 
                     : 'hover:shadow-2xl bg-white/90 dark:bg-gray-900/90 border-gray-200 dark:border-gray-700 hover:border-purple-300 dark:hover:border-purple-600'
@@ -127,7 +139,7 @@ const PersonalitySelector = ({ selectedAvatar, onAvatarSelect, onConfirm }: Pers
                 )}
               </AnimatePresence>
 
-              <CardHeader className="text-center pb-4 relative">
+              <CardHeader className="text-center pb-2 pt-4 relative">
                 {/* Floating icon animation */}
                 <motion.div
                   className="absolute top-2 left-1/2 transform -translate-x-1/2"
@@ -146,7 +158,7 @@ const PersonalitySelector = ({ selectedAvatar, onAvatarSelect, onConfirm }: Pers
 
                 {/* Avatar representation with unified orb animation */}
                 <motion.div 
-                  className={`w-36 h-36 mx-auto rounded-full bg-gradient-to-br ${avatar.gradient} p-1 mb-4 shadow-2xl relative overflow-hidden group-hover:shadow-3xl transition-all duration-500`}
+                  className={`w-32 h-32 mx-auto rounded-full bg-gradient-to-br ${avatar.gradient} p-1 mb-3 shadow-2xl relative overflow-hidden group-hover:shadow-3xl transition-all duration-500`}
                   whileHover={{ 
                     scale: 1.1,
                     boxShadow: `0 20px 40px rgba(147, 51, 234, 0.3)`,
@@ -246,10 +258,10 @@ const PersonalitySelector = ({ selectedAvatar, onAvatarSelect, onConfirm }: Pers
                 </motion.div>
               </CardHeader>
 
-              <CardContent className="space-y-6 flex-1 flex flex-col justify-between p-6">
-                <div className="flex-1 space-y-6">
+              <CardContent className="space-y-3 flex-1 flex flex-col justify-between p-3">
+                <div className="flex-1 space-y-3">
                   <motion.p 
-                    className="text-base text-gray-600 dark:text-gray-300 text-center leading-relaxed font-medium min-h-[3rem] flex items-center justify-center"
+                    className="text-sm text-gray-600 dark:text-gray-300 text-center leading-relaxed font-medium min-h-[2rem] flex items-center justify-center"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.4 + index * 0.1 }}
@@ -259,12 +271,12 @@ const PersonalitySelector = ({ selectedAvatar, onAvatarSelect, onConfirm }: Pers
 
                   {/* Personality traits */}
                   <motion.div 
-                    className="flex flex-wrap gap-3 justify-center"
+                    className="flex flex-wrap gap-2 justify-center"
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.5 + index * 0.1 }}
                   >
-                    {avatar.traits.map((trait, traitIndex) => (
+                    {avatar.traits.slice(0, 2).map((trait, traitIndex) => (
                       <motion.div
                         key={trait}
                         initial={{ opacity: 0, scale: 0.8 }}
@@ -274,7 +286,7 @@ const PersonalitySelector = ({ selectedAvatar, onAvatarSelect, onConfirm }: Pers
                       >
                         <Badge 
                           variant="outline" 
-                          className={`text-sm px-4 py-2 font-medium transition-all duration-300 ${
+                          className={`text-xs px-3 py-1 font-medium transition-all duration-300 ${
                             isSelected 
                               ? `border-${avatar.color}-400 bg-${avatar.color}-50 text-${avatar.color}-700` 
                               : 'hover:border-purple-300 hover:bg-purple-50 border-gray-300 text-gray-700'
@@ -288,7 +300,7 @@ const PersonalitySelector = ({ selectedAvatar, onAvatarSelect, onConfirm }: Pers
 
                   {/* Sample quote with typewriter effect */}
                   <motion.div 
-                    className={`p-5 rounded-xl bg-gradient-to-r from-${avatar.color}-50 to-${avatar.color}-100 dark:from-${avatar.color}-950/20 dark:to-${avatar.color}-900/30 border border-${avatar.color}-200 dark:border-${avatar.color}-800 relative overflow-hidden`}
+                    className={`p-3 rounded-lg bg-gradient-to-r from-${avatar.color}-50 to-${avatar.color}-100 dark:from-${avatar.color}-950/20 dark:to-${avatar.color}-900/30 border border-${avatar.color}-200 dark:border-${avatar.color}-800 relative overflow-hidden`}
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.7 + index * 0.1 }}
@@ -298,7 +310,7 @@ const PersonalitySelector = ({ selectedAvatar, onAvatarSelect, onConfirm }: Pers
                     <div className="absolute top-2 left-2 text-4xl opacity-20 font-serif text-gray-400">"</div>
                     <div className="absolute bottom-2 right-2 text-4xl opacity-20 font-serif text-gray-400 rotate-180">"</div>
                     
-                    <p className="text-base italic text-center relative z-10 min-h-[3rem] flex items-center justify-center text-gray-700 dark:text-gray-300 font-medium">
+                    <p className="text-sm italic text-center relative z-10 min-h-[3rem] flex items-center justify-center text-gray-700 dark:text-gray-300 font-medium leading-relaxed">
                       {showTypewriter === avatar.id ? (
                         <Typewriter
                           words={[avatar.quote]}
@@ -323,7 +335,7 @@ const PersonalitySelector = ({ selectedAvatar, onAvatarSelect, onConfirm }: Pers
                   >
                     <Button 
                       variant={isSelected ? "default" : "outline"}
-                      className={`w-full py-4 text-lg font-semibold transition-all duration-300 ${
+                      className={`w-full py-2 text-sm font-semibold transition-all duration-300 ${
                         isSelected 
                           ? `bg-gradient-to-r from-${avatar.color}-500 to-${avatar.color}-600 hover:from-${avatar.color}-600 hover:to-${avatar.color}-700 text-white shadow-lg shadow-${avatar.color}-500/25` 
                           : `border-2 border-${avatar.color}-300 text-${avatar.color}-600 hover:bg-gradient-to-r hover:from-${avatar.color}-50 hover:to-${avatar.color}-100 hover:border-${avatar.color}-400`

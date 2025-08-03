@@ -68,27 +68,27 @@ const CompanionPage = () => {
           />
 
           {/* Features Preview */}
-          <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="text-center">
-              <div className="w-16 h-16 mx-auto mb-4 bg-pink-100 dark:bg-pink-900/30 rounded-full flex items-center justify-center">
-                <Heart className="w-8 h-8 text-pink-600" />
+              <div className="w-12 h-12 mx-auto mb-2 bg-pink-100 dark:bg-pink-900/30 rounded-full flex items-center justify-center">
+                <Heart className="w-6 h-6 text-pink-600" />
               </div>
-              <h3 className="text-xl font-semibold mb-2">Emotional Support</h3>
-              <p className="text-muted-foreground">Get encouragement and motivation when you need it most</p>
+              <h3 className="text-lg font-semibold mb-1">Emotional Support</h3>
+              <p className="text-muted-foreground text-sm">Get encouragement and motivation when you need it most</p>
             </div>
             <div className="text-center">
-              <div className="w-16 h-16 mx-auto mb-4 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center">
-                <MessageCircle className="w-8 h-8 text-purple-600" />
+              <div className="w-12 h-12 mx-auto mb-2 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center">
+                <MessageCircle className="w-6 h-6 text-purple-600" />
               </div>
-              <h3 className="text-xl font-semibold mb-2">Natural Conversation</h3>
-              <p className="text-muted-foreground">Chat naturally about studies, life, and everything in between</p>
+              <h3 className="text-lg font-semibold mb-1">Natural Conversation</h3>
+              <p className="text-muted-foreground text-sm">Chat naturally about studies, life, and everything in between</p>
             </div>
             <div className="text-center">
-              <div className="w-16 h-16 mx-auto mb-4 bg-indigo-100 dark:bg-indigo-900/30 rounded-full flex items-center justify-center">
-                <Sparkles className="w-8 h-8 text-indigo-600" />
+              <div className="w-12 h-12 mx-auto mb-2 bg-indigo-100 dark:bg-indigo-900/30 rounded-full flex items-center justify-center">
+                <Sparkles className="w-6 h-6 text-indigo-600" />
               </div>
-              <h3 className="text-xl font-semibold mb-2">Study Motivation</h3>
-              <p className="text-muted-foreground">Stay motivated and focused on your academic goals</p>
+              <h3 className="text-lg font-semibold mb-1">Study Motivation</h3>
+              <p className="text-muted-foreground text-sm">Stay motivated and focused on your academic goals</p>
             </div>
           </div>
         </div>

@@ -8,7 +8,7 @@ interface OrbSpeakingAnimationProps {
   onSpeechEnd?: () => void;
   size?: 'sm' | 'md' | 'lg';
   className?: string;
-  avatarColor?: 'purple' | 'indigo' | 'pink';
+  avatarColor?: 'purple' | 'indigo' | 'pink' | 'blue';
 }
 
 const OrbSpeakingAnimation = ({
@@ -63,6 +63,16 @@ const OrbSpeakingAnimation = ({
       border: 'border-pink-400/70',
       innerGlow: 'from-white/60 via-pink-200/50 to-transparent',
       pastelOverlay: 'from-rose-300/40 via-pink-300/30 via-purple-300/30 to-violet-300/40'
+    },
+    blue: {
+      primary: 'from-blue-400 via-sky-500 via-cyan-500 to-teal-400',
+      secondary: 'from-blue-400/90 via-sky-400/80 via-cyan-400/80 to-teal-400/90',
+      accent: 'from-sky-300/70 via-blue-400/60 via-cyan-400/60 to-teal-300/70',
+      tertiary: 'from-blue-300/50 via-sky-300/40 via-cyan-300/40 to-teal-300/50',
+      glow: 'shadow-blue-500/60',
+      border: 'border-blue-400/70',
+      innerGlow: 'from-white/60 via-blue-200/50 to-transparent',
+      pastelOverlay: 'from-sky-300/40 via-blue-300/30 via-cyan-300/30 to-teal-300/40'
     }
   };
 

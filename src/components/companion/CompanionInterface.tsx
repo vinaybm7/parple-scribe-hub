@@ -23,7 +23,8 @@ const CompanionInterface = ({ avatarId, onBack }: CompanionInterfaceProps) => {
 
   const avatarNames = {
     bella: 'Bella',
-    luna: 'Luna', 
+    luna: 'Luna',
+    zyan: 'Zyan',
     aria: 'Aria'
   };
 
@@ -109,8 +110,8 @@ const CompanionInterface = ({ avatarId, onBack }: CompanionInterfaceProps) => {
         <div className="flex flex-col lg:flex-row gap-6 max-w-7xl mx-auto items-start -mt-4">
           {/* Left Side - Avatar Display */}
           <div className="flex-shrink-0">
-            {avatarId === 'aria' || avatarId === 'luna' ? (
-              // For Aria and Luna: No card wrapper, direct placement for Live2D
+            {avatarId === 'aria' || avatarId === 'luna' || avatarId === 'zyan' ? (
+              // For Aria, Luna, and Zyan: No card wrapper, direct placement for Live2D
               <div className="w-full lg:w-96">
                 <AvatarDisplay
                   avatarId={avatarId}
@@ -138,7 +139,7 @@ const CompanionInterface = ({ avatarId, onBack }: CompanionInterfaceProps) => {
 
           {/* Right Side - Chat Interface */}
           <div className="flex-1 max-w-md lg:max-w-none">
-            <Card className={`w-full bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm shadow-xl ${avatarId === 'aria' || avatarId === 'luna' ? 'h-[700px]' : 'h-[600px]'}`}>
+            <Card className={`w-full bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm shadow-xl ${avatarId === 'aria' || avatarId === 'luna' || avatarId === 'zyan' ? 'h-[700px]' : 'h-[600px]'}`}>
               <CardContent className="p-0 h-full">
                 <CompanionChat
                   avatarId={avatarId}

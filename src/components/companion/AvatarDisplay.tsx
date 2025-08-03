@@ -25,6 +25,13 @@ const AvatarDisplay = ({ avatarId, mood, isTyping = false, isSpeaking = false, v
       bgGradient: 'from-purple-100 to-purple-200',
       darkBgGradient: 'dark:from-purple-900/30 dark:to-purple-800/30'
     },
+    zyan: {
+      name: 'Zyan',
+      color: 'blue',
+      gradient: 'from-blue-400 to-blue-600',
+      bgGradient: 'from-blue-100 to-blue-200',
+      darkBgGradient: 'dark:from-blue-900/30 dark:to-blue-800/30'
+    },
     aria: {
       name: 'Aria',
       color: 'indigo',
@@ -131,6 +138,155 @@ const AvatarDisplay = ({ avatarId, mood, isTyping = false, isSpeaking = false, v
               "mobile": {
                 "show": true,
                 "scale": 0.7,
+                "motion": true
+              },
+              "react": {
+                "opacityDefault": 1,
+                "opacityOnHover": 0.9
+              },
+              "dialog": {
+                "enable": false
+              },
+              "dev": {
+                "enable": false
+              },
+              "log": false
+            });
+            
+            // Hide Live2D widget controls after initialization
+            setTimeout(() => {
+              // Hide all Live2D widget control elements
+              const controlElements = document.querySelectorAll('[id*="waifu"], [class*="waifu"], [id*="live2d-toggle"], [class*="live2d-toggle"], [id*="live2d-tool"], [class*="live2d-tool"]');
+              controlElements.forEach(el => {
+                if (el instanceof HTMLElement) {
+                  el.style.display = 'none';
+                  el.style.visibility = 'hidden';
+                  el.style.opacity = '0';
+                  el.style.pointerEvents = 'none';
+                }
+              });
+              
+              // Also hide any elements with gradient backgrounds that might be controls
+              const gradientElements = document.querySelectorAll('[style*="gradient"], [style*="linear-gradient"]');
+              gradientElements.forEach(el => {
+                if (el instanceof HTMLElement && el.tagName !== 'CANVAS') {
+                  const rect = el.getBoundingClientRect();
+                  // Hide small gradient elements that are likely controls
+                  if (rect.width < 100 || rect.height < 100) {
+                    el.style.display = 'none';
+                  }
+                }
+              });
+            }, 3000);
+          </script>
+        </body>
+        </html>
+      `);
+      iframeDoc.close();
+
+      // Mark as loaded after a delay
+      setTimeout(() => {
+        setLive2dLoaded(true);
+        widgetInitialized.current = true;
+      }, 2000);
+    }
+  };
+
+  // Initialize Live2D widget for Zyan with Chitose model
+  const initializeLive2DForZyan = () => {
+    if (avatarId !== 'zyan' || widgetInitialized.current) return;
+
+    const container = document.querySelector('#zyan-live2d-widget');
+    if (!container) return;
+
+    // Clear any existing content
+    container.innerHTML = '';
+
+    // Create iframe to isolate Live2D instance
+    const iframe = document.createElement('iframe');
+    iframe.style.width = '100%';
+    iframe.style.height = '100%';
+    iframe.style.border = 'none';
+    iframe.style.background = 'transparent';
+    
+    container.appendChild(iframe);
+
+    // Write HTML content to iframe with Chitose model
+    const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
+    if (iframeDoc) {
+      iframeDoc.open();
+      iframeDoc.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <style>
+            html, body { 
+              margin: 0; 
+              padding: 0; 
+              background: transparent; 
+              overflow: visible;
+              height: 700px;
+              width: 100%;
+            }
+            body {
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              box-sizing: border-box;
+            }
+            #live2d-widget {
+              position: relative !important;
+              width: 380px !important;
+              height: 650px !important;
+              overflow: visible !important;
+            }
+            canvas {
+              position: relative !important;
+              left: 0 !important;
+              top: 0 !important;
+              transform: scale(1.1) translateY(-10px) !important;
+              transform-origin: center center !important;
+              overflow: visible !important;
+            }
+            /* Hide Live2D widget controls */
+            [id*="waifu"], [class*="waifu"], 
+            [id*="live2d-toggle"], [class*="live2d-toggle"],
+            [id*="live2d-tool"], [class*="live2d-tool"],
+            .live2d-widget-dialog-container,
+            .live2d-widget-dialog,
+            .fui-home,
+            .fui-eye,
+            .fui-user,
+            .fui-photo,
+            .fui-info-circle,
+            .fui-cross-circle,
+            .fui-gear {
+              display: none !important;
+              visibility: hidden !important;
+              opacity: 0 !important;
+              pointer-events: none !important;
+            }
+          </style>
+        </head>
+        <body>
+          <script src="https://cdn.jsdelivr.net/npm/live2d-widget@3.1.4/lib/L2Dwidget.min.js"></script>
+          <script>
+            console.log('🔍 ZYAN LIVE2D DIAGNOSTICS - Starting initialization');
+            
+            L2Dwidget.init({
+              "model": {
+                "jsonPath": "https://cdn.jsdelivr.net/gh/evrstr/live2d-widget-models/live2d_evrstr/chitose/model.json"
+              },
+              "display": {
+                "position": "relative",
+                "width": 380,
+                "height": 650,
+                "hOffset": 0,
+                "vOffset": -10
+              },
+              "mobile": {
+                "show": true,
+                "scale": 0.9,
                 "motion": true
               },
               "react": {
@@ -462,12 +618,14 @@ const AvatarDisplay = ({ avatarId, mood, isTyping = false, isSpeaking = false, v
     setCurrentExpression(mood);
   }, [mood]);
 
-  // Initialize Live2D for Aria and Luna
+  // Initialize Live2D for Aria, Luna, and Zyan
   useEffect(() => {
     if (avatarId === 'aria') {
       initializeLive2DForAria();
     } else if (avatarId === 'luna') {
       initializeLive2DForLuna();
+    } else if (avatarId === 'zyan') {
+      initializeLive2DForZyan();
     }
 
     // Cleanup function
@@ -486,15 +644,22 @@ const AvatarDisplay = ({ avatarId, mood, isTyping = false, isSpeaking = false, v
         }
         widgetInitialized.current = false;
         setLive2dLoaded(false);
+      } else if (avatarId === 'zyan') {
+        const zyanWidget = document.querySelector('#zyan-live2d-widget');
+        if (zyanWidget) {
+          zyanWidget.innerHTML = '';
+        }
+        widgetInitialized.current = false;
+        setLive2dLoaded(false);
       }
     };
   }, [avatarId]);
 
-  // Render Live2D for Aria and Luna, 2D avatar for others
-  if (avatarId === 'aria' || avatarId === 'luna') {
+  // Render Live2D for Aria, Luna, and Zyan, 2D avatar for others
+  if (avatarId === 'aria' || avatarId === 'luna' || avatarId === 'zyan') {
     return (
       <div className="flex flex-col items-center w-full">
-        {/* Live2D Container for Aria and Luna - Full model display */}
+        {/* Live2D Container for Aria, Luna, and Zyan - Full model display */}
         <div className="relative w-full flex items-center justify-center">
           {/* Live2D Widget Container - Full model visibility */}
           <div 
@@ -509,7 +674,7 @@ const AvatarDisplay = ({ avatarId, mood, isTyping = false, isSpeaking = false, v
               isActive={isSpeaking}
               voiceLevel={voiceLevel}
               size="md"
-              avatarColor={config.color as 'purple' | 'indigo' | 'pink'}
+              avatarColor={config.color as 'purple' | 'indigo' | 'pink' | 'blue'}
               onSpeechStart={() => console.log(`${config.name} orb animation started`)}
               onSpeechEnd={() => console.log(`${config.name} orb animation ended`)}
               className="drop-shadow-lg"
@@ -574,7 +739,7 @@ const AvatarDisplay = ({ avatarId, mood, isTyping = false, isSpeaking = false, v
             isActive={isSpeaking}
             voiceLevel={voiceLevel}
             size="lg"
-            avatarColor={config.color as 'purple' | 'indigo' | 'pink'}
+            avatarColor={config.color as 'purple' | 'indigo' | 'pink' | 'blue'}
             onSpeechStart={() => console.log(`${config.name} 2D orb animation started`)}
             onSpeechEnd={() => console.log(`${config.name} 2D orb animation ended`)}
             className="drop-shadow-xl"

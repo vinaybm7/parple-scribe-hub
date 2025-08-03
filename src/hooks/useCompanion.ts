@@ -51,6 +51,10 @@ export const useCompanion = (avatarId: string) => {
           message: "Oops! My brain had a little hiccup there! ✨ Let's try that again, shall we?",
           mood: 'excited' as const
         },
+        zyan: {
+          message: "Sorry girl, I'm having a little tech moment! 💙 Give me a sec and let's try again, beautiful!",
+          mood: 'caring' as const
+        },
         aria: {
           message: "I apologize, but I'm experiencing some difficulty processing that. Please give me a moment and try again.",
           mood: 'calm' as const

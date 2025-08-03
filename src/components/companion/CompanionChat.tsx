@@ -146,11 +146,12 @@ const CompanionChat = ({ avatarId, onMoodChange, onTypingChange, onSpeakingChang
       return;
     }
 
-    const avatarNames = { luna: 'Luna', aria: 'Aria' };
+    const avatarNames = { luna: 'Luna', zyan: 'Zyan', aria: 'Aria' };
     const avatarName = avatarNames[avatarId as keyof typeof avatarNames] || 'Luna';
     
     const greetings = {
       luna: `Hey there! ✨ I'm ${avatarName}, your energetic study buddy! I'm super excited to help you tackle whatever challenges come your way. Ready to make today amazing together?`,
+      zyan: `Hey there! 🚀 I'm ${avatarName}, your energetic companion who's here to make learning absolutely EPIC! I'm super pumped to be on this adventure with you. Ready to turn studying into something amazing? Let's do this! 💙⚡`,
       aria: `Hello, dear student. 🌙 I'm ${avatarName}, and I'm here to provide you with calm guidance and wisdom. Whether you need help with studies or just want to chat, I'm here for you.`
     };
 
