@@ -144,16 +144,18 @@ export const checkRateLimit = (
 export const getCSPHeader = (): string => {
   return [
     "default-src 'self'",
-    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net",
+    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://*.unicornstudio.com https://*.hiunicornstudio.com",
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
     "font-src 'self' https://fonts.gstatic.com",
     "img-src 'self' data: https: blob:",
     "media-src 'self' blob:",
-    "connect-src 'self' https://*.supabase.co https://generativelanguage.googleapis.com https://api.elevenlabs.io",
+    "connect-src 'self' https://*.supabase.co https://generativelanguage.googleapis.com https://api.elevenlabs.io https://*.unicornstudio.com https://*.hiunicornstudio.com",
     "frame-src 'none'",
     "object-src 'none'",
     "base-uri 'self'",
-    "form-action 'self'"
+    "form-action 'self'",
+    "worker-src 'self' blob:",
+    "child-src 'self' blob:"
   ].join('; ');
 };
 

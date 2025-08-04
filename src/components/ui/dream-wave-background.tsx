@@ -27,6 +27,14 @@ export const DreamWaveBackground: React.FC<DreamWaveBackgroundProps> = ({
   const initializeUnicornStudio = useCallback(() => {
     if (!isMounted.current) return;
 
+    // Debug logging for production
+    console.log('🌊 Initializing UnicornStudio...', {
+      environment: import.meta.env.MODE,
+      hasWindow: typeof window !== 'undefined',
+      hasUnicornStudio: !!window.UnicornStudio,
+      isInitialized: window.UnicornStudio?.isInitialized
+    });
+
     // Clear any existing timeouts
     if (initTimeoutRef.current) {
       clearTimeout(initTimeoutRef.current);
@@ -60,6 +68,7 @@ export const DreamWaveBackground: React.FC<DreamWaveBackgroundProps> = ({
         initTimeoutRef.current = setTimeout(() => {
           if (window.UnicornStudio?.init) {
             (window as any).UnicornStudio.init();
+            console.log('🌊 UnicornStudio reinitialized');
           }
         }, 50);
       }
@@ -70,11 +79,13 @@ export const DreamWaveBackground: React.FC<DreamWaveBackgroundProps> = ({
     const existingScript = document.querySelector('script[src*="unicornStudio"]');
     
     if (!existingScript) {
+      console.log('🌊 Loading UnicornStudio script...');
       const script = document.createElement("script");
       script.src = "https://cdn.jsdelivr.net/gh/hiunicornstudio/unicornstudio.js@v1.4.29/dist/unicornStudio.umd.js";
+      script.crossOrigin = "anonymous"; // Add CORS support
       script.onload = function() {
         if (!isMounted.current) return;
-        console.log('🌊 UnicornStudio script loaded');
+        console.log('🌊 UnicornStudio script loaded successfully');
         
         initTimeoutRef.current = setTimeout(() => {
           if (window.UnicornStudio && !window.UnicornStudio.isInitialized) {
@@ -86,14 +97,16 @@ export const DreamWaveBackground: React.FC<DreamWaveBackgroundProps> = ({
               console.error('🌊 UnicornStudio initialization error:', error);
             }
           }
-        }, 100);
+        }, 200); // Increased timeout for production
       };
-      script.onerror = function() {
-        console.error('🌊 Failed to load UnicornStudio script');
+      script.onerror = function(error) {
+        console.error('🌊 Failed to load UnicornStudio script:', error);
+        console.error('🌊 This might be due to CSP restrictions or network issues');
       };
       (document.head || document.body).appendChild(script);
     } else if (window.UnicornStudio && typeof (window as any).UnicornStudio.init === 'function') {
       // Script exists but might need reinitialization
+      console.log('🌊 UnicornStudio script exists, reinitializing...');
       initTimeoutRef.current = setTimeout(() => {
         if (!window.UnicornStudio?.isInitialized) {
           try {
@@ -104,7 +117,7 @@ export const DreamWaveBackground: React.FC<DreamWaveBackgroundProps> = ({
             console.error('🌊 Error initializing from existing script:', error);
           }
         }
-      }, 100);
+      }, 200);
     }
   }, []);
 
@@ -143,6 +156,12 @@ export const DreamWaveBackground: React.FC<DreamWaveBackgroundProps> = ({
 
   return (
     <div className={`dream-wave-container ${className}`} ref={containerRef}>
+      {/* Fallback Gradient Background */}
+      <div className="w-full h-full fixed top-0 left-0 bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900">
+        <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-purple-500/10"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-purple-500/20 via-transparent to-transparent"></div>
+      </div>
+      
       {/* Dream Wave Animation Background */}
       <div className="dream-wave-animation w-full h-full fixed top-0 left-0 overflow-hidden">
         <div 
@@ -157,7 +176,7 @@ export const DreamWaveBackground: React.FC<DreamWaveBackgroundProps> = ({
             left: '50%',
             transform: 'translate(-50%, -50%) scale(1.1)',
             opacity: 0.6,
-            zIndex: 0
+            zIndex: 1
           }}
           key="unicorn-bg" // Force re-creation on re-render
         />
