@@ -14,7 +14,7 @@ import CategoryPage from "./pages/CategoryPage";
 import SubjectsPage from "./pages/SubjectsPage";
 import AboutPage from "./pages/AboutPage";
 import CompanionPage from "./pages/CompanionPage";
-import AdminDashboard from "./pages/AdminDashboard";
+import SecureAdminDashboard from "./pages/SecureAdminDashboard";
 import NotFound from "./pages/NotFound";
 import ChatWidget from "./components/chat/ChatWidget";
 
@@ -56,7 +56,7 @@ const App = () => (
           <Route path="/subjects" element={<WithChatWidget><SubjectsPage /></WithChatWidget>} />
           <Route path="/about" element={<WithChatWidget><AboutPage /></WithChatWidget>} />
           <Route path="/companion" element={<CompanionPage />} />
-          <Route path="/admin-dashboard-secure-vny-access" element={<AdminDashboard />} />
+          <Route path="/admin-dashboard-secure-vny-access" element={<SecureAdminDashboard />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<WithChatWidget><NotFound /></WithChatWidget>} />
         </Routes>

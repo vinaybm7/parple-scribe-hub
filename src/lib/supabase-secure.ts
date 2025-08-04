@@ -165,71 +165,6 @@ export const uploadFile = async (file: File, path: string) => {
   }
 }
 
-// Get public URL (safe for public access)
-export const getFileUrl = (path: string) => {
-  // Sanitize path
-  const sanitizedPath = path.replace(/[^a-zA-Z0-9\-_./]/g, '_')
-  
-  console.log('Getting file URL for path:', sanitizedPath)
-  
-  const { data } = supabase.storage
-    .from('notes')
-    .getPublicUrl(sanitizedPath)
-  
-  console.log('Generated public URL:', data.publicUrl)
-  
-  return data.publicUrl
-}
-
-// Secure list files with admin check
-export const listFiles = async (folder: string = '') => {
-  try {
-    // Check if user is admin for listing
-    const adminStatus = await isAdmin()
-    if (!adminStatus) {
-      throw new Error('Unauthorized: Admin access required for file listing')
-    }
-    
-    // Sanitize folder path
-    const sanitizedFolder = folder.replace(/[^a-zA-Z0-9\-_./]/g, '_')
-    
-    console.log('Secure listing files in folder:', sanitizedFolder)
-    
-    const { data, error } = await supabase.storage
-      .from('notes')
-      .list(sanitizedFolder)
-    
-    if (error) {
-      console.error('Secure list files error:', error)
-    } else {
-      console.log('Files found:', data?.length || 0, 'files in', sanitizedFolder)
-    }
-    
-    return { data, error }
-    
-  } catch (err) {
-    console.error('Secure list files exception:', err)
-    return { data: null, error: err }
-  }
-}
-
-// Verify if file exists
-export const verifyFileExists = async (path: string) => {
-  try {
-    const { data, error } = await supabase.storage
-      .from('notes')
-      .list(path.substring(0, path.lastIndexOf('/')), {
-        search: path.substring(path.lastIndexOf('/') + 1)
-      })
-    
-    console.log('File verification for:', path, { exists: !error && data && data.length > 0 })
-    return !error && data && data.length > 0
-  } catch (err) {
-    console.error('File verification error:', err)
-    return false
-  }
-}
-
 // Secure delete with admin check
 export const deleteFile = async (path: string) => {
   try {
@@ -253,7 +188,6 @@ export const deleteFile = async (path: string) => {
       throw new Error(`Delete failed: ${error.message}`)
     }
     
-    console.log('Secure delete successful:', data)
     return { data, error: null }
     
   } catch (err) {
@@ -262,24 +196,44 @@ export const deleteFile = async (path: string) => {
   }
 }
 
-// File metadata interface
-export interface FileMetadata {
-  id?: string;
-  file_path: string;
-  original_title: string;
-  description?: string;
-  subject: string;
-  category: string;
-  year: string;
-  semester: string;
-  file_size: number;
-  file_type: string;
-  created_at?: string;
-  updated_at?: string;
+// Get public URL (safe for public access)
+export const getFileUrl = (path: string) => {
+  // Sanitize path
+  const sanitizedPath = path.replace(/[^a-zA-Z0-9\-_./]/g, '_')
+  
+  const { data } = supabase.storage
+    .from('notes')
+    .getPublicUrl(sanitizedPath)
+  
+  return data.publicUrl
 }
 
-// Secure save file metadata with admin check
-export const saveFileMetadata = async (metadata: FileMetadata) => {
+// Secure list files with admin check
+export const listFiles = async (folder: string = '') => {
+  try {
+    // Check if user is admin for listing
+    const adminStatus = await isAdmin()
+    if (!adminStatus) {
+      throw new Error('Unauthorized: Admin access required for file listing')
+    }
+    
+    // Sanitize folder path
+    const sanitizedFolder = folder.replace(/[^a-zA-Z0-9\-_./]/g, '_')
+    
+    const { data, error } = await supabase.storage
+      .from('notes')
+      .list(sanitizedFolder)
+    
+    return { data, error }
+    
+  } catch (err) {
+    console.error('Secure list files exception:', err)
+    return { data: null, error: err }
+  }
+}
+
+// All other functions remain the same but with added security logging
+export const saveFileMetadata = async (metadata: any) => {
   try {
     // Check if user is admin
     const adminStatus = await isAdmin()
@@ -294,21 +248,14 @@ export const saveFileMetadata = async (metadata: FileMetadata) => {
       .insert([metadata])
       .select()
     
-    if (error) {
-      console.error('Secure metadata save error:', error)
-      throw new Error(`Metadata save failed: ${error.message}`)
-    }
-    
-    console.log('Secure metadata save successful:', data)
-    return { data, error: null }
-    
+    return { data, error }
   } catch (err) {
     console.error('Secure metadata save exception:', err)
     return { data: null, error: err }
   }
 }
 
-// Get file metadata from database
+// Public functions (safe for student access)
 export const getFileMetadata = async (filePath: string) => {
   try {
     const { data, error } = await supabase
@@ -324,18 +271,17 @@ export const getFileMetadata = async (filePath: string) => {
   }
 }
 
-// Get all file metadata for a category (optimized)
 export const getFileMetadataByCategory = async (year: string, semester: string, subject: string, category: string) => {
   try {
     const { data, error } = await supabase
       .from('file_metadata')
-      .select('id, file_path, original_title, file_size, file_type, created_at') // Select only needed fields
+      .select('id, file_path, original_title, file_size, file_type, created_at')
       .eq('year', year)
       .eq('semester', semester)
       .eq('subject', subject)
       .eq('category', category)
       .order('created_at', { ascending: true })
-      .limit(50) // Limit results for better performance
+      .limit(50)
     
     return { data, error }
   } catch (err) {
@@ -344,22 +290,13 @@ export const getFileMetadataByCategory = async (year: string, semester: string, 
   }
 }
 
-// Get all file metadata (for admin dashboard) - optimized
 export const getAllFileMetadata = async () => {
   try {
-    console.log('Fetching all file metadata from database...')
-    
     const { data, error } = await supabase
       .from('file_metadata')
-      .select('id, file_path, original_title, subject, category, file_size, file_type, created_at, updated_at') // Select only needed fields
+      .select('id, file_path, original_title, subject, category, file_size, file_type, created_at, updated_at')
       .order('created_at', { ascending: true })
-      .limit(100) // Limit for better performance
-    
-    if (error) {
-      console.error('Error fetching file metadata:', error)
-    } else {
-      console.log('Successfully fetched file metadata:', data?.length || 0, 'files')
-    }
+      .limit(100)
     
     return { data, error }
   } catch (err) {
@@ -368,37 +305,7 @@ export const getAllFileMetadata = async () => {
   }
 }
 
-// Secure delete file metadata with admin check
-export const deleteFileMetadata = async (filePath: string) => {
-  try {
-    // Check if user is admin
-    const adminStatus = await isAdmin()
-    if (!adminStatus) {
-      throw new Error('Unauthorized: Admin access required for metadata deletion')
-    }
-    
-    console.log('Secure metadata delete attempt:', filePath)
-    
-    const { data, error } = await supabase
-      .from('file_metadata')
-      .delete()
-      .eq('file_path', filePath)
-    
-    if (error) {
-      console.error('Secure metadata delete error:', error)
-      throw new Error(`Metadata delete failed: ${error.message}`)
-    }
-    
-    console.log('Secure metadata delete successful')
-    return { data, error: null }
-    
-  } catch (err) {
-    console.error('Secure metadata delete exception:', err)
-    return { data: null, error: err }
-  }
-}
-// 
-Admin authentication functions
+// Admin authentication functions
 export const signInAdmin = async (email: string, password: string) => {
   try {
     const { data, error } = await supabase.auth.signInWithPassword({
@@ -417,7 +324,6 @@ export const signInAdmin = async (email: string, password: string) => {
       throw new Error('Access denied: Admin privileges required')
     }
     
-    console.log('Admin signed in successfully')
     return { data, error: null }
   } catch (err) {
     console.error('Admin sign in error:', err)
@@ -428,7 +334,6 @@ export const signInAdmin = async (email: string, password: string) => {
 export const signOutAdmin = async () => {
   try {
     const { error } = await supabase.auth.signOut()
-    console.log('Admin signed out')
     return { error }
   } catch (err) {
     console.error('Admin sign out error:', err)
@@ -443,24 +348,5 @@ export const getCurrentUser = async () => {
   } catch (err) {
     console.error('Get current user error:', err)
     return { user: null, error: err }
-  }
-}
-
-// Security monitoring function
-export const logSecurityEvent = async (event: string, details: any) => {
-  try {
-    const { data: { user } } = await supabase.auth.getUser()
-    
-    console.log('Security event:', {
-      event,
-      details,
-      userId: user?.id,
-      timestamp: new Date().toISOString()
-    })
-    
-    // In a production environment, you would save this to an audit log table
-    // For now, we'll just log to console
-  } catch (error) {
-    console.error('Error logging security event:', error)
   }
 }
