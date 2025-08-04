@@ -732,3 +732,34 @@ body {
 .micro-bounce {
   animation: micro-bounce 2s ease-in-out infinite;
 }
+
+/* Premium Shimmer Animation */
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.animate-shimmer {
+  animation: shimmer 3s ease-in-out infinite;
+}
+
+/* Premium Glow Effects */
+.premium-glow {
+  box-shadow: 
+    0 0 20px rgba(139, 92, 246, 0.3),
+    0 0 40px rgba(139, 92, 246, 0.2),
+    0 0 80px rgba(139, 92, 246, 0.1);
+}
+
+.premium-glow-hover:hover {
+  box-shadow: 
+    0 0 30px rgba(139, 92, 246, 0.4),
+    0 0 60px rgba(139, 92, 246, 0.3),
+    0 0 120px rgba(139, 92, 246, 0.2);
+  transform: translateY(-2px);
+  transition: all 0.3s ease;
+}

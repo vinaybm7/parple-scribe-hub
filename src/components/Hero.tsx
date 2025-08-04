@@ -10,33 +10,35 @@ const Hero = () => {
       {/* Enhanced Glassmorphism Frame Container */}
       <div className="relative z-40 container mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-center min-h-screen pt-24">
         <div className="relative max-w-6xl mx-auto">
-          {/* Enhanced Multi-layered Glassmorphism Frame with Staggered Animations */}
-          <div className="absolute inset-0 backdrop-blur-3xl bg-white/12 border border-white/20 rounded-[2rem] shadow-2xl transform rotate-1 scale-[1.02] animate-fade-in-up" 
+          {/* Premium Multi-layered Glassmorphism Frame with Luxury Animations */}
+          <div className="absolute inset-0 backdrop-blur-3xl bg-gradient-to-br from-white/15 via-purple-100/10 to-pink-100/10 border border-white/25 rounded-[2.5rem] shadow-2xl transform rotate-1 scale-[1.02] animate-fade-in-up" 
             style={{
-              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
+              boxShadow: '0 32px 64px -12px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.05)',
               animationDelay: '0.1s',
               animationFillMode: 'both'
             }}></div>
-          <div className="absolute inset-0 backdrop-blur-2xl bg-gradient-to-br from-white/25 via-white/15 to-purple-500/10 border border-white/30 rounded-[2rem] shadow-xl transform -rotate-0.5 animate-fade-in-up"
+          <div className="absolute inset-0 backdrop-blur-2xl bg-gradient-to-br from-white/30 via-purple-200/15 to-pink-200/15 border border-white/35 rounded-[2.5rem] shadow-xl transform -rotate-0.5 animate-fade-in-up"
             style={{
-              boxShadow: '0 20px 40px -12px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.15)',
+              boxShadow: '0 24px 48px -12px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.08)',
               animationDelay: '0.15s',
               animationFillMode: 'both'
             }}></div>
-          <div className="absolute inset-0 backdrop-blur-xl bg-gradient-to-t from-white/20 via-transparent to-white/15 border border-white/40 rounded-[2rem] shadow-lg animate-fade-in-up"
+          <div className="absolute inset-0 backdrop-blur-xl bg-gradient-to-t from-white/25 via-transparent to-white/20 border border-white/45 rounded-[2.5rem] shadow-lg animate-fade-in-up"
             style={{
-              boxShadow: '0 15px 30px -8px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
+              boxShadow: '0 16px 32px -8px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.1)',
               animationDelay: '0.2s',
               animationFillMode: 'both'
             }}></div>
           
-          {/* Inner Content Frame with Enhanced Glassmorphism and Animation */}
-          <div className="relative z-10 backdrop-blur-md bg-white/8 border border-white/25 rounded-[1.5rem] mx-2 sm:mx-4 animate-fade-in-up"
+          {/* Premium Inner Content Frame with Luxury Glassmorphism */}
+          <div className="relative z-10 backdrop-blur-md bg-gradient-to-br from-white/12 via-white/8 to-white/6 border border-white/30 rounded-[2rem] mx-2 sm:mx-4 animate-fade-in-up overflow-hidden"
             style={{
-              boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 10px 20px -5px rgba(0, 0, 0, 0.1)',
+              boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.15), inset 0 -1px 0 rgba(255, 255, 255, 0.05), 0 12px 24px -6px rgba(0, 0, 0, 0.15)',
               animationDelay: '0.25s',
               animationFillMode: 'both'
             }}>
+            {/* Premium Shimmer Effect */}
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full animate-shimmer"></div>
             {/* Content Container */}
             <div className="px-8 sm:px-12 lg:px-16 py-20 sm:py-24 lg:py-28 text-center">
             {/* Main Headline with Animation */}
