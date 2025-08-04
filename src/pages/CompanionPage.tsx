@@ -40,12 +40,8 @@ const CompanionPage = () => {
 
   return (
     <CompanionErrorBoundary>
-      <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-indigo-50 dark:from-pink-950/20 dark:via-purple-950/20 dark:to-indigo-950/20 relative overflow-hidden">
-        {/* Premium Background Effects */}
-        <div className="absolute inset-0 bg-gradient-to-br from-purple-100/30 via-pink-100/20 to-indigo-100/30 animate-pulse"></div>
-        <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-purple-200/20 via-transparent to-transparent"></div>
-        <div className="absolute bottom-0 right-0 w-full h-full bg-[radial-gradient(ellipse_at_bottom_left,_var(--tw-gradient-stops))] from-pink-200/20 via-transparent to-transparent"></div>
-        <div className="container mx-auto px-4 py-8 relative z-10">
+      <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-indigo-50 dark:from-pink-950/20 dark:via-purple-950/20 dark:to-indigo-950/20">
+        <div className="container mx-auto px-4 py-8">
           {/* Breadcrumbs */}
           <Breadcrumbs 
             items={[
