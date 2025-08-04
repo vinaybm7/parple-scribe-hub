@@ -123,11 +123,23 @@ export const DreamWaveBackground: React.FC<DreamWaveBackgroundProps> = ({
 
   useEffect(() => {
     isMounted.current = true;
+    
+    // Add global error handler for UnicornStudio promise rejections
+    const handleUnhandledRejection = (event: PromiseRejectionEvent) => {
+      if (event.reason?.message?.includes('v3r3CutuBESeiAosS9Ii')) {
+        console.warn('🌊 UnicornStudio promise rejection handled:', event.reason);
+        event.preventDefault(); // Prevent the error from showing in console
+      }
+    };
+    
+    window.addEventListener('unhandledrejection', handleUnhandledRejection);
+    
     initializeUnicornStudio();
 
     // Cleanup function
     return () => {
       isMounted.current = false;
+      window.removeEventListener('unhandledrejection', handleUnhandledRejection);
       if (initTimeoutRef.current) {
         clearTimeout(initTimeoutRef.current);
       }

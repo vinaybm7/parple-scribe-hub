@@ -149,7 +149,7 @@ export const getCSPHeader = (): string => {
     "font-src 'self' https://fonts.gstatic.com",
     "img-src 'self' data: https: blob:",
     "media-src 'self' blob:",
-    "connect-src 'self' https://*.supabase.co https://generativelanguage.googleapis.com https://api.elevenlabs.io https://*.unicornstudio.com https://*.hiunicornstudio.com",
+    "connect-src 'self' https://*.supabase.co https://generativelanguage.googleapis.com https://api.elevenlabs.io https://*.unicornstudio.com https://*.hiunicornstudio.com https://storage.googleapis.com",
     "frame-src 'none'",
     "object-src 'none'",
     "base-uri 'self'",
