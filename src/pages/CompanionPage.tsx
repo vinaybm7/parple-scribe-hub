@@ -5,16 +5,13 @@ import { Heart, MessageCircle, Sparkles, User } from 'lucide-react';
 import CompanionInterface from '@/components/companion/CompanionInterface';
 import PersonalitySelector from '@/components/companion/PersonalitySelector';
 import CompanionErrorBoundary from '@/components/companion/CompanionErrorBoundary';
-import CompanionOnboarding from '@/components/companion/CompanionOnboarding';
+
 import Breadcrumbs from '@/components/ui/breadcrumbs';
 
 const CompanionPage = () => {
   const [selectedAvatar, setSelectedAvatar] = useState<string | null>(null);
   const [isInChat, setIsInChat] = useState(false);
-  const [showOnboarding, setShowOnboarding] = useState(() => {
-    // Check if user has seen onboarding before
-    return !localStorage.getItem('companion-onboarding-completed');
-  });
+  const [showOnboarding, setShowOnboarding] = useState(false);
 
   const handleStartChat = () => {
     if (selectedAvatar) {
@@ -27,15 +24,7 @@ const CompanionPage = () => {
     setSelectedAvatar(null);
   };
 
-  const handleOnboardingComplete = () => {
-    localStorage.setItem('companion-onboarding-completed', 'true');
-    setShowOnboarding(false);
-  };
 
-  const handleSkipOnboarding = () => {
-    localStorage.setItem('companion-onboarding-completed', 'true');
-    setShowOnboarding(false);
-  };
 
   // If in chat mode, show the companion interface
   if (isInChat && selectedAvatar) {
@@ -93,13 +82,7 @@ const CompanionPage = () => {
           </div>
         </div>
 
-        {/* Onboarding Modal */}
-        {showOnboarding && (
-          <CompanionOnboarding
-            onComplete={handleOnboardingComplete}
-            onSkip={handleSkipOnboarding}
-          />
-        )}
+
       </div>
     </CompanionErrorBoundary>
   );
