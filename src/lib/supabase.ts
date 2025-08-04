@@ -397,8 +397,8 @@ export const deleteFileMetadata = async (filePath: string) => {
     return { data: null, error: err }
   }
 }
-// 
-Admin authentication functions
+
+// Admin authentication functions
 export const signInAdmin = async (email: string, password: string) => {
   try {
     const { data, error } = await supabase.auth.signInWithPassword({
@@ -462,5 +462,163 @@ export const logSecurityEvent = async (event: string, details: any) => {
     // For now, we'll just log to console
   } catch (error) {
     console.error('Error logging security event:', error)
+  }
+}
+
+// PUBLIC FUNCTIONS - Available to all users (no authentication required)
+
+// Public function to browse files (read-only access)
+export const getPublicFileMetadata = async (year?: string, semester?: string, subject?: string, category?: string) => {
+  try {
+    let query = supabase
+      .from('file_metadata')
+      .select('id, file_path, original_title, description, subject, category, year, semester, file_size, file_type, created_at')
+      .order('created_at', { ascending: true })
+      .limit(100)
+
+    // Apply filters if provided
+    if (year) query = query.eq('year', year)
+    if (semester) query = query.eq('semester', semester)
+    if (subject) query = query.eq('subject', subject)
+    if (category) query = query.eq('category', category)
+
+    const { data, error } = await query
+
+    if (error) {
+      console.error('Error fetching public file metadata:', error)
+      return { data: null, error }
+    }
+
+    console.log('Public file metadata fetched:', data?.length || 0, 'files')
+    return { data, error: null }
+  } catch (err) {
+    console.error('Exception getting public file metadata:', err)
+    return { data: null, error: err }
+  }
+}
+
+// Public function to get download URL (read-only access)
+export const getPublicDownloadUrl = (filePath: string) => {
+  try {
+    // Sanitize path for security
+    const sanitizedPath = filePath.replace(/[^a-zA-Z0-9\-_./]/g, '_')
+    
+    const { data } = supabase.storage
+      .from('notes')
+      .getPublicUrl(sanitizedPath)
+    
+    console.log('Public download URL generated for:', sanitizedPath)
+    return data.publicUrl
+  } catch (error) {
+    console.error('Error generating public download URL:', error)
+    return null
+  }
+}
+
+// Public function to search files (read-only access)
+export const searchPublicFiles = async (searchTerm: string, filters?: {
+  year?: string
+  semester?: string
+  subject?: string
+  category?: string
+}) => {
+  try {
+    let query = supabase
+      .from('file_metadata')
+      .select('id, file_path, original_title, description, subject, category, year, semester, file_size, file_type, created_at')
+      .or(`original_title.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%,subject.ilike.%${searchTerm}%`)
+      .order('created_at', { ascending: true })
+      .limit(50)
+
+    // Apply additional filters
+    if (filters?.year) query = query.eq('year', filters.year)
+    if (filters?.semester) query = query.eq('semester', filters.semester)
+    if (filters?.subject) query = query.eq('subject', filters.subject)
+    if (filters?.category) query = query.eq('category', filters.category)
+
+    const { data, error } = await query
+
+    if (error) {
+      console.error('Error searching public files:', error)
+      return { data: null, error }
+    }
+
+    console.log('Public file search completed:', data?.length || 0, 'results for:', searchTerm)
+    return { data, error: null }
+  } catch (err) {
+    console.error('Exception searching public files:', err)
+    return { data: null, error: err }
+  }
+}
+
+// Public function to get file statistics (read-only access)
+export const getPublicFileStats = async () => {
+  try {
+    const { data, error } = await supabase
+      .from('file_metadata')
+      .select('subject, category, year, semester, file_size')
+
+    if (error) {
+      console.error('Error fetching file stats:', error)
+      return { data: null, error }
+    }
+
+    // Calculate statistics
+    const stats = {
+      totalFiles: data?.length || 0,
+      totalSize: data?.reduce((sum, file) => sum + (file.file_size || 0), 0) || 0,
+      bySubject: {} as Record<string, number>,
+      byCategory: {} as Record<string, number>,
+      byYear: {} as Record<string, number>
+    }
+
+    // Group by subject, category, and year
+    data?.forEach(file => {
+      if (file.subject) {
+        stats.bySubject[file.subject] = (stats.bySubject[file.subject] || 0) + 1
+      }
+      if (file.category) {
+        stats.byCategory[file.category] = (stats.byCategory[file.category] || 0) + 1
+      }
+      if (file.year) {
+        stats.byYear[file.year] = (stats.byYear[file.year] || 0) + 1
+      }
+    })
+
+    console.log('Public file statistics calculated:', stats)
+    return { data: stats, error: null }
+  } catch (err) {
+    console.error('Exception getting file statistics:', err)
+    return { data: null, error: err }
+  }
+}
+
+// ADMIN-ONLY FUNCTIONS - Require authentication and admin privileges
+
+// Note: All existing functions (uploadFile, deleteFile, saveFileMetadata, etc.) 
+// already have admin checks and are only available to authenticated admins
+
+// Function to check if current user has admin access (for UI purposes)
+export const checkAdminAccess = async () => {
+  try {
+    const adminStatus = await isAdmin()
+    const { user } = await getCurrentUser()
+    
+    return {
+      isAdmin: adminStatus,
+      user: user,
+      hasUploadAccess: adminStatus,
+      hasDeleteAccess: adminStatus,
+      hasManageAccess: adminStatus
+    }
+  } catch (error) {
+    console.error('Error checking admin access:', error)
+    return {
+      isAdmin: false,
+      user: null,
+      hasUploadAccess: false,
+      hasDeleteAccess: false,
+      hasManageAccess: false
+    }
   }
 }

@@ -1,7 +1,12 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { trackRequest } from './ai-optimization-utils';
 
-const API_KEY = import.meta.env.VITE_GEMINI_API_KEY || 'AIzaSyCP8LBstvGY97T6aGKwedOmJTIgK1zp9qg';
+// SECURITY: No hardcoded API keys
+const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
+
+if (!API_KEY) {
+  throw new Error('VITE_GEMINI_API_KEY environment variable is required');
+}
 
 // Initialize the Gemini AI
 const genAI = new GoogleGenerativeAI(API_KEY);

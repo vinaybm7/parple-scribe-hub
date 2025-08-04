@@ -13,8 +13,9 @@ RETURNS BOOLEAN AS $$
 BEGIN
   -- Replace these UUIDs with your actual admin user IDs
   RETURN auth.uid() IN (
-    'your-admin-uuid-1',
-    'your-admin-uuid-2'
+    '974cdef2-2ea1-4a54-a5ac-6bbff5fcffec'::uuid
+    -- Add more admin UUIDs here as needed:
+    -- ,'another-admin-uuid-here'::uuid
   );
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
@@ -72,9 +73,14 @@ CREATE POLICY "Admin can delete metadata" ON file_metadata
 FOR DELETE TO authenticated
 USING (is_admin_user());
 
--- Policy: Public can read metadata
+-- Policy: Public can read metadata (students can browse and view files)
 CREATE POLICY "Public can read metadata" ON file_metadata
 FOR SELECT TO public
+USING (true);
+
+-- Policy: Anonymous users can read metadata (for unauthenticated students)
+CREATE POLICY "Anonymous can read metadata" ON file_metadata
+FOR SELECT TO anon
 USING (true);
 
 -- 6. Create audit log table for security monitoring

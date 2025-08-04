@@ -35,8 +35,7 @@ interface UploadedFile {
 }
 
 const AdminDashboard = () => {
-  const [isAuthorized, setIsAuthorized] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [files, setFiles] = useState<UploadedFile[]>([]);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -77,9 +76,6 @@ const AdminDashboard = () => {
   };
 
   useEffect(() => {
-    // Simple URL-based access - no auth check needed
-    setIsAuthorized(true);
-    setLoading(false);
     loadFiles();
   }, []);
 
@@ -328,36 +324,18 @@ const AdminDashboard = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="flex items-center justify-center py-8">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Checking access...</p>
+          <p className="text-muted-foreground">Loading files...</p>
         </div>
-      </div>
-    );
-  }
-
-  if (!isAuthorized) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <Card className="w-full max-w-md">
-          <CardContent className="p-8 text-center">
-            <AlertCircle className="h-16 w-16 text-destructive mx-auto mb-4" />
-            <h2 className="text-2xl font-bold text-foreground mb-2">Access Denied</h2>
-            <p className="text-muted-foreground">
-              You don't have permission to access the admin dashboard.
-            </p>
-          </CardContent>
-        </Card>
       </div>
     );
   }
 
   return (
     <div className="min-h-screen bg-background">
-      <Header />
-      
-      <div className="container mx-auto px-4 pt-24 pb-12">
+      <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-foreground mb-2">Admin Dashboard</h1>
           <p className="text-lg text-muted-foreground">Manage study materials and notes</p>
@@ -820,8 +798,6 @@ const AdminDashboard = () => {
           </TabsContent>
         </Tabs>
       </div>
-
-      <Footer />
     </div>
   );
 };
