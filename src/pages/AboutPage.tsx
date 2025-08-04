@@ -76,12 +76,12 @@ const AboutPage = () => {
               Meet Your <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">AI Companions</span>
             </h2>
             <p className="text-lg text-gray-700 max-w-2xl mx-auto drop-shadow-sm">
-              Luna and Aria are your personal AI study companions, each with unique personalities 
+              Luna, Zyan, and Aria are your personal AI study companions, each with unique personalities 
               designed to make learning engaging and effective.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
             <Card className="text-center hover:shadow-2xl transition-all duration-300 bg-white/25 backdrop-blur-xl border border-white/30 hover:border-white/50 rounded-2xl glass-morphism">
               <CardContent className="p-8">
                 <div className="w-32 h-32 mx-auto rounded-full bg-gradient-to-br from-purple-400 to-purple-600 p-1 mb-6 shadow-2xl relative overflow-hidden">
@@ -110,6 +110,38 @@ const AboutPage = () => {
                 <div className="flex items-center justify-center gap-2">
                   <Mic className="h-4 w-4 text-purple-500" />
                   <span className="text-sm text-gray-600">Voice-powered interactions</span>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="text-center hover:shadow-2xl transition-all duration-300 bg-white/25 backdrop-blur-xl border border-white/30 hover:border-white/50 rounded-2xl glass-morphism">
+              <CardContent className="p-8">
+                <div className="w-32 h-32 mx-auto rounded-full bg-gradient-to-br from-blue-400 to-blue-600 p-1 mb-6 shadow-2xl relative overflow-hidden">
+                  <div className="w-full h-full rounded-full bg-white/95 flex items-center justify-center overflow-hidden relative">
+                    <img 
+                      src="/images/avatars/zyan-avatar.png"
+                      alt="Zyan avatar"
+                      className="w-full h-full object-cover rounded-full"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.style.display = 'none';
+                        const fallback = target.nextElementSibling as HTMLElement;
+                        if (fallback) fallback.style.display = 'flex';
+                      }}
+                    />
+                    <div className="w-full h-full rounded-full bg-white/90 items-center justify-center hidden">
+                      <Bot className="w-12 h-12 text-blue-600" />
+                    </div>
+                  </div>
+                </div>
+                <h3 className="text-2xl font-semibold text-gray-800 mb-4 drop-shadow-sm">Zyan</h3>
+                <p className="text-gray-700 mb-4">
+                  Your energetic and motivational companion who brings excitement and energy to your studies. 
+                  Zyan specializes in keeping you motivated and engaged throughout your learning journey.
+                </p>
+                <div className="flex items-center justify-center gap-2">
+                  <Zap className="h-4 w-4 text-blue-500" />
+                  <span className="text-sm text-gray-600">Energetic motivation</span>
                 </div>
               </CardContent>
             </Card>
@@ -166,7 +198,7 @@ const AboutPage = () => {
               <div className="mb-4 inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10">
                 <Bot className="h-8 w-8 text-primary" />
               </div>
-              <div className="text-3xl font-bold text-foreground mb-2">2</div>
+              <div className="text-3xl font-bold text-foreground mb-2">3</div>
               <div className="text-muted-foreground">AI Companions</div>
             </div>
 
@@ -220,7 +252,7 @@ const AboutPage = () => {
               </p>
               
               <p className="mb-6">
-                The breakthrough came with Luna and Aria - our AI companions powered by advanced language models and 
+                The breakthrough came with Luna, Zyan, and Aria - our AI companions powered by advanced language models and 
                 voice technology. These aren't just chatbots; they're sophisticated learning partners designed to 
                 understand, encourage, and guide students through their engineering journey with empathy and intelligence.
               </p>

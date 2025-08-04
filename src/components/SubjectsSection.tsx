@@ -1,58 +1,98 @@
+import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Calculator, Atom, Code, Zap, Cog, Cpu } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useScrollAnimation, useStaggeredScrollAnimation } from "@/hooks/useScrollAnimation";
+import { getAllFileMetadata } from "@/lib/supabase";
 
-const subjects = [
+const subjectsTemplate = [
   {
     icon: Calculator,
     name: "Engineering Mathematics",
     description: "Calculus, Linear Algebra, Differential Equations",
-    notesCount: 85,
-    color: "from-pink-500 to-rose-500"
+    color: "from-pink-500 to-rose-500",
+    keywords: ["mathematics", "maths", "calculus", "algebra", "differential", "equations"]
   },
   {
     icon: Atom,
     name: "Engineering Physics",
     description: "Mechanics, Thermodynamics, Wave Optics",
-    notesCount: 72,
-    color: "from-indigo-500 to-blue-500"
+    color: "from-indigo-500 to-blue-500",
+    keywords: ["physics", "mechanics", "thermodynamics", "optics", "waves"]
   },
   {
     icon: Code,
     name: "Programming Fundamentals",
     description: "C Programming, Data Structures, Algorithms",
-    notesCount: 94,
-    color: "from-blue-500 to-purple-500"
+    color: "from-blue-500 to-purple-500",
+    keywords: ["programming", "c", "cpp", "java", "python", "coding", "algorithms", "data structures"]
   },
   {
     icon: Zap,
     name: "Basic Electrical Engineering",
     description: "Circuit Analysis, Network Theory, AC/DC Circuits",
-    notesCount: 68,
-    color: "from-yellow-500 to-orange-500"
+    color: "from-yellow-500 to-orange-500",
+    keywords: ["electrical", "circuits", "network", "current", "voltage", "power"]
   },
   {
     icon: Cog,
     name: "Engineering Mechanics",
     description: "Statics, Dynamics, Strength of Materials",
-    notesCount: 76,
-    color: "from-gray-500 to-slate-600"
+    color: "from-gray-500 to-slate-600",
+    keywords: ["mechanics", "mechanical", "statics", "dynamics", "materials", "strength"]
   },
   {
     icon: Cpu,
     name: "Digital Electronics",
     description: "Logic Gates, Boolean Algebra, Sequential Circuits",
-    notesCount: 58,
-    color: "from-green-500 to-teal-500"
+    color: "from-green-500 to-teal-500",
+    keywords: ["electronics", "digital", "logic", "gates", "boolean", "circuits"]
   }
 ];
 
 const SubjectsSection = () => {
+  const [subjects, setSubjects] = useState(subjectsTemplate.map(s => ({ ...s, notesCount: 0 })));
   const { elementRef: titleRef, isVisible: titleVisible } = useScrollAnimation();
-  const { containerRef, visibleItems } = useStaggeredScrollAnimation(subjects.length, 120);
+  const { containerRef, visibleItems } = useStaggeredScrollAnimation(subjects.length, 80);
   const { elementRef: buttonRef, isVisible: buttonVisible } = useScrollAnimation();
+
+  // Load actual notes count from database
+  useEffect(() => {
+    const loadNotesCount = async () => {
+      try {
+        const response = await getAllFileMetadata();
+        if (response.data) {
+          const fileMetadata = response.data;
+          
+          // Count notes for each subject
+          const updatedSubjects = subjectsTemplate.map(subject => {
+            const count = fileMetadata.filter(file => {
+              const fileSubject = file.subject?.toLowerCase() || '';
+              const fileTitle = file.original_title?.toLowerCase() || '';
+              
+              // Check if file matches any of the subject keywords
+              return subject.keywords.some(keyword => 
+                fileSubject.includes(keyword) || fileTitle.includes(keyword)
+              );
+            }).length;
+            
+            return {
+              ...subject,
+              notesCount: count
+            };
+          });
+          
+          setSubjects(updatedSubjects);
+        }
+      } catch (error) {
+        console.error('Error loading notes count:', error);
+        // Keep default counts if loading fails
+      }
+    };
+
+    loadNotesCount();
+  }, []);
 
   return (
     <section className="py-20 bg-gradient-to-b from-blue-50/30 via-purple-50/40 to-pink-50/30 backdrop-blur-sm">
@@ -77,10 +117,10 @@ const SubjectsSection = () => {
           {subjects.map((subject, index) => (
             <Card 
               key={index}
-              className={`group hover:shadow-2xl hover:shadow-purple-500/10 transition-all duration-500 hover:scale-105 hover:-translate-y-1 bg-white/25 backdrop-blur-xl border border-white/30 hover:border-purple-300/50 cursor-pointer rounded-2xl overflow-hidden relative stagger-item ${visibleItems[index] ? 'visible' : ''}`}
+              className={`group hover:shadow-2xl hover:shadow-purple-500/10 transition-all duration-300 hover:scale-105 hover:-translate-y-1 bg-white/25 backdrop-blur-xl border border-white/30 hover:border-purple-300/50 cursor-pointer rounded-2xl overflow-hidden relative stagger-item ${visibleItems[index] ? 'visible' : ''}`}
               style={{
                 boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
-                transitionDelay: `${index * 120}ms`
+                transitionDelay: `0ms` // Remove staggered delay for hover effects
               }}
             >
               {/* Subtle background animation */}

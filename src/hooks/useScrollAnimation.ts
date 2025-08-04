@@ -49,7 +49,7 @@ export const useScrollAnimation = (options: UseScrollAnimationOptions = {}) => {
   return { elementRef, isVisible };
 };
 
-export const useStaggeredScrollAnimation = (itemCount: number, delay: number = 100) => {
+export const useStaggeredScrollAnimation = (itemCount: number, delay: number = 80) => {
   const [visibleItems, setVisibleItems] = useState<boolean[]>(new Array(itemCount).fill(false));
   const containerRef = useRef<HTMLElement>(null);
 
@@ -57,16 +57,20 @@ export const useStaggeredScrollAnimation = (itemCount: number, delay: number = 1
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          // Stagger the animation of items
-          visibleItems.forEach((_, index) => {
-            setTimeout(() => {
-              setVisibleItems(prev => {
-                const newState = [...prev];
-                newState[index] = true;
-                return newState;
-              });
-            }, index * delay);
-          });
+          // Use requestAnimationFrame for smoother animations
+          const animateItems = () => {
+            visibleItems.forEach((_, index) => {
+              setTimeout(() => {
+                setVisibleItems(prev => {
+                  const newState = [...prev];
+                  newState[index] = true;
+                  return newState;
+                });
+              }, index * delay);
+            });
+          };
+          
+          requestAnimationFrame(animateItems);
           
           if (containerRef.current) {
             observer.unobserve(containerRef.current);
@@ -75,7 +79,7 @@ export const useStaggeredScrollAnimation = (itemCount: number, delay: number = 1
       },
       {
         threshold: 0.1,
-        rootMargin: '0px 0px -100px 0px',
+        rootMargin: '0px 0px -50px 0px', // Reduced margin for earlier trigger
       }
     );
 

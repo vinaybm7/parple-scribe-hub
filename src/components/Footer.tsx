@@ -74,6 +74,9 @@ const Footer = () => {
               <Link to="/companions/luna" className="block text-gray-800 hover:text-purple-600 transition-all duration-200 hover:translate-x-1 hover:drop-shadow-sm">
                 Meet Luna
               </Link>
+              <Link to="/companions/zyan" className="block text-gray-800 hover:text-purple-600 transition-all duration-200 hover:translate-x-1 hover:drop-shadow-sm">
+                Meet Zyan
+              </Link>
               <Link to="/companions/aria" className="block text-gray-800 hover:text-purple-600 transition-all duration-200 hover:translate-x-1 hover:drop-shadow-sm">
                 Meet Aria
               </Link>
@@ -94,11 +97,11 @@ const Footer = () => {
             <h4 className="font-semibold text-gray-900 mb-6 text-lg drop-shadow-sm">Connect</h4>
             <div className="space-y-4">
               <a 
-                href="mailto:hello@parplenotes.com" 
+                href="mailto:parplenotes@gmail.com" 
                 className="flex items-center space-x-2 text-gray-800 hover:text-purple-600 transition-all duration-200 hover:drop-shadow-sm"
               >
                 <Mail className="h-4 w-4" />
-                <span>hello@parplenotes.com</span>
+                <span>parplenotes@gmail.com</span>
               </a>
               <div className="text-gray-700 text-sm">
                 <p>Empowering Students</p>

@@ -1,0 +1,191 @@
+/* Performance optimizations for smooth transitions */
+
+/* Enable hardware acceleration for common animations */
+.transition-all,
+.hover\:scale-105:hover,
+.hover\:scale-\[1\.02\]:hover,
+.hover\:-translate-y-1:hover,
+.hover\:translate-x-1:hover,
+.hover\:translate-x-2:hover,
+.animate-bounce,
+.animate-pulse,
+.animate-spin {
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* Optimize backdrop-blur for better performance */
+.backdrop-blur-sm,
+.backdrop-blur-md,
+.backdrop-blur-lg,
+.backdrop-blur-xl,
+.backdrop-blur-2xl {
+  -webkit-backdrop-filter: blur(var(--blur-amount));
+  backdrop-filter: blur(var(--blur-amount));
+  transform: translateZ(0);
+}
+
+/* Smooth scroll behavior */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Optimize font rendering */
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Optimize image loading */
+img {
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+}
+
+/* Optimize hover states for better performance */
+.group:hover .group-hover\:scale-110 {
+  transform: scale(1.1) translateZ(0);
+}
+
+.group:hover .group-hover\:rotate-3 {
+  transform: rotate(3deg) translateZ(0);
+}
+
+/* Optimize glassmorphism effects */
+.glass-morphism {
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  background: rgba(255, 255, 255, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  transform: translateZ(0);
+}
+
+/* Optimize card hover effects */
+.card-hover {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform, box-shadow;
+}
+
+.card-hover:hover {
+  transform: translateY(-4px) scale(1.02) translateZ(0);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+/* Optimize button interactions */
+button,
+.btn {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform, background-color, border-color;
+}
+
+/* Optimize link hover effects */
+a {
+  transition: color 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Optimize scroll animations */
+.scroll-fade-in {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.scroll-fade-in.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.scroll-slide-left {
+  opacity: 0;
+  transform: translateX(-30px);
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.scroll-slide-left.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.scroll-scale-in {
+  opacity: 0;
+  transform: scale(0.9);
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.scroll-scale-in.visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Optimize staggered animations */
+.stagger-item {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.stagger-item.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Optimize micro-interactions */
+.micro-bounce:hover {
+  animation: micro-bounce 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes micro-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-2px); }
+}
+
+/* Optimize loading states */
+.loading-shimmer {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* Optimize focus states for accessibility */
+*:focus-visible {
+  outline: 2px solid #8b5cf6;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Optimize container queries for responsive design */
+@container (min-width: 768px) {
+  .container-responsive {
+    padding: 2rem;
+  }
+}
+
+/* Optimize critical rendering path */
+.above-fold {
+  content-visibility: visible;
+}
+
+.below-fold {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 500px;
+}
