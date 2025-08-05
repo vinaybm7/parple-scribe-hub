@@ -50,10 +50,10 @@ const FloatingHeader = () => {
           </Link>
 
           {/* Desktop Navigation with Elegant Hover Effects */}
-          <nav className="hidden md:flex items-center space-x-3">
+          <nav className="hidden md:flex items-center space-x-2">
             <Link
               to="/"
-              className="relative text-gray-800 hover:text-purple-600 transition-all duration-300 font-semibold px-5 py-2 rounded-full bg-white/30 hover:bg-white/60 backdrop-blur-md border border-white/40 hover:border-purple-300/60 shadow-lg hover:shadow-2xl group overflow-hidden transform hover:scale-105 hover:-translate-y-0.5"
+              className="relative text-gray-800 hover:text-purple-600 transition-all duration-300 font-semibold px-4 py-2 rounded-full bg-white/30 hover:bg-white/60 backdrop-blur-md border border-white/40 hover:border-purple-300/60 shadow-lg hover:shadow-2xl group overflow-hidden transform hover:scale-105 hover:-translate-y-0.5"
               style={{ 
                 textShadow: '0 1px 2px rgba(0,0,0,0.1)',
                 boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 4px 8px -2px rgba(0, 0, 0, 0.1)'
@@ -65,7 +65,7 @@ const FloatingHeader = () => {
             </Link>
             <Link
               to="/notes"
-              className="relative text-gray-800 hover:text-purple-600 transition-all duration-300 font-semibold px-5 py-2 rounded-full bg-white/30 hover:bg-white/60 backdrop-blur-md border border-white/40 hover:border-purple-300/60 shadow-lg hover:shadow-2xl group overflow-hidden transform hover:scale-105 hover:-translate-y-0.5"
+              className="relative text-gray-800 hover:text-purple-600 transition-all duration-300 font-semibold px-4 py-2 rounded-full bg-white/30 hover:bg-white/60 backdrop-blur-md border border-white/40 hover:border-purple-300/60 shadow-lg hover:shadow-2xl group overflow-hidden transform hover:scale-105 hover:-translate-y-0.5"
               style={{ 
                 textShadow: '0 1px 2px rgba(0,0,0,0.1)',
                 boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 4px 8px -2px rgba(0, 0, 0, 0.1)'
@@ -76,7 +76,7 @@ const FloatingHeader = () => {
             </Link>
             <Link
               to="/companion"
-              className="relative text-gray-800 hover:text-purple-600 transition-all duration-300 font-semibold px-5 py-2 rounded-full bg-white/30 hover:bg-white/60 backdrop-blur-md border border-white/40 hover:border-purple-300/60 shadow-lg hover:shadow-2xl group overflow-hidden transform hover:scale-105 hover:-translate-y-0.5"
+              className="relative text-gray-800 hover:text-purple-600 transition-all duration-300 font-semibold px-4 py-2 rounded-full bg-white/30 hover:bg-white/60 backdrop-blur-md border border-white/40 hover:border-purple-300/60 shadow-lg hover:shadow-2xl group overflow-hidden transform hover:scale-105 hover:-translate-y-0.5"
               style={{ 
                 textShadow: '0 1px 2px rgba(0,0,0,0.1)',
                 boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 4px 8px -2px rgba(0, 0, 0, 0.1)'
@@ -87,7 +87,7 @@ const FloatingHeader = () => {
             </Link>
             <Link
               to="/about"
-              className="relative text-gray-800 hover:text-purple-600 transition-all duration-300 font-semibold px-5 py-2 rounded-full bg-white/30 hover:bg-white/60 backdrop-blur-md border border-white/40 hover:border-purple-300/60 shadow-lg hover:shadow-2xl group overflow-hidden transform hover:scale-105 hover:-translate-y-0.5"
+              className="relative text-gray-800 hover:text-purple-600 transition-all duration-300 font-semibold px-4 py-2 rounded-full bg-white/30 hover:bg-white/60 backdrop-blur-md border border-white/40 hover:border-purple-300/60 shadow-lg hover:shadow-2xl group overflow-hidden transform hover:scale-105 hover:-translate-y-0.5"
               style={{ 
                 textShadow: '0 1px 2px rgba(0,0,0,0.1)',
                 boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 4px 8px -2px rgba(0, 0, 0, 0.1)'
@@ -97,6 +97,24 @@ const FloatingHeader = () => {
               <span className="relative z-10">About us</span>
             </Link>
           </nav>
+
+          {/* Enhanced Get Started CTA with Premium Hover Effects */}
+          <div className="hidden md:flex items-center">
+            <Link to="/notes" className="group">
+              <div className="relative">
+                {/* Animated glow background */}
+                <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 via-pink-600 to-purple-700 rounded-full blur opacity-30 group-hover:opacity-60 transition-all duration-300 group-hover:blur-md animate-pulse"></div>
+                <Button size="sm" className="relative font-medium bg-gradient-to-r from-purple-600 via-pink-600 to-purple-700 text-white hover:from-purple-700 hover:via-pink-700 hover:to-purple-800 rounded-full shadow-lg hover:shadow-2xl transform hover:scale-110 hover:-translate-y-1 transition-all duration-300 border border-white/20 group-hover:border-white/40 overflow-hidden">
+                  {/* Shimmer effect */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out"></div>
+                  <span className="relative z-10 flex items-center">
+                    Get Started
+                    <ArrowRight className="ml-1 h-4 w-4 group-hover:translate-x-1 group-hover:scale-110 transition-all duration-300" />
+                  </span>
+                </Button>
+              </div>
+            </Link>
+          </div>
 
 
 
@@ -163,7 +181,20 @@ const FloatingHeader = () => {
                   About us
                 </span>
               </Link>
-
+              <div className="pt-4 border-t border-white/30">
+                <Link to="/notes" onClick={() => setIsMenuOpen(false)} className="group">
+                  <div className="relative">
+                    <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-600 via-pink-600 to-purple-700 rounded-full blur opacity-30 group-hover:opacity-60 transition-all duration-300 animate-pulse"></div>
+                    <Button size="sm" className="relative w-full font-medium bg-gradient-to-r from-purple-600 via-pink-600 to-purple-700 text-white hover:from-purple-700 hover:via-pink-700 hover:to-purple-800 rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 overflow-hidden">
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+                      <span className="relative z-10 flex items-center justify-center">
+                        Get Started
+                        <ArrowRight className="ml-1 h-4 w-4 group-hover:translate-x-1 transition-transform duration-300" />
+                      </span>
+                    </Button>
+                  </div>
+                </Link>
+              </div>
             </nav>
           </div>
         )}

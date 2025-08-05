@@ -42,8 +42,8 @@ const Hero = () => {
             {/* Content Container */}
             <div className="px-8 sm:px-12 lg:px-16 py-20 sm:py-24 lg:py-28 text-center">
             {/* Main Headline with Animation */}
-            <div className="space-y-8 sm:space-y-10 lg:space-y-12">
-              <h1 className="font-bricolage text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-extrabold leading-[1.1] sm:leading-[1.15] text-white drop-shadow-2xl">
+            <div className="space-y-10 sm:space-y-12 lg:space-y-14">
+              <h1 className="font-bricolage text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-extrabold leading-tight text-white drop-shadow-2xl">
                 <span className="inline-block animate-fade-in-up" style={{ animationDelay: '0.2s', animationFillMode: 'both' }}>
                   From{" "}
                 </span>
@@ -58,7 +58,7 @@ const Hero = () => {
                   </span>
                 </span>{" "}
                 <span className="text-white font-extrabold inline-block animate-fade-in-up" style={{ animationDelay: '0.6s', animationFillMode: 'both' }}>
-                  Notes
+                  Notes,
                 </span>
                 <br className="hidden sm:block" />
                 <span className="sm:hidden"> </span>
@@ -78,16 +78,11 @@ const Hero = () => {
                 </span>
               </h1>
 
-              {/* Enhanced subtitle with value proposition */}
-              <div className="space-y-4 animate-fade-in-up" style={{ animationDelay: '1.4s', animationFillMode: 'both' }}>
-                <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-white/95 max-w-4xl mx-auto leading-relaxed font-medium drop-shadow-lg">
-                  With AI-powered guidance, never lose track of what matters.
-                </p>
-                <p className="text-base sm:text-lg md:text-xl text-white/85 max-w-3xl mx-auto leading-relaxed font-normal drop-shadow-md">
-                  Transform your engineering study chaos into organized, searchable knowledge 
-                  that actually helps you succeed.
-                </p>
-              </div>
+              <p className="text-lg sm:text-xl md:text-xl lg:text-2xl text-white/95 max-w-4xl mx-auto leading-relaxed font-medium drop-shadow-lg animate-fade-in-up" 
+                style={{ animationDelay: '1.4s', animationFillMode: 'both' }}>
+                Transform your engineering study chaos into organized, searchable knowledge 
+                that actually helps you succeed.
+              </p>
 
               {/* Premium CTA Button with Stunning Hover Effects */}
               <div className="flex justify-center mt-12 sm:mt-14 lg:mt-16 animate-fade-in-up" 
@@ -99,10 +94,7 @@ const Hero = () => {
                   <div className="absolute -inset-1 bg-gradient-to-r from-purple-400/30 via-pink-400/30 to-blue-400/30 rounded-3xl blur-2xl scale-105 animate-fade-in-up group-hover:scale-115 group-hover:opacity-80 transition-all duration-500" 
                     style={{ animationDelay: '1.7s', animationFillMode: 'both' }}></div>
                   
-                  {/* Rotating Border Glow */}
-                  <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                    <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 animate-spin-slow opacity-20"></div>
-                  </div>
+
                   
                   <Link to="/notes">
                     <button className="relative z-10 font-bricolage font-bold text-white text-lg sm:text-xl px-10 sm:px-12 lg:px-14 py-4 sm:py-5 lg:py-6 rounded-2xl bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 hover:from-purple-700 hover:via-pink-700 hover:to-blue-700 shadow-2xl border border-white/20 backdrop-blur-sm transform hover:scale-110 hover:-translate-y-2 transition-all duration-500 flex items-center justify-center gap-3 group min-w-[280px] sm:min-w-[320px] animate-fade-in-up overflow-hidden" 
