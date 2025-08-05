@@ -161,9 +161,31 @@
     }
     
     /* Better mobile typography */
-    h1 { @apply text-2xl; }
-    h2 { @apply text-xl; }
-    h3 { @apply text-lg; }
+    h1 { @apply text-2xl leading-tight; }
+    h2 { @apply text-xl leading-tight; }
+    h3 { @apply text-lg leading-tight; }
+    
+    /* Mobile-specific spacing */
+    .hero-mobile-spacing {
+      @apply space-y-6;
+    }
+    
+    /* Ensure cards stack properly on mobile */
+    .mobile-stack {
+      @apply grid-cols-1 gap-4;
+    }
+    
+    /* Mobile-friendly footer */
+    .footer-mobile {
+      @apply grid-cols-1 gap-6 text-center;
+    }
+  }
+  
+  /* Tablet optimizations */
+  @media (min-width: 641px) and (max-width: 1024px) {
+    .tablet-grid {
+      @apply grid-cols-2;
+    }
   }
 }
 
@@ -505,6 +527,51 @@ ro Animation Keyframes */
 /* Smooth scroll behavior */
 html {
   scroll-behavior: smooth;
+}
+
+/* Page transitions */
+.page-transition-enter {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.page-transition-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 300ms ease-in-out, transform 300ms ease-in-out;
+}
+
+.page-transition-exit {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.page-transition-exit-active {
+  opacity: 0;
+  transform: translateY(-20px);
+  transition: opacity 300ms ease-in-out, transform 300ms ease-in-out;
+}
+
+/* Line clamp utilities */
+.line-clamp-1 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+}
+
+.line-clamp-2 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.line-clamp-3 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
 }
 
 /* Custom scrollbar */

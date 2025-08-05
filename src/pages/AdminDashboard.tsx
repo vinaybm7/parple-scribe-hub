@@ -60,8 +60,8 @@ const AdminDashboard = () => {
 
   // Map of semester to subjects
   const semesterToSubjects: Record<string, string[]> = {
-    '1': ["Scientific Foundation of Health & Wellness", "Samskruthi Kannada", "POP", "Physics", "Nano Technology", "Maths", "IOT", "Indian Constitution", "IE Electronics", "IE Electrical", "English", "Cyber Security", "Cloud Computing", "Civil", "Chemistry", "CAED", "C Programming", "Balake Kannada", "AI"],
-    '2': ["Web Dev", "Python", "Physics", "Mini Project", "Mechanical", "Maths", "Java", "Indian Constitution", "English", "Electrical", "Civil", "Chemistry", "C++", "Basic Electronics", "CAED"],
+    '1': ["Scientific Foundation of Health & Wellness", "POP", "Physics", "Nano Technology", "Maths - I", "IOT", "Indian Constitution", "IE Electronics", "English - I", "Cyber Security", "Cloud Computing", "Civil", "C Programming", "AI"],
+    '2': ["Web Dev", "Python", "Mini Project", "Mechanical", "Maths - II", "Java", "English - II", "Electrical", "Civil", "Chemistry", "C++", "Samskruthi Kannada", "Balake Kannada", "Basic Electronics"],
     '3': [],
     '4': [],
     '5': [],
@@ -458,8 +458,8 @@ const AdminDashboard = () => {
                       <SelectContent>
                         {uploadForm.year === "1" && (
                           <>
-                            <SelectItem value="1">1st Semester</SelectItem>
-                            <SelectItem value="2">2nd Semester</SelectItem>
+                            <SelectItem value="1">Physics cycle</SelectItem>
+                            <SelectItem value="2">Chemistry cycle</SelectItem>
                           </>
                         )}
                         {uploadForm.year === "2" && (

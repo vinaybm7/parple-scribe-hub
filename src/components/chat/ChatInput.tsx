@@ -58,13 +58,20 @@ const ChatInput = ({ onSendMessage, isLoading, disabled = false, context }: Chat
 
         // Update message with final transcript or show interim results
         if (finalTranscript) {
-          setMessage(finalTranscript.trim());
-          // Stop listening after getting final result
-          if (recognitionRef.current) {
-            recognitionRef.current.stop();
-          }
+          setMessage(prev => prev + finalTranscript);
+          // Don't auto-stop, let user decide when to send
+          // Reset silence timer for potential additional speech
+          silenceTimerRef.current = setTimeout(() => {
+            if (recognitionRef.current) {
+              recognitionRef.current.stop();
+            }
+          }, 3000); // 3 seconds of silence after final speech
         } else if (interimTranscript) {
-          setMessage(interimTranscript.trim());
+          setMessage(prev => {
+            // Replace interim results, don't append
+            const finalPart = prev.replace(/\s*[^\s]*$/, ''); // Remove last word if it was interim
+            return finalPart + interimTranscript;
+          });
           // Reset silence timer when we detect speech
           silenceTimerRef.current = setTimeout(() => {
             if (recognitionRef.current) {
@@ -105,14 +112,29 @@ const ChatInput = ({ onSendMessage, isLoading, disabled = false, context }: Chat
 
   const handleSend = () => {
     if (message.trim() && !isLoading && !disabled) {
+      // Stop any ongoing speech recognition
+      if (recognitionRef.current && isListening) {
+        recognitionRef.current.stop();
+      }
+      
       onSendMessage(message.trim(), context);
       setMessage('');
+      setIsListening(false);
+      
+      // Clear any pending timers
+      if (silenceTimerRef.current) {
+        clearTimeout(silenceTimerRef.current);
+      }
     }
   };
 
   const handleKeyPress = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
+      // Stop listening if currently active
+      if (isListening && recognitionRef.current) {
+        recognitionRef.current.stop();
+      }
       handleSend();
     }
   };
@@ -146,11 +168,15 @@ const ChatInput = ({ onSendMessage, isLoading, disabled = false, context }: Chat
             onClick={startVoiceInput}
             disabled={isLoading || disabled || isListening}
             size="sm"
-            variant="outline"
-            className="px-3"
-            title="Start voice input"
+            variant={isListening ? "default" : "outline"}
+            className={`px-3 transition-all duration-200 ${
+              isListening 
+                ? "bg-pink-500 hover:bg-pink-600 text-white shadow-lg" 
+                : "hover:bg-pink-50 hover:border-pink-300"
+            }`}
+            title={isListening ? "Recording..." : "Start voice input"}
           >
-            <Mic className="w-4 h-4" />
+            <Mic className={`w-4 h-4 ${isListening ? "animate-pulse" : ""}`} />
           </Button>
         )}
         

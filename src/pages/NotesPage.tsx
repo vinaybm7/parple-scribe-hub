@@ -43,41 +43,37 @@ const years = [
 
 // Subject data for comprehensive search
 const allSubjects = [
-  // 1st Semester
+  // Physics cycle (1st Semester)
   { id: 1, name: "Scientific Foundation of Health & Wellness", code: "SFHW101", semester: 1, year: 1, keywords: ["health", "wellness", "foundation", "scientific"] },
-  { id: 2, name: "Samskruthi Kannada", code: "SK101", semester: 1, year: 1, keywords: ["kannada", "samskruthi", "language"] },
   { id: 3, name: "POP", code: "POP101", semester: 1, year: 1, keywords: ["pop", "programming", "principles"] },
   { id: 4, name: "Physics", code: "PHY101", semester: 1, year: 1, keywords: ["physics", "mechanics", "waves", "optics"] },
   { id: 5, name: "Nano Technology", code: "NT101", semester: 1, year: 1, keywords: ["nano", "technology", "nanotechnology", "materials"] },
-  { id: 6, name: "Maths", code: "MATH101", semester: 1, year: 1, keywords: ["mathematics", "maths", "calculus", "algebra"] },
+  { id: 6, name: "Maths - I", code: "MATH101", semester: 1, year: 1, keywords: ["mathematics", "maths", "calculus", "algebra", "maths 1", "math 1"] },
   { id: 7, name: "IOT", code: "IOT101", semester: 1, year: 1, keywords: ["iot", "internet", "things", "sensors"] },
   { id: 8, name: "Indian Constitution", code: "IC101", semester: 1, year: 1, keywords: ["constitution", "indian", "law", "rights"] },
   { id: 9, name: "IE Electronics", code: "IEE101", semester: 1, year: 1, keywords: ["electronics", "circuits", "components"] },
-  { id: 10, name: "IE Electrical", code: "IEL101", semester: 1, year: 1, keywords: ["electrical", "power", "circuits", "current"] },
-  { id: 11, name: "English", code: "ENG101", semester: 1, year: 1, keywords: ["english", "language", "communication"] },
+  { id: 11, name: "English - I", code: "ENG101", semester: 1, year: 1, keywords: ["english", "language", "communication", "english 1"] },
   { id: 12, name: "Cyber Security", code: "CS101", semester: 1, year: 1, keywords: ["cyber", "security", "hacking", "protection"] },
   { id: 13, name: "Cloud Computing", code: "CC101", semester: 1, year: 1, keywords: ["cloud", "computing", "aws", "server"] },
   { id: 14, name: "Civil", code: "CIV101", semester: 1, year: 1, keywords: ["civil", "construction", "structures"] },
-  { id: 15, name: "Chemistry", code: "CHEM101", semester: 1, year: 1, keywords: ["chemistry", "organic", "inorganic", "reactions"] },
-  { id: 16, name: "CAED", code: "CAED101", semester: 1, year: 1, keywords: ["caed", "design", "drawing", "autocad"] },
   { id: 17, name: "C Programming", code: "CP101", semester: 1, year: 1, keywords: ["c", "programming", "coding", "language"] },
-  { id: 18, name: "Balake Kannada", code: "BK101", semester: 1, year: 1, keywords: ["balake", "kannada", "language"] },
   { id: 19, name: "AI", code: "AI101", semester: 1, year: 1, keywords: ["ai", "artificial", "intelligence", "machine", "learning"] },
   
-  // 2nd Semester
+  // Chemistry cycle (2nd Semester)
   { id: 20, name: "Web Dev", code: "WD102", semester: 2, year: 1, keywords: ["web", "development", "html", "css", "javascript"] },
   { id: 21, name: "Python", code: "PY102", semester: 2, year: 1, keywords: ["python", "programming", "coding", "language"] },
-  { id: 22, name: "Physics", code: "PHY102", semester: 2, year: 1, keywords: ["physics", "mechanics", "waves", "optics"] },
   { id: 23, name: "Mini Project", code: "MP102", semester: 2, year: 1, keywords: ["mini", "project", "development", "implementation"] },
   { id: 24, name: "Mechanical", code: "MECH102", semester: 2, year: 1, keywords: ["mechanical", "machines", "thermodynamics"] },
-  { id: 25, name: "Maths", code: "MATH102", semester: 2, year: 1, keywords: ["mathematics", "maths", "calculus", "algebra"] },
+  { id: 25, name: "Maths - II", code: "MATH102", semester: 2, year: 1, keywords: ["mathematics", "maths", "calculus", "algebra", "maths 2", "math 2"] },
   { id: 26, name: "Java", code: "JAVA102", semester: 2, year: 1, keywords: ["java", "programming", "oop", "object"] },
-  { id: 27, name: "Indian Constitution", code: "IC102", semester: 2, year: 1, keywords: ["constitution", "indian", "law", "rights"] },
-  { id: 28, name: "English", code: "ENG102", semester: 2, year: 1, keywords: ["english", "language", "communication"] },
+  { id: 28, name: "English - II", code: "ENG102", semester: 2, year: 1, keywords: ["english", "language", "communication", "english 2"] },
   { id: 29, name: "Electrical", code: "EE102", semester: 2, year: 1, keywords: ["electrical", "power", "circuits", "current"] },
   { id: 30, name: "Civil", code: "CIV102", semester: 2, year: 1, keywords: ["civil", "construction", "structures"] },
   { id: 31, name: "Chemistry", code: "CHEM102", semester: 2, year: 1, keywords: ["chemistry", "organic", "inorganic", "reactions"] },
   { id: 32, name: "C++", code: "CPP102", semester: 2, year: 1, keywords: ["cpp", "c++", "programming", "oop"] },
+  { id: 2, name: "Samskruthi Kannada", code: "SK102", semester: 2, year: 1, keywords: ["kannada", "samskruthi", "language"] },
+  { id: 18, name: "Balake Kannada", code: "BK102", semester: 2, year: 1, keywords: ["balake", "kannada", "language"] },
+  { id: 33, name: "Basic Electronics", code: "BE102", semester: 2, year: 1, keywords: ["electronics", "basic", "circuits", "components"] },
   { id: 33, name: "Basic Electronics", code: "BE102", semester: 2, year: 1, keywords: ["electronics", "basic", "circuits", "components"] },
   { id: 34, name: "CAED", code: "CAED102", semester: 2, year: 1, keywords: ["caed", "design", "drawing", "autocad"] }
 ];
@@ -181,11 +177,18 @@ const NotesPage = () => {
       );
 
       if (matchesAllTerms || matchesName || matchesCode || matchesKeywords) {
+        const getSemesterName = (sem: number, yr: number) => {
+          if (yr === 1) {
+            return sem === 1 ? "Physics cycle" : sem === 2 ? "Chemistry cycle" : `Semester ${sem}`;
+          }
+          return `Semester ${sem}`;
+        };
+
         results.push({
           type: 'subject',
           id: subject.id,
           title: subject.name,
-          description: `${subject.code} - Year ${subject.year}, Semester ${subject.semester}`,
+          description: `${subject.code} - Year ${subject.year}, ${getSemesterName(subject.semester, subject.year)}`,
           path: `/notes/subject/${subject.id}`,
           year: subject.year,
           semester: subject.semester
@@ -218,11 +221,18 @@ const NotesPage = () => {
       const matchesCategory = file.category?.toLowerCase().includes(searchLower);
 
       if (matchesAllTerms || matchesTitle || matchesSubject || matchesCategory) {
+        const getSemesterName = (sem: number, yr: number) => {
+          if (yr === 1) {
+            return sem === 1 ? "Physics cycle" : sem === 2 ? "Chemistry cycle" : `Semester ${sem}`;
+          }
+          return `Semester ${sem}`;
+        };
+
         results.push({
           type: 'file',
           id: file.id,
           title: file.original_title || file.file_path.split('/').pop() || 'Unknown File',
-          description: `${file.subject} - ${file.category} (Year ${file.year}, Semester ${file.semester})`,
+          description: `${file.subject} - ${file.category} (Year ${file.year}, ${getSemesterName(parseInt(file.semester), parseInt(file.year))})`,
           path: `/notes/subject/${getSubjectIdByName(file.subject)}/${file.category}`,
           year: parseInt(file.year),
           semester: parseInt(file.semester),

@@ -130,6 +130,8 @@ export const useVoice = () => {
       // Use ElevenLabs if enabled and supported
       if (voiceSettings.useElevenLabs && elevenLabsAvailable) {
         console.log('🎤 Attempting to use ElevenLabs TTS...');
+        
+        console.log('🎤 Attempting to use ElevenLabs TTS...');
         const elevenLabsService = getElevenLabsService();
         
         console.log('🎤 Converting text to speech with ElevenLabs...');

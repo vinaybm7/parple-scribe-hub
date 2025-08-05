@@ -112,47 +112,48 @@ const SubjectsSection = () => {
 
         <div 
           ref={containerRef as any}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12"
+          className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-12"
         >
           {subjects.map((subject, index) => (
-            <Card 
-              key={index}
-              className={`group hover:shadow-2xl hover:shadow-purple-500/10 transition-all duration-300 hover:scale-105 hover:-translate-y-1 bg-white/25 backdrop-blur-xl border border-white/30 hover:border-purple-300/50 cursor-pointer rounded-2xl overflow-hidden relative stagger-item ${visibleItems[index] ? 'visible' : ''}`}
-              style={{
-                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
-                transitionDelay: `0ms` // Remove staggered delay for hover effects
-              }}
-            >
-              {/* Subtle background animation */}
-              <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-              
-              <CardContent className="p-6 relative z-10">
-                <div className="flex items-start space-x-4">
-                  <div className={`p-3 rounded-xl bg-gradient-to-r ${subject.color} shadow-lg border border-white/20 backdrop-blur-sm group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 relative overflow-hidden`}>
-                    {/* Icon shimmer effect */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
-                    <subject.icon className="h-6 w-6 text-white drop-shadow-sm relative z-10" />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="text-lg font-semibold text-gray-800 mb-1 drop-shadow-sm group-hover:text-purple-700 transition-colors duration-300">
-                      {subject.name}
-                    </h3>
-                    <p className="text-sm text-gray-700 mb-3 group-hover:text-gray-800 transition-colors duration-300">
-                      {subject.description}
-                    </p>
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs font-medium text-purple-700 bg-purple-100/80 backdrop-blur-sm px-3 py-1.5 rounded-full border border-purple-200/50 group-hover:bg-purple-200/80 group-hover:scale-105 transition-all duration-300">
-                        {subject.notesCount} notes
-                      </span>
-                      <div className="flex items-center space-x-1 text-gray-600 group-hover:text-purple-600 transition-colors duration-300">
-                        <span className="text-xs font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300">Explore</span>
-                        <ArrowRight className="h-4 w-4 group-hover:translate-x-2 transition-all duration-300" />
+            <Link to="/notes" key={index}>
+              <Card 
+                className={`group hover:shadow-2xl hover:shadow-purple-500/10 transition-all duration-300 hover:scale-105 hover:-translate-y-1 bg-white/25 backdrop-blur-xl border border-white/30 hover:border-purple-300/50 cursor-pointer rounded-2xl overflow-hidden relative stagger-item ${visibleItems[index] ? 'visible' : ''}`}
+                style={{
+                  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
+                  transitionDelay: `0ms` // Remove staggered delay for hover effects
+                }}
+              >
+                {/* Subtle background animation */}
+                <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                
+                <CardContent className="p-4 sm:p-6 relative z-10">
+                  <div className="flex items-start space-x-3 sm:space-x-4">
+                    <div className={`p-2.5 sm:p-3 rounded-xl bg-gradient-to-r ${subject.color} shadow-lg border border-white/20 backdrop-blur-sm group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 relative overflow-hidden flex-shrink-0`}>
+                      {/* Icon shimmer effect */}
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+                      <subject.icon className="h-5 w-5 sm:h-6 sm:w-6 text-white drop-shadow-sm relative z-10" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-1 drop-shadow-sm group-hover:text-purple-700 transition-colors duration-300 line-clamp-2">
+                        {subject.name}
+                      </h3>
+                      <p className="text-xs sm:text-sm text-gray-700 mb-3 group-hover:text-gray-800 transition-colors duration-300 line-clamp-2">
+                        {subject.description}
+                      </p>
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-medium text-purple-700 bg-purple-100/80 backdrop-blur-sm px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full border border-purple-200/50 group-hover:bg-purple-200/80 group-hover:scale-105 transition-all duration-300 flex-shrink-0">
+                          {subject.notesCount} notes
+                        </span>
+                        <div className="flex items-center space-x-1 text-gray-600 group-hover:text-purple-600 transition-colors duration-300 flex-shrink-0">
+                          <span className="text-xs font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300 hidden sm:inline">Explore</span>
+                          <ArrowRight className="h-3.5 w-3.5 sm:h-4 sm:w-4 group-hover:translate-x-2 transition-all duration-300" />
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            </Link>
           ))}
         </div>
 

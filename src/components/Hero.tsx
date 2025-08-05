@@ -42,8 +42,8 @@ const Hero = () => {
             {/* Content Container */}
             <div className="px-8 sm:px-12 lg:px-16 py-20 sm:py-24 lg:py-28 text-center">
             {/* Main Headline with Animation */}
-            <div className="space-y-10 sm:space-y-12 lg:space-y-14">
-              <h1 className="font-bricolage text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-extrabold leading-tight text-white drop-shadow-2xl">
+            <div className="space-y-8 sm:space-y-10 lg:space-y-12">
+              <h1 className="font-bricolage text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-extrabold leading-[1.1] sm:leading-[1.15] text-white drop-shadow-2xl">
                 <span className="inline-block animate-fade-in-up" style={{ animationDelay: '0.2s', animationFillMode: 'both' }}>
                   From{" "}
                 </span>
@@ -58,7 +58,7 @@ const Hero = () => {
                   </span>
                 </span>{" "}
                 <span className="text-white font-extrabold inline-block animate-fade-in-up" style={{ animationDelay: '0.6s', animationFillMode: 'both' }}>
-                  Notes,
+                  Notes
                 </span>
                 <br className="hidden sm:block" />
                 <span className="sm:hidden"> </span>
@@ -78,11 +78,16 @@ const Hero = () => {
                 </span>
               </h1>
 
-              <p className="text-lg sm:text-xl md:text-xl lg:text-2xl text-white/95 max-w-4xl mx-auto leading-relaxed font-medium drop-shadow-lg animate-fade-in-up" 
-                style={{ animationDelay: '1.4s', animationFillMode: 'both' }}>
-                Transform your engineering study chaos into organized, searchable knowledge 
-                that actually helps you succeed.
-              </p>
+              {/* Enhanced subtitle with value proposition */}
+              <div className="space-y-4 animate-fade-in-up" style={{ animationDelay: '1.4s', animationFillMode: 'both' }}>
+                <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-white/95 max-w-4xl mx-auto leading-relaxed font-medium drop-shadow-lg">
+                  With AI-powered guidance, never lose track of what matters.
+                </p>
+                <p className="text-base sm:text-lg md:text-xl text-white/85 max-w-3xl mx-auto leading-relaxed font-normal drop-shadow-md">
+                  Transform your engineering study chaos into organized, searchable knowledge 
+                  that actually helps you succeed.
+                </p>
+              </div>
 
               {/* Premium CTA Button with Stunning Hover Effects */}
               <div className="flex justify-center mt-12 sm:mt-14 lg:mt-16 animate-fade-in-up" 
@@ -100,30 +105,35 @@ const Hero = () => {
                   </div>
                   
                   <Link to="/notes">
-                    <button className="relative z-10 font-bricolage font-bold text-white text-lg sm:text-xl px-10 sm:px-12 lg:px-14 py-4 sm:py-5 lg:py-6 rounded-2xl bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 hover:from-purple-700 hover:via-pink-700 hover:to-blue-700 shadow-2xl border border-white/20 backdrop-blur-sm transform hover:scale-110 hover:-translate-y-2 transition-all duration-500 flex items-center justify-center gap-3 group min-w-[280px] sm:min-w-[320px] animate-fade-in-up overflow-hidden" 
-                      style={{ animationDelay: '1.6s', animationFillMode: 'both' }}>
+                    <button className="relative z-10 font-bricolage font-bold text-white text-lg sm:text-xl px-12 sm:px-14 lg:px-16 py-5 sm:py-6 lg:py-7 rounded-2xl bg-gradient-to-r from-purple-500 via-pink-500 to-purple-600 hover:from-purple-600 hover:via-pink-600 hover:to-purple-700 shadow-2xl border-2 border-white/30 backdrop-blur-sm transform hover:scale-110 hover:-translate-y-2 transition-all duration-500 flex items-center justify-center gap-3 group min-w-[300px] sm:min-w-[340px] animate-fade-in-up overflow-hidden" 
+                      style={{ 
+                        animationDelay: '1.6s', 
+                        animationFillMode: 'both',
+                        boxShadow: '0 20px 40px rgba(168, 85, 247, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
+                      }}>
                       
-                      {/* Shimmer Effect */}
-                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out"></div>
+                      {/* Enhanced Shimmer Effect */}
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out"></div>
                       
-                      {/* Removed particle dots effect */}
+                      {/* Pulsing background glow */}
+                      <div className="absolute inset-0 bg-gradient-to-r from-purple-400/20 via-pink-400/20 to-purple-400/20 rounded-2xl animate-pulse"></div>
                       
                       {/* Enhanced Text with Glow */}
                       <span className="relative z-10 animate-fade-in-up group-hover:text-shadow-glow transition-all duration-300" 
                         style={{ 
                           animationDelay: '1.8s', 
                           animationFillMode: 'both',
-                          textShadow: '0 0 0 transparent'
+                          textShadow: '0 2px 4px rgba(0, 0, 0, 0.3)'
                         }}>
-                        Organize Your Studies Now
+                        Get Started Now
                       </span>
                       
                       {/* Enhanced Arrow with Multiple Effects */}
                       <div className="relative">
-                        <ArrowRight className="h-5 w-5 group-hover:translate-x-2 group-hover:scale-125 transition-all duration-500 animate-fade-in-up relative z-10" 
+                        <ArrowRight className="h-6 w-6 group-hover:translate-x-2 group-hover:scale-125 transition-all duration-500 animate-fade-in-up relative z-10" 
                           style={{ animationDelay: '2.0s', animationFillMode: 'both' }} />
                         {/* Arrow Glow Trail */}
-                        <ArrowRight className="absolute top-0 left-0 h-5 w-5 text-white/50 blur-sm group-hover:translate-x-1 group-hover:scale-110 transition-all duration-300" />
+                        <ArrowRight className="absolute top-0 left-0 h-6 w-6 text-white/50 blur-sm group-hover:translate-x-1 group-hover:scale-110 transition-all duration-300" />
                       </div>
                       
                       {/* Ripple Effect */}

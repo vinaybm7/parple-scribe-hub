@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { CardTitle } from '@/components/ui/card';
+import { Card, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { X, Trash2, Bot, Heart, Zap, RotateCcw, Smile, Frown, HelpCircle, Coffee, Brain, Sparkles } from 'lucide-react';
@@ -122,6 +122,8 @@ const ChatInterface = ({ isOpen, onClose, context, isEmbedded = false }: ChatInt
         return <Heart className="w-3 h-3 text-pink-500" />;
     }
   };
+
+
 
   if (!isOpen) return null;
 

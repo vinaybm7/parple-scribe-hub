@@ -9,8 +9,8 @@ import { Link, useParams } from "react-router-dom";
 // Semester data for each year
 const semesterData = {
   1: [
-    { id: 1, title: "1st Semester", description: "Mathematics I, Physics, Chemistry, Engineering Drawing", color: "from-blue-100 to-blue-200" },
-    { id: 2, title: "2nd Semester", description: "Mathematics II, Physics II, Chemistry II, Programming", color: "from-blue-200 to-blue-300" }
+    { id: 1, title: "Physics cycle", description: "Mathematics I, Physics, Chemistry, Engineering Drawing", color: "from-blue-100 to-blue-200" },
+    { id: 2, title: "Chemistry cycle", description: "Mathematics II, Physics II, Chemistry II, Programming", color: "from-blue-200 to-blue-300" }
   ],
   2: [
     { id: 3, title: "3rd Semester", description: "Core engineering subjects and advanced concepts", color: "from-green-100 to-green-200" },

@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { Mic } from 'lucide-react';
 
 interface VoiceAnimationProps {
   isListening: boolean;
@@ -7,103 +6,66 @@ interface VoiceAnimationProps {
 }
 
 const VoiceAnimation = ({ isListening, audioLevel = 0 }: VoiceAnimationProps) => {
-  const [pulseIntensity, setPulseIntensity] = useState(0);
+  const [bars, setBars] = useState<number[]>([0, 0, 0, 0, 0]);
 
   useEffect(() => {
     if (isListening) {
-      // Create a pulsing animation based on audio level
+      // Create animated bars with different heights
       const interval = setInterval(() => {
-        setPulseIntensity(Math.random() * 0.8 + 0.2); // Random pulse between 0.2 and 1
-      }, 150);
+        setBars([
+          Math.random() * 0.8 + 0.2,
+          Math.random() * 1.0 + 0.3,
+          Math.random() * 0.6 + 0.4,
+          Math.random() * 0.9 + 0.1,
+          Math.random() * 0.7 + 0.3
+        ]);
+      }, 120);
 
       return () => clearInterval(interval);
     } else {
-      setPulseIntensity(0);
+      setBars([0, 0, 0, 0, 0]);
     }
   }, [isListening, audioLevel]);
 
   if (!isListening) return null;
 
   return (
-    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 z-10">
-      <div className="bg-white dark:bg-gray-800 rounded-full p-3 shadow-lg border-2 border-pink-200 dark:border-pink-700">
-        {/* Outer pulse ring */}
-        <div 
-          className="absolute inset-0 rounded-full bg-pink-400/30 animate-ping"
-          style={{
-            animationDuration: '1s',
-            transform: `scale(${1 + pulseIntensity * 0.5})`
-          }}
-        />
-        
-        {/* Middle pulse ring */}
-        <div 
-          className="absolute inset-1 rounded-full bg-pink-500/40"
-          style={{
-            transform: `scale(${1 + pulseIntensity * 0.3})`,
-            transition: 'transform 0.15s ease-out'
-          }}
-        />
-        
-        {/* Inner mic icon */}
-        <div className="relative z-10 flex items-center justify-center">
-          <Mic 
-            className="w-5 h-5 text-pink-600 dark:text-pink-400"
-            style={{
-              transform: `scale(${1 + pulseIntensity * 0.2})`,
-              transition: 'transform 0.15s ease-out'
-            }}
-          />
+    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-3 z-10 animate-in fade-in-0 slide-in-from-bottom-2 duration-300">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl px-4 py-3 shadow-xl border border-pink-200 dark:border-pink-700/50 backdrop-blur-sm">
+        <div className="flex items-center gap-3">
+          {/* Central circle with pulse */}
+          <div className="relative">
+            <div className="w-8 h-8 bg-gradient-to-r from-pink-500 to-purple-500 rounded-full flex items-center justify-center relative overflow-hidden">
+              {/* Pulse effect */}
+              <div className="absolute inset-0 bg-white/30 rounded-full animate-ping" />
+              <div className="relative z-10 w-3 h-3 bg-white rounded-full" />
+            </div>
+            {/* Outer pulse ring */}
+            <div className="absolute inset-0 rounded-full border-2 border-pink-400/40 animate-pulse" style={{ transform: 'scale(1.3)' }} />
+          </div>
+          
+          {/* Animated bars */}
+          <div className="flex items-center gap-1">
+            {bars.map((height, index) => (
+              <div
+                key={index}
+                className="bg-gradient-to-t from-pink-500 to-purple-400 rounded-full transition-all duration-150 ease-out"
+                style={{
+                  width: '3px',
+                  height: `${8 + height * 16}px`,
+                  opacity: 0.7 + height * 0.3
+                }}
+              />
+            ))}
+          </div>
         </div>
         
-        {/* Sound waves */}
-        <div className="absolute -left-8 top-1/2 transform -translate-y-1/2">
-          <div 
-            className="w-1 bg-pink-500 rounded-full"
-            style={{
-              height: `${8 + pulseIntensity * 12}px`,
-              opacity: pulseIntensity,
-              transition: 'all 0.15s ease-out'
-            }}
-          />
+        {/* Listening text */}
+        <div className="text-center mt-2">
+          <span className="text-xs text-pink-600 dark:text-pink-400 font-medium">
+            Listening...
+          </span>
         </div>
-        <div className="absolute -left-6 top-1/2 transform -translate-y-1/2">
-          <div 
-            className="w-1 bg-pink-400 rounded-full"
-            style={{
-              height: `${6 + pulseIntensity * 16}px`,
-              opacity: pulseIntensity * 0.8,
-              transition: 'all 0.15s ease-out'
-            }}
-          />
-        </div>
-        <div className="absolute -right-8 top-1/2 transform -translate-y-1/2">
-          <div 
-            className="w-1 bg-pink-500 rounded-full"
-            style={{
-              height: `${8 + pulseIntensity * 12}px`,
-              opacity: pulseIntensity,
-              transition: 'all 0.15s ease-out'
-            }}
-          />
-        </div>
-        <div className="absolute -right-6 top-1/2 transform -translate-y-1/2">
-          <div 
-            className="w-1 bg-pink-400 rounded-full"
-            style={{
-              height: `${6 + pulseIntensity * 16}px`,
-              opacity: pulseIntensity * 0.8,
-              transition: 'all 0.15s ease-out'
-            }}
-          />
-        </div>
-      </div>
-      
-      {/* Listening text */}
-      <div className="text-center mt-2">
-        <span className="text-xs text-pink-600 dark:text-pink-400 font-medium bg-white/80 dark:bg-gray-800/80 px-2 py-1 rounded-full">
-          Listening...
-        </span>
       </div>
     </div>
   );

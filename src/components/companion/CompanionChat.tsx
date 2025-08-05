@@ -28,7 +28,9 @@ const CompanionChat = ({ avatarId, onMoodChange, onTypingChange, onSpeakingChang
   const [inputMessage, setInputMessage] = useState('');
   const [isListening, setIsListening] = useState(false);
   const [isSoundEnabled, setIsSoundEnabled] = useState(true);
+  const [speechSupported, setSpeechSupported] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const recognitionRef = useRef<SpeechRecognition | null>(null);
   
   const { sendMessage, isLoading, generateResponse } = useCompanion(avatarId);
   const { speak, isSpeaking, isVoiceActive, voiceLevel, isElevenLabsSupported, voiceSettings, updateVoiceSettings } = useVoice();
@@ -81,15 +83,77 @@ const CompanionChat = ({ avatarId, onMoodChange, onTypingChange, onSpeakingChang
     onVoiceLevelChange?.(voiceLevel);
   }, [voiceLevel, onVoiceLevelChange]);
 
-  // Log voice settings and support status
+  // Initialize speech recognition with auto-stop functionality
   useEffect(() => {
-    console.log('🔊 Voice settings updated:', {
-      ...voiceSettings,
-      // Don't log the full API key for security
-      apiKey: voiceSettings.useElevenLabs ? '*** (set)' : 'not set'
-    });
-    console.log('🔊 ElevenLabs supported:', isElevenLabsSupported);
-  }, [voiceSettings, isElevenLabsSupported]);
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      const recognition = new SpeechRecognition();
+      
+      // Configure for automatic stopping when user stops speaking
+      recognition.continuous = false; // Don't continue listening indefinitely
+      recognition.interimResults = true; // Show real-time results
+      recognition.lang = 'en-US';
+      recognition.maxAlternatives = 1;
+
+      recognition.onstart = () => {
+        console.log('🎤 Speech recognition started in companion');
+        setIsListening(true);
+      };
+
+      recognition.onresult = (event) => {
+        let finalTranscript = '';
+        let interimTranscript = '';
+
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          const transcript = event.results[i][0].transcript;
+          if (event.results[i].isFinal) {
+            finalTranscript += transcript;
+          } else {
+            interimTranscript += transcript;
+          }
+        }
+
+        // Update message with final transcript or show interim results
+        if (finalTranscript) {
+          setInputMessage(finalTranscript.trim());
+          // Don't set isListening to false here - let onend handle it
+        } else if (interimTranscript) {
+          setInputMessage(interimTranscript.trim());
+        }
+      };
+
+      recognition.onerror = (event) => {
+        console.error('Speech recognition error in companion:', event.error);
+        setIsListening(false);
+        
+        // Handle specific errors
+        if (event.error === 'no-speech') {
+          console.log('No speech detected - auto-stopping');
+          // Don't show error for no-speech, it's expected behavior
+        } else if (event.error === 'audio-capture') {
+          console.error('No microphone access');
+        } else if (event.error === 'not-allowed') {
+          console.error('Microphone access denied');
+        }
+      };
+
+      recognition.onend = () => {
+        console.log('🎤 Speech recognition ended automatically');
+        setIsListening(false);
+      };
+
+      recognitionRef.current = recognition;
+      setSpeechSupported(true);
+    }
+
+    return () => {
+      if (recognitionRef.current) {
+        recognitionRef.current.abort();
+      }
+    };
+  }, []);
+
+
 
   // Enhanced speakMessage function with perfect audio synchronization
   const speakMessage = async (text: string) => {
@@ -151,7 +215,7 @@ const CompanionChat = ({ avatarId, onMoodChange, onTypingChange, onSpeakingChang
     
     const greetings = {
       luna: `Hey there! ✨ I'm ${avatarName}, your energetic study buddy! I'm super excited to help you tackle whatever challenges come your way. Ready to make today amazing together?`,
-      zyan: `Hey there! 🚀 I'm ${avatarName}, your energetic companion who's here to make learning absolutely EPIC! I'm super pumped to be on this adventure with you. Ready to turn studying into something amazing? Let's do this! 💙⚡`,
+      zyan: `Hey gorgeous! 🔥 I'm ${avatarName}, and I'm absolutely PUMPED to meet you! Ready to set this world on FIRE together? Let's make studying the most exciting adventure ever! 💙⚡✨`,
       aria: `Hello, dear student. 🌙 I'm ${avatarName}, and I'm here to provide you with calm guidance and wisdom. Whether you need help with studies or just want to chat, I'm here for you.`
     };
 
@@ -241,15 +305,27 @@ const CompanionChat = ({ avatarId, onMoodChange, onTypingChange, onSpeakingChang
   };
 
   const toggleVoiceInput = () => {
-    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-      setIsListening(!isListening);
-      // Voice recognition implementation would go here
+    if (!recognitionRef.current || !speechSupported) return;
+
+    if (isListening) {
+      recognitionRef.current.stop();
+    } else {
+      try {
+        // Clear any existing message before starting
+        setInputMessage('');
+        recognitionRef.current.start();
+      } catch (error) {
+        console.error('Failed to start speech recognition in companion:', error);
+        setIsListening(false);
+      }
     }
   };
 
   const formatTime = (date: Date) => {
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
+
+
 
   return (
     <div className="flex flex-col h-full">
@@ -349,20 +425,24 @@ const CompanionChat = ({ avatarId, onMoodChange, onTypingChange, onSpeakingChang
             value={inputMessage}
             onChange={(e) => setInputMessage(e.target.value)}
             onKeyPress={handleKeyPress}
-            placeholder="Type your message..."
-            disabled={isLoading}
+            placeholder={isListening ? "Listening..." : "Type your message..."}
+            disabled={isLoading || isListening}
             className="flex-1"
           />
           
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={toggleVoiceInput}
-            disabled={isLoading}
-            className={`p-2 ${isListening ? 'bg-red-100 text-red-600' : ''}`}
-          >
-            {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
-          </Button>
+          {/* Voice Input Button */}
+          {speechSupported && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={toggleVoiceInput}
+              disabled={isLoading}
+              className={`p-2 ${isListening ? 'bg-red-100 text-red-600' : ''}`}
+              title={isListening ? "Stop listening" : "Start voice input"}
+            >
+              {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
+            </Button>
+          )}
           
           <Button
             onClick={handleSendMessage}
