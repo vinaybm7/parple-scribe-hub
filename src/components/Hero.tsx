@@ -105,35 +105,30 @@ const Hero = () => {
                   </div>
                   
                   <Link to="/notes">
-                    <button className="relative z-10 font-bricolage font-bold text-white text-lg sm:text-xl px-12 sm:px-14 lg:px-16 py-5 sm:py-6 lg:py-7 rounded-2xl bg-gradient-to-r from-purple-500 via-pink-500 to-purple-600 hover:from-purple-600 hover:via-pink-600 hover:to-purple-700 shadow-2xl border-2 border-white/30 backdrop-blur-sm transform hover:scale-110 hover:-translate-y-2 transition-all duration-500 flex items-center justify-center gap-3 group min-w-[300px] sm:min-w-[340px] animate-fade-in-up overflow-hidden" 
-                      style={{ 
-                        animationDelay: '1.6s', 
-                        animationFillMode: 'both',
-                        boxShadow: '0 20px 40px rgba(168, 85, 247, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
-                      }}>
+                    <button className="relative z-10 font-bricolage font-bold text-white text-lg sm:text-xl px-10 sm:px-12 lg:px-14 py-4 sm:py-5 lg:py-6 rounded-2xl bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 hover:from-purple-700 hover:via-pink-700 hover:to-blue-700 shadow-2xl border border-white/20 backdrop-blur-sm transform hover:scale-110 hover:-translate-y-2 transition-all duration-500 flex items-center justify-center gap-3 group min-w-[280px] sm:min-w-[320px] animate-fade-in-up overflow-hidden" 
+                      style={{ animationDelay: '1.6s', animationFillMode: 'both' }}>
                       
-                      {/* Enhanced Shimmer Effect */}
-                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out"></div>
+                      {/* Shimmer Effect */}
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out"></div>
                       
-                      {/* Pulsing background glow */}
-                      <div className="absolute inset-0 bg-gradient-to-r from-purple-400/20 via-pink-400/20 to-purple-400/20 rounded-2xl animate-pulse"></div>
+                      {/* Removed particle dots effect */}
                       
                       {/* Enhanced Text with Glow */}
                       <span className="relative z-10 animate-fade-in-up group-hover:text-shadow-glow transition-all duration-300" 
                         style={{ 
                           animationDelay: '1.8s', 
                           animationFillMode: 'both',
-                          textShadow: '0 2px 4px rgba(0, 0, 0, 0.3)'
+                          textShadow: '0 0 0 transparent'
                         }}>
-                        Get Started Now
+                        Organize Your Studies Now
                       </span>
                       
                       {/* Enhanced Arrow with Multiple Effects */}
                       <div className="relative">
-                        <ArrowRight className="h-6 w-6 group-hover:translate-x-2 group-hover:scale-125 transition-all duration-500 animate-fade-in-up relative z-10" 
+                        <ArrowRight className="h-5 w-5 group-hover:translate-x-2 group-hover:scale-125 transition-all duration-500 animate-fade-in-up relative z-10" 
                           style={{ animationDelay: '2.0s', animationFillMode: 'both' }} />
                         {/* Arrow Glow Trail */}
-                        <ArrowRight className="absolute top-0 left-0 h-6 w-6 text-white/50 blur-sm group-hover:translate-x-1 group-hover:scale-110 transition-all duration-300" />
+                        <ArrowRight className="absolute top-0 left-0 h-5 w-5 text-white/50 blur-sm group-hover:translate-x-1 group-hover:scale-110 transition-all duration-300" />
                       </div>
                       
                       {/* Ripple Effect */}
