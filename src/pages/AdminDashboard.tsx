@@ -39,7 +39,9 @@ const AdminDashboard = () => {
   const [uploading, setUploading] = useState(false);
   const [files, setFiles] = useState<UploadedFile[]>([]);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [isDragOver, setIsDragOver] = useState(false);
+  const [uploadMode, setUploadMode] = useState<'single' | 'batch'>('single');
   const [uploadForm, setUploadForm] = useState({
     title: "",
     description: "",
@@ -48,6 +50,14 @@ const AdminDashboard = () => {
     year: "",
     category: "modules"
   });
+  const [batchUploadForm, setBatchUploadForm] = useState({
+    subject: "",
+    semester: "",
+    year: "",
+    category: "modules",
+    commonDescription: ""
+  });
+  const [batchFileData, setBatchFileData] = useState<Array<{file: File, title: string, description: string}>>([]);
   const [alert, setAlert] = useState<{ type: 'success' | 'error', message: string } | null>(null);
   
   // Advanced filtering state
@@ -127,9 +137,20 @@ const AdminDashboard = () => {
   };
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file && validateFile(file)) {
-      setSelectedFile(file);
+    if (uploadMode === 'single') {
+      const file = event.target.files?.[0];
+      if (file && validateFile(file)) {
+        setSelectedFile(file);
+      }
+    } else {
+      const files = Array.from(event.target.files || []);
+      const validFiles = files.filter(validateFile);
+      setSelectedFiles(validFiles);
+      setBatchFileData(validFiles.map(file => ({
+        file,
+        title: file.name.replace(/\.[^/.]+$/, ""), // Remove extension
+        description: batchUploadForm.commonDescription
+      })));
     }
   };
 
@@ -152,16 +173,37 @@ const AdminDashboard = () => {
     setIsDragOver(false);
 
     const files = Array.from(e.dataTransfer.files);
-    if (files.length > 0) {
+    if (uploadMode === 'single' && files.length > 0) {
       const file = files[0];
       if (validateFile(file)) {
         setSelectedFile(file);
       }
+    } else if (uploadMode === 'batch' && files.length > 0) {
+      const validFiles = files.filter(validateFile);
+      setSelectedFiles(validFiles);
+      setBatchFileData(validFiles.map(file => ({
+        file,
+        title: file.name.replace(/\.[^/.]+$/, ""), // Remove extension
+        description: batchUploadForm.commonDescription
+      })));
     }
-  }, []);
+  }, [uploadMode, batchUploadForm.commonDescription]);
 
   const removeSelectedFile = () => {
     setSelectedFile(null);
+  };
+
+  const removeBatchFile = (index: number) => {
+    const newFiles = selectedFiles.filter((_, i) => i !== index);
+    const newFileData = batchFileData.filter((_, i) => i !== index);
+    setSelectedFiles(newFiles);
+    setBatchFileData(newFileData);
+  };
+
+  const updateBatchFileData = (index: number, field: 'title' | 'description', value: string) => {
+    const newFileData = [...batchFileData];
+    newFileData[index][field] = value;
+    setBatchFileData(newFileData);
   };
 
   // Helper to upload file with simulated progress
@@ -228,6 +270,87 @@ const AdminDashboard = () => {
       console.error('Upload error:', error);
       toast.dismiss(loadingToast);
       showErrorToast('Failed to upload file');
+    } finally {
+      setUploading(false);
+      setUploadProgress(0);
+    }
+  };
+
+  const handleBatchUpload = async () => {
+    if (!batchFileData.length || !batchUploadForm.subject || !batchUploadForm.semester || !batchUploadForm.year) {
+      showErrorToast('Please fill in all required fields and select files');
+      return;
+    }
+
+    // Check if all files have titles
+    const missingTitles = batchFileData.some(item => !item.title.trim());
+    if (missingTitles) {
+      showErrorToast('Please provide titles for all files');
+      return;
+    }
+
+    setUploading(true);
+    const loadingToast = showLoadingToast(`Uploading ${batchFileData.length} files...`);
+    let successCount = 0;
+    let errorCount = 0;
+
+    try {
+      for (let i = 0; i < batchFileData.length; i++) {
+        const { file, title, description } = batchFileData[i];
+        setUploadProgress(Math.round(((i + 1) / batchFileData.length) * 100));
+
+        try {
+          // Compress image if needed
+          let fileToUpload = file;
+          if (file.type.startsWith('image/')) {
+            fileToUpload = await imageCompression(file, { maxSizeMB: 2, maxWidthOrHeight: 1920 });
+          }
+
+          // Create file path
+          const sanitizedTitle = title.replace(/[<>:"/\\|?*]/g, '');
+          const fileName = `${sanitizedTitle}__TIMESTAMP__${Date.now()}.${fileToUpload.name.split('.').pop()}`;
+          const filePath = `year-${batchUploadForm.year}/semester-${batchUploadForm.semester}/${batchUploadForm.subject}/${batchUploadForm.category}/${fileName}`;
+
+          // Upload file
+          const { data, error } = await uploadFile(fileToUpload, filePath);
+          if (error) throw error;
+
+          // Save file metadata
+          const metadata: FileMetadata = {
+            file_path: filePath,
+            original_title: title,
+            description: description || batchUploadForm.commonDescription,
+            subject: batchUploadForm.subject,
+            category: batchUploadForm.category,
+            year: batchUploadForm.year,
+            semester: batchUploadForm.semester,
+            file_size: fileToUpload.size,
+            file_type: fileToUpload.type
+          };
+          await saveFileMetadata(metadata);
+          successCount++;
+        } catch (error) {
+          console.error(`Error uploading ${title}:`, error);
+          errorCount++;
+        }
+      }
+
+      // Reset form
+      setSelectedFiles([]);
+      setBatchFileData([]);
+      setBatchUploadForm({ subject: "", semester: "", year: "", category: "modules", commonDescription: "" });
+      loadFiles();
+      toast.dismiss(loadingToast);
+
+      if (errorCount === 0) {
+        showSuccessToast(`All ${successCount} files uploaded successfully!`);
+      } else {
+        showErrorToast(`${successCount} files uploaded, ${errorCount} failed`);
+      }
+    } catch (error) {
+      console.error('Batch upload error:', error);
+      toast.dismiss(loadingToast);
+      showErrorToast('Batch upload failed');
     } finally {
       setUploading(false);
       setUploadProgress(0);
@@ -401,215 +524,488 @@ const AdminDashboard = () => {
                   <Upload className="h-5 w-5" />
                   Upload Study Material
                 </CardTitle>
+                <div className="flex gap-2 mt-4">
+                  <Button
+                    variant={uploadMode === 'single' ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => {
+                      setUploadMode('single');
+                      setSelectedFiles([]);
+                      setBatchFileData([]);
+                    }}
+                  >
+                    Single Upload
+                  </Button>
+                  <Button
+                    variant={uploadMode === 'batch' ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => {
+                      setUploadMode('batch');
+                      setSelectedFile(null);
+                    }}
+                  >
+                    Batch Upload
+                  </Button>
+                </div>
               </CardHeader>
               <CardContent className="space-y-6">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="title">Title *</Label>
-                    <Input
-                      id="title"
-                      placeholder="e.g., Calculus Chapter 1"
-                      value={uploadForm.title}
-                      onChange={(e) => setUploadForm({...uploadForm, title: e.target.value})}
-                    />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="year">Year *</Label>
-                    <Select 
-                      value={uploadForm.year} 
-                      onValueChange={(value) => {
-                        setUploadForm({
-                          ...uploadForm, 
-                          year: value, 
-                          semester: "", 
-                          subject: ""
-                        });
-                      }}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select year" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="1">1st Year</SelectItem>
-                        <SelectItem value="2">2nd Year</SelectItem>
-                        <SelectItem value="3">3rd Year</SelectItem>
-                        <SelectItem value="4">4th Year</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="semester">Semester *</Label>
-                    <Select 
-                      value={uploadForm.semester} 
-                      onValueChange={(value) => {
-                        setUploadForm({
-                          ...uploadForm, 
-                          semester: value, 
-                          subject: ""
-                        });
-                      }}
-                      disabled={!uploadForm.year}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select semester" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {uploadForm.year === "1" && (
-                          <>
-                            <SelectItem value="1">Physics cycle</SelectItem>
-                            <SelectItem value="2">Chemistry cycle</SelectItem>
-                          </>
-                        )}
-                        {uploadForm.year === "2" && (
-                          <>
-                            <SelectItem value="3">3rd Semester</SelectItem>
-                            <SelectItem value="4">4th Semester</SelectItem>
-                          </>
-                        )}
-                        {uploadForm.year === "3" && (
-                          <>
-                            <SelectItem value="5">5th Semester</SelectItem>
-                            <SelectItem value="6">6th Semester</SelectItem>
-                          </>
-                        )}
-                        {uploadForm.year === "4" && (
-                          <>
-                            <SelectItem value="7">7th Semester</SelectItem>
-                            <SelectItem value="8">8th Semester</SelectItem>
-                          </>
-                        )}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="subject">Subject *</Label>
-                    <Select value={uploadForm.subject} onValueChange={(value) => setUploadForm({...uploadForm, subject: value})}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select subject" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {uploadForm.semester && getSubjectsForSemester(uploadForm.semester).map((subject, index) => (
-                          <SelectItem key={`${subject}-${index}`} value={subject}>
-                            {subject}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="category">Category *</Label>
-                    <Select value={uploadForm.category} onValueChange={(value) => setUploadForm({...uploadForm, category: value})}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select category" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {getCategoryOptions().map((option) => (
-                          <SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="description">Description</Label>
-                  <Textarea
-                    id="description"
-                    placeholder="Brief description of the material..."
-                    value={uploadForm.description}
-                    onChange={(e) => setUploadForm({...uploadForm, description: e.target.value})}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label>File *</Label>
-                  
-                  {/* Drag and Drop Zone */}
-                  <div
-                    className={`relative border-2 border-dashed rounded-lg p-8 text-center transition-all duration-200 ${
-                      isDragOver
-                        ? 'border-primary bg-primary/5 scale-105'
-                        : selectedFile
-                        ? 'border-green-300 bg-green-50'
-                        : 'border-muted-foreground/25 hover:border-primary/50 hover:bg-muted/50'
-                    }`}
-                    onDragOver={handleDragOver}
-                    onDragLeave={handleDragLeave}
-                    onDrop={handleDrop}
-                  >
-                    {selectedFile ? (
-                      // Selected File Display
-                      <div className="space-y-4">
-                        <div className="flex items-center justify-center gap-3">
-                          <FileText className="h-12 w-12 text-green-600" />
-                          <div className="text-left">
-                            <p className="font-medium text-foreground">{selectedFile.name}</p>
-                            <p className="text-sm text-muted-foreground">
-                              {formatFileSize(selectedFile.size)} • {selectedFile.type.split('/')[1].toUpperCase()}
-                            </p>
-                          </div>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={removeSelectedFile}
-                            className="ml-auto"
-                          >
-                            <X className="h-4 w-4" />
-                          </Button>
-                        </div>
-                        <p className="text-sm text-green-600 font-medium">✓ File ready for upload</p>
+                {uploadMode === 'single' ? (
+                  /* Single Upload Form */
+                  <>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="title">Title *</Label>
+                        <Input
+                          id="title"
+                          placeholder="e.g., Calculus Chapter 1"
+                          value={uploadForm.title}
+                          onChange={(e) => setUploadForm({...uploadForm, title: e.target.value})}
+                        />
                       </div>
-                    ) : (
-                      // Drag and Drop Interface
+                      
+                      <div className="space-y-2">
+                        <Label htmlFor="year">Year *</Label>
+                        <Select 
+                          value={uploadForm.year} 
+                          onValueChange={(value) => {
+                            setUploadForm({
+                              ...uploadForm, 
+                              year: value, 
+                              semester: "", 
+                              subject: ""
+                            });
+                          }}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select year" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="1">1st Year</SelectItem>
+                            <SelectItem value="2">2nd Year</SelectItem>
+                            <SelectItem value="3">3rd Year</SelectItem>
+                            <SelectItem value="4">4th Year</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="semester">Semester *</Label>
+                        <Select 
+                          value={uploadForm.semester} 
+                          onValueChange={(value) => {
+                            setUploadForm({
+                              ...uploadForm, 
+                              semester: value, 
+                              subject: ""
+                            });
+                          }}
+                          disabled={!uploadForm.year}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select semester" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {uploadForm.year === "1" && (
+                              <>
+                                <SelectItem value="1">Physics cycle</SelectItem>
+                                <SelectItem value="2">Chemistry cycle</SelectItem>
+                              </>
+                            )}
+                            {uploadForm.year === "2" && (
+                              <>
+                                <SelectItem value="3">3rd Semester</SelectItem>
+                                <SelectItem value="4">4th Semester</SelectItem>
+                              </>
+                            )}
+                            {uploadForm.year === "3" && (
+                              <>
+                                <SelectItem value="5">5th Semester</SelectItem>
+                                <SelectItem value="6">6th Semester</SelectItem>
+                              </>
+                            )}
+                            {uploadForm.year === "4" && (
+                              <>
+                                <SelectItem value="7">7th Semester</SelectItem>
+                                <SelectItem value="8">8th Semester</SelectItem>
+                              </>
+                            )}
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="subject">Subject *</Label>
+                        <Select value={uploadForm.subject} onValueChange={(value) => setUploadForm({...uploadForm, subject: value})}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select subject" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {uploadForm.semester && getSubjectsForSemester(uploadForm.semester).map((subject, index) => (
+                              <SelectItem key={`${subject}-${index}`} value={subject}>
+                                {subject}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="category">Category *</Label>
+                        <Select value={uploadForm.category} onValueChange={(value) => setUploadForm({...uploadForm, category: value})}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select category" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {getCategoryOptions().map((option) => (
+                              <SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="description">Description</Label>
+                      <Textarea
+                        id="description"
+                        placeholder="Brief description of the material..."
+                        value={uploadForm.description}
+                        onChange={(e) => setUploadForm({...uploadForm, description: e.target.value})}
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label>File *</Label>
+                      
+                      {/* Drag and Drop Zone */}
+                      <div
+                        className={`relative border-2 border-dashed rounded-lg p-8 text-center transition-all duration-200 ${
+                          isDragOver
+                            ? 'border-primary bg-primary/5 scale-105'
+                            : selectedFile
+                            ? 'border-green-300 bg-green-50'
+                            : 'border-muted-foreground/25 hover:border-primary/50 hover:bg-muted/50'
+                        }`}
+                        onDragOver={handleDragOver}
+                        onDragLeave={handleDragLeave}
+                        onDrop={handleDrop}
+                      >
+                        {selectedFile ? (
+                          // Selected File Display
+                          <div className="space-y-4">
+                            <div className="flex items-center justify-center gap-3">
+                              <FileText className="h-12 w-12 text-green-600" />
+                              <div className="text-left">
+                                <p className="font-medium text-foreground">{selectedFile.name}</p>
+                                <p className="text-sm text-muted-foreground">
+                                  {formatFileSize(selectedFile.size)} • {selectedFile.type.split('/')[1].toUpperCase()}
+                                </p>
+                              </div>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={removeSelectedFile}
+                                className="ml-auto"
+                              >
+                                <X className="h-4 w-4" />
+                              </Button>
+                            </div>
+                            <p className="text-sm text-green-600 font-medium">✓ File ready for upload</p>
+                          </div>
+                        ) : (
+                          // Drag and Drop Interface
+                          <div className="space-y-4">
+                            <div className="flex justify-center">
+                              <Upload className={`h-12 w-12 transition-colors ${
+                                isDragOver ? 'text-primary' : 'text-muted-foreground'
+                              }`} />
+                            </div>
+                            <div className="space-y-2">
+                              <p className={`text-lg font-medium transition-colors ${
+                                isDragOver ? 'text-primary' : 'text-foreground'
+                              }`}>
+                                {isDragOver ? 'Drop your file here' : 'Drag and drop your file here'}
+                              </p>
+                              <p className="text-sm text-muted-foreground">
+                                or click to browse files
+                              </p>
+                              <p className="text-xs text-muted-foreground">
+                                Supports PDF, DOCX, JPG, PNG (max 10MB)
+                              </p>
+                            </div>
+                          </div>
+                        )}
+                        
+                        {/* Hidden File Input */}
+                        <input
+                          type="file"
+                          accept=".pdf,.docx,.jpg,.jpeg,.png"
+                          onChange={handleFileSelect}
+                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                        />
+                      </div>
+                    </div>
+
+                    <Button 
+                      onClick={handleUpload} 
+                      disabled={uploading || !selectedFile}
+                      className="w-full"
+                    >
+                      {uploading ? `Uploading... (${uploadProgress}%)` : "Upload File"}
+                    </Button>
+                    {uploading && (
+                      <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
+                        <div
+                          className="bg-blue-500 h-2 rounded-full transition-all duration-200"
+                          style={{ width: `${uploadProgress}%` }}
+                        ></div>
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  /* Batch Upload Form */
+                  <div className="space-y-6 border-t pt-6">
+                    <h3 className="text-lg font-semibold">Batch Upload - Common Settings</h3>
+                    
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="batch-year">Year *</Label>
+                        <Select 
+                          value={batchUploadForm.year} 
+                          onValueChange={(value) => {
+                            setBatchUploadForm({
+                              ...batchUploadForm, 
+                              year: value, 
+                              semester: "", 
+                              subject: ""
+                            });
+                          }}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select year" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="1">1st Year</SelectItem>
+                            <SelectItem value="2">2nd Year</SelectItem>
+                            <SelectItem value="3">3rd Year</SelectItem>
+                            <SelectItem value="4">4th Year</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="batch-semester">Semester *</Label>
+                        <Select 
+                          value={batchUploadForm.semester} 
+                          onValueChange={(value) => {
+                            setBatchUploadForm({
+                              ...batchUploadForm, 
+                              semester: value, 
+                              subject: ""
+                            });
+                          }}
+                          disabled={!batchUploadForm.year}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select semester" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {batchUploadForm.year === "1" && (
+                              <>
+                                <SelectItem value="1">Physics cycle</SelectItem>
+                                <SelectItem value="2">Chemistry cycle</SelectItem>
+                              </>
+                            )}
+                            {batchUploadForm.year === "2" && (
+                              <>
+                                <SelectItem value="3">3rd Semester</SelectItem>
+                                <SelectItem value="4">4th Semester</SelectItem>
+                              </>
+                            )}
+                            {batchUploadForm.year === "3" && (
+                              <>
+                                <SelectItem value="5">5th Semester</SelectItem>
+                                <SelectItem value="6">6th Semester</SelectItem>
+                              </>
+                            )}
+                            {batchUploadForm.year === "4" && (
+                              <>
+                                <SelectItem value="7">7th Semester</SelectItem>
+                                <SelectItem value="8">8th Semester</SelectItem>
+                              </>
+                            )}
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="batch-subject">Subject *</Label>
+                        <Select value={batchUploadForm.subject} onValueChange={(value) => setBatchUploadForm({...batchUploadForm, subject: value})}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select subject" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {batchUploadForm.semester && getSubjectsForSemester(batchUploadForm.semester).map((subject, index) => (
+                              <SelectItem key={`${subject}-${index}`} value={subject}>
+                                {subject}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="batch-category">Category *</Label>
+                        <Select value={batchUploadForm.category} onValueChange={(value) => setBatchUploadForm({...batchUploadForm, category: value})}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select category" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {getCategoryOptions().map((option) => (
+                              <SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="batch-description">Common Description (Optional)</Label>
+                      <Textarea
+                        id="batch-description"
+                        placeholder="Description that will be applied to all files (can be overridden per file)..."
+                        value={batchUploadForm.commonDescription}
+                        onChange={(e) => setBatchUploadForm({...batchUploadForm, commonDescription: e.target.value})}
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label>Files *</Label>
+                      
+                      {/* Drag and Drop Zone for Multiple Files */}
+                      <div
+                        className={`relative border-2 border-dashed rounded-lg p-8 text-center transition-all duration-200 ${
+                          isDragOver
+                            ? 'border-primary bg-primary/5 scale-105'
+                            : selectedFiles.length > 0
+                            ? 'border-green-300 bg-green-50'
+                            : 'border-muted-foreground/25 hover:border-primary/50 hover:bg-muted/50'
+                        }`}
+                        onDragOver={handleDragOver}
+                        onDragLeave={handleDragLeave}
+                        onDrop={handleDrop}
+                      >
+                        {selectedFiles.length > 0 ? (
+                          <div className="space-y-4">
+                            <div className="flex items-center justify-center gap-3">
+                              <FileText className="h-12 w-12 text-green-600" />
+                              <div className="text-left">
+                                <p className="font-medium text-foreground">{selectedFiles.length} files selected</p>
+                                <p className="text-sm text-muted-foreground">
+                                  {formatFileSize(selectedFiles.reduce((total, file) => total + file.size, 0))} total
+                                </p>
+                              </div>
+                            </div>
+                            <p className="text-sm text-green-600 font-medium">✓ Files ready for batch upload</p>
+                          </div>
+                        ) : (
+                          <div className="space-y-4">
+                            <div className="flex justify-center">
+                              <Upload className={`h-12 w-12 transition-colors ${
+                                isDragOver ? 'text-primary' : 'text-muted-foreground'
+                              }`} />
+                            </div>
+                            <div className="space-y-2">
+                              <p className={`text-lg font-medium transition-colors ${
+                                isDragOver ? 'text-primary' : 'text-foreground'
+                              }`}>
+                                {isDragOver ? 'Drop your files here' : 'Drag and drop multiple files here'}
+                              </p>
+                              <p className="text-sm text-muted-foreground">
+                                or click to browse files
+                              </p>
+                              <p className="text-xs text-muted-foreground">
+                                Supports PDF, DOCX, JPG, PNG (max 10MB each)
+                              </p>
+                            </div>
+                          </div>
+                        )}
+                        
+                        {/* Hidden File Input for Multiple Files */}
+                        <input
+                          type="file"
+                          accept=".pdf,.docx,.jpg,.jpeg,.png"
+                          multiple
+                          onChange={handleFileSelect}
+                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                        />
+                      </div>
+                    </div>
+
+                    {/* File List with Individual Titles */}
+                    {batchFileData.length > 0 && (
                       <div className="space-y-4">
-                        <div className="flex justify-center">
-                          <Upload className={`h-12 w-12 transition-colors ${
-                            isDragOver ? 'text-primary' : 'text-muted-foreground'
-                          }`} />
-                        </div>
-                        <div className="space-y-2">
-                          <p className={`text-lg font-medium transition-colors ${
-                            isDragOver ? 'text-primary' : 'text-foreground'
-                          }`}>
-                            {isDragOver ? 'Drop your file here' : 'Drag and drop your file here'}
-                          </p>
-                          <p className="text-sm text-muted-foreground">
-                            or click to browse files
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            Supports PDF, DOCX, JPG, PNG (max 10MB)
-                          </p>
+                        <h4 className="font-medium">Individual File Settings</h4>
+                        <div className="space-y-3 max-h-96 overflow-y-auto">
+                          {batchFileData.map((fileData, index) => (
+                            <div key={index} className="border rounded-lg p-4 space-y-3">
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-3">
+                                  <FileText className="h-6 w-6 text-primary" />
+                                  <div>
+                                    <p className="font-medium text-sm">{fileData.file.name}</p>
+                                    <p className="text-xs text-muted-foreground">
+                                      {formatFileSize(fileData.file.size)}
+                                    </p>
+                                  </div>
+                                </div>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => removeBatchFile(index)}
+                                >
+                                  <X className="h-4 w-4" />
+                                </Button>
+                              </div>
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                <div className="space-y-1">
+                                  <Label className="text-xs">Title *</Label>
+                                  <Input
+                                    placeholder="Enter title for this file"
+                                    value={fileData.title}
+                                    onChange={(e) => updateBatchFileData(index, 'title', e.target.value)}
+                                  />
+                                </div>
+                                <div className="space-y-1">
+                                  <Label className="text-xs">Description (Optional)</Label>
+                                  <Input
+                                    placeholder="Custom description or leave empty for common"
+                                    value={fileData.description}
+                                    onChange={(e) => updateBatchFileData(index, 'description', e.target.value)}
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                          ))}
                         </div>
                       </div>
                     )}
-                    
-                    {/* Hidden File Input */}
-                    <input
-                      type="file"
-                      accept=".pdf,.docx,.jpg,.jpeg,.png"
-                      onChange={handleFileSelect}
-                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                    />
-                  </div>
-                </div>
 
-                <Button 
-                  onClick={handleUpload} 
-                  disabled={uploading || !selectedFile}
-                  className="w-full"
-                >
-                  {uploading ? `Uploading... (${uploadProgress}%)` : "Upload File"}
-                </Button>
-                {uploading && (
-                  <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
-                    <div
-                      className="bg-blue-500 h-2 rounded-full transition-all duration-200"
-                      style={{ width: `${uploadProgress}%` }}
-                    ></div>
+                    <Button 
+                      onClick={handleBatchUpload} 
+                      disabled={uploading || !batchFileData.length}
+                      className="w-full"
+                    >
+                      {uploading ? `Uploading... (${uploadProgress}%)` : `Upload ${batchFileData.length} Files`}
+                    </Button>
+                    {uploading && (
+                      <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
+                        <div
+                          className="bg-blue-500 h-2 rounded-full transition-all duration-200"
+                          style={{ width: `${uploadProgress}%` }}
+                        ></div>
+                      </div>
+                    )}
                   </div>
                 )}
               </CardContent>

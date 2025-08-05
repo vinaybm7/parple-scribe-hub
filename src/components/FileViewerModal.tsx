@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { X, Download, ExternalLink, MessageCircle } from "lucide-react";
+import { X, Download, ExternalLink, MessageCircle, AlertCircle } from "lucide-react";
 import ChatInterface from "./chat/ChatInterface";
 import { useChat } from "@/hooks/useChat";
 import ErrorBoundary from "./ErrorBoundary";
@@ -16,11 +16,12 @@ interface FileViewerModalProps {
 
 const FileViewerModal = ({ isOpen, onClose, fileUrl, fileName, fileType }: FileViewerModalProps) => {
   const [isChatOpen, setIsChatOpen] = useState(false); // Start with chat closed to avoid hooks issues
+  const [iframeError, setIframeError] = useState(false);
   const { sendMessage, bellaState } = useChat();
 
   console.log('FileViewerModal render:', { isOpen, fileUrl, fileName, fileType });
 
-  // Handle ESC key press
+  // Handle ESC key press and reset iframe error state
   useEffect(() => {
     const handleEscKey = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
@@ -30,6 +31,8 @@ const FileViewerModal = ({ isOpen, onClose, fileUrl, fileName, fileType }: FileV
 
     if (isOpen) {
       document.addEventListener('keydown', handleEscKey);
+      // Reset iframe error state when modal opens
+      setIframeError(false);
     }
 
     return () => {
@@ -52,6 +55,28 @@ const FileViewerModal = ({ isOpen, onClose, fileUrl, fileName, fileType }: FileV
     console.log('Rendering file content:', { fileType, fileUrl, fileName });
     
     if (fileType.includes('pdf')) {
+      if (iframeError) {
+        return (
+          <div className="w-full h-full flex flex-col justify-center items-center text-center bg-gray-50 p-8">
+            <AlertCircle className="h-16 w-16 text-orange-500 mb-4" />
+            <h3 className="text-lg font-semibold text-gray-800 mb-2">PDF Preview Blocked</h3>
+            <p className="text-gray-600 mb-6 max-w-md">
+              The PDF preview is blocked by security settings. You can still download or open it in a new tab.
+            </p>
+            <div className="flex gap-3 justify-center">
+              <Button onClick={handleOpenInNewTab} className="flex items-center gap-2">
+                <ExternalLink className="h-4 w-4" />
+                Open in New Tab
+              </Button>
+              <Button onClick={handleDownload} variant="outline" className="flex items-center gap-2">
+                <Download className="h-4 w-4" />
+                Download PDF
+              </Button>
+            </div>
+          </div>
+        );
+      }
+
       return (
         <div className="w-full h-full bg-white overflow-hidden">
           <iframe
@@ -61,8 +86,14 @@ const FileViewerModal = ({ isOpen, onClose, fileUrl, fileName, fileType }: FileV
             title={fileName}
             className="border-0 w-full h-full"
             style={{ minHeight: '100%' }}
-            onLoad={() => console.log('PDF iframe loaded')}
-            onError={() => console.error('PDF iframe failed to load')}
+            onLoad={() => {
+              console.log('PDF iframe loaded successfully');
+              setIframeError(false);
+            }}
+            onError={(e) => {
+              console.error('PDF iframe failed to load:', e);
+              setIframeError(true);
+            }}
           />
         </div>
       );
@@ -175,14 +206,7 @@ const FileViewerModal = ({ isOpen, onClose, fileUrl, fileName, fileType }: FileV
           >
             {/* PDF Content - Full height and width, no extra wrappers */}
             <div className="flex-1 h-0 w-full flex flex-col">
-              {fileType.includes('pdf') ? (
-                <iframe
-                  src={`${fileUrl}#toolbar=1&navpanes=1&scrollbar=1`}
-                  title={fileName}
-                  className="w-full h-full border-0 rounded-lg bg-white shadow-lg"
-                  style={{ minHeight: 0 }}
-                />
-              ) : renderFileContent()}
+              {renderFileContent()}
             </div>
           </div>
 

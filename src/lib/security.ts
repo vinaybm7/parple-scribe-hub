@@ -150,7 +150,7 @@ export const getCSPHeader = (): string => {
     "img-src 'self' data: https: blob:",
     "media-src 'self' blob: https://cdn.jsdelivr.net",
     "connect-src 'self' https://*.supabase.co https://generativelanguage.googleapis.com https://api.elevenlabs.io https://storage.googleapis.com https://cdn.jsdelivr.net",
-    "frame-src 'none'",
+    "frame-src 'self' https://*.supabase.co",
     "object-src 'none'",
     "base-uri 'self'",
     "form-action 'self'"
