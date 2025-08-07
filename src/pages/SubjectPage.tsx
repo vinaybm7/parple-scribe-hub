@@ -357,6 +357,19 @@ const SubjectPage = () => {
               { label: subjectName, current: true }
             ]} 
           />
+          
+          {/* Back Button */}
+          <div className="mb-6">
+            <Button 
+              variant="outline" 
+              onClick={() => navigate(`/notes/semester/${semester}`)}
+              className="flex items-center gap-2 hover:bg-muted/50 transition-colors"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Back to {semesterTitle}
+            </Button>
+          </div>
+          
           <h1 className="text-4xl font-bold text-foreground mb-2">{subjectName}</h1>
           <p className="text-lg text-muted-foreground mb-6">Study materials organized by category</p>
           

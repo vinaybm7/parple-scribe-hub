@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Breadcrumbs from "@/components/ui/breadcrumbs";
-import { Search, GraduationCap, BookOpen, FileText, ArrowRight } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Search, GraduationCap, BookOpen, FileText, ArrowRight, ArrowLeft } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 import { getAllFileMetadata } from "@/lib/supabase";
 
 // Year data for engineering notes
@@ -103,6 +104,7 @@ interface FileMetadata {
 }
 
 const NotesPage = () => {
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const [fileMetadata, setFileMetadata] = useState<FileMetadata[]>([]);
@@ -301,6 +303,19 @@ const NotesPage = () => {
               { label: 'Browse Notes', current: true }
             ]} 
           />
+          
+          {/* Back Button */}
+          <div className="mb-6">
+            <Button 
+              variant="outline" 
+              onClick={() => navigate('/')}
+              className="flex items-center gap-2 hover:bg-muted/50 transition-colors"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Back to Home
+            </Button>
+          </div>
+          
           <div className="max-w-2xl mx-auto relative">
             <div className="glass-morphism rounded-2xl p-1 group hover:shadow-lg hover:shadow-purple-500/20 transition-all duration-300">
               <Search className="absolute left-6 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-600 group-hover:text-purple-600 transition-colors duration-300" />

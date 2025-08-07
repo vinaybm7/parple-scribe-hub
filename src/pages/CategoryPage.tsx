@@ -311,6 +311,18 @@ const CategoryPage = () => {
             ]} 
           />
           
+          {/* Back Button */}
+          <div className="mb-6">
+            <Button 
+              variant="outline" 
+              onClick={() => navigate(`/notes/subject/${subjectId}`)}
+              className="flex items-center gap-2 hover:bg-muted/50 transition-colors"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Back to {subjectName}
+            </Button>
+          </div>
+          
           {/* Category Header */}
           <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 mb-6 text-center sm:text-left">
             <div className={`w-16 h-16 rounded-full ${categoryConfig.color.icon} flex items-center justify-center flex-shrink-0`}>

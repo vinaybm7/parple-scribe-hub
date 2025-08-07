@@ -4,7 +4,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Breadcrumbs from "@/components/ui/breadcrumbs";
 import { ArrowLeft, BookOpen } from "lucide-react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 
 // Semester data for each year
 const semesterData = {
@@ -35,6 +35,7 @@ const yearTitles = {
 
 const YearPage = () => {
   const { yearId } = useParams();
+  const navigate = useNavigate();
   const year = parseInt(yearId || "1");
   const semesters = semesterData[year as keyof typeof semesterData] || [];
   const yearTitle = yearTitles[year as keyof typeof yearTitles] || "Year";
@@ -52,6 +53,19 @@ const YearPage = () => {
               { label: yearTitle, current: true }
             ]} 
           />
+          
+          {/* Back Button */}
+          <div className="mb-6">
+            <Button 
+              variant="outline" 
+              onClick={() => navigate('/notes')}
+              className="flex items-center gap-2 hover:bg-muted/50 transition-colors"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Back to Browse Notes
+            </Button>
+          </div>
+          
           <h1 className="text-4xl font-bold text-foreground mb-2">{yearTitle}</h1>
           <p className="text-lg text-muted-foreground">Select a semester to browse notes</p>
         </div>
